@@ -23,6 +23,8 @@ def verify_signature(request):
         msg=request.body,
         digestmod=hashlib.sha1).hexdigest()
 
+    # due to security reasons do not use '==' operator
+    # https://docs.python.org/3/library/hmac.html#hmac.compare_digest
     if not hmac.compare_digest(signature, expected):
         return HttpResponseForbidden()
 
