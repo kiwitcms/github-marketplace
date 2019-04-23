@@ -18,10 +18,10 @@ def verify_signature(request):
     if not signature:
         return HttpResponseForbidden()
 
-    expected = 'sha1=' + hmac.new(  # pylint: disable=no-member
+    expected = 'sha1=' + hmac.new(
         settings.KIWI_GITHUB_MARKETPLACE_SECRET,
-        msg=request.POST,
-        digestmod=hashlib.sha1).hex()
+        msg=request.body,
+        digestmod=hashlib.sha1).hexdigest()
 
     if not hmac.compare_digest(signature, expected):
         return HttpResponseForbidden()

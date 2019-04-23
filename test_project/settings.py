@@ -27,4 +27,5 @@ INSTALLED_APPS = [
 ROOT_URLCONF = 'test_project.urls'
 
 # application specific configuration
-KIWI_GITHUB_MARKETPLACE_SECRET = 'S3cr3t'
+# NOTE: must be bytes, not string
+KIWI_GITHUB_MARKETPLACE_SECRET = b'S3cr3t'
