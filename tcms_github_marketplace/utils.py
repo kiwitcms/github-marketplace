@@ -14,7 +14,7 @@ def verify_signature(request):
         Verifies request comes from GitHub, see:
         https://developer.github.com/webhooks/securing/
     """
-    signature = request.META.get('HTTP_X_HUB_SIGNATURE', None)
+    signature = request.headers.get('X-Hub-Signature', None)
     if not signature:
         return HttpResponseForbidden()
 
