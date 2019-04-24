@@ -9,6 +9,13 @@ from django.conf import settings
 from django.http import HttpResponseForbidden, HttpResponseRedirect
 
 
+def calculate_signature(secret, contents):
+    return 'sha1=' + hmac.new(
+        secret,
+        msg=contents,
+        digestmod=hashlib.sha1).hexdigest()
+
+
 def verify_signature(request):
     """
         Verifies request comes from GitHub, see:
@@ -18,10 +25,8 @@ def verify_signature(request):
     if not signature:
         return HttpResponseForbidden()
 
-    expected = 'sha1=' + hmac.new(
-        settings.KIWI_GITHUB_MARKETPLACE_SECRET,
-        msg=request.body,
-        digestmod=hashlib.sha1).hexdigest()
+    expected = calculate_signature(settings.KIWI_GITHUB_MARKETPLACE_SECRET,
+                                   request.body)
 
     # due to security reasons do not use '==' operator
     # https://docs.python.org/3/library/hmac.html#hmac.compare_digest
