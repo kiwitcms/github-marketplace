@@ -1,3 +1,4 @@
 include README.rst LICENSE requirements.txt
 
+recursive-exclude test_project/ *
 recursive-exclude tcms_github_marketplace/tests/ *
