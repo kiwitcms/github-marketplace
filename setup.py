@@ -4,7 +4,7 @@
 
 # Licensed under the GPL 3.0: https://www.gnu.org/licenses/gpl-3.0.txt
 
-from setuptools import setup, find_packages
+from setuptools import setup
 
 
 def get_long_description():
@@ -33,7 +33,7 @@ setup(
     url='https://github.com/kiwitcms/github-marketplace/',
     license='GPLv3+',
     install_requires=get_install_requires('requirements.txt'),
-    packages=find_packages(),
+    packages=['tcms_github_marketplace'],
     include_package_data=True,
     classifiers=[
         'Framework :: Django',
