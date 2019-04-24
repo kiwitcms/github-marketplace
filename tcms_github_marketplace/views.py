@@ -4,16 +4,18 @@
 
 import json
 
-from django.views.generic.base import TemplateView
+from django.views.generic.base import View
 
 from tcms_github_marketplace import utils
 
 
-class PurchaseHook(TemplateView):
+class PurchaseHook(View):
     """
         Handles `marketplace_purchase` web hook as described at:
         https://developer.github.com/marketplace/listing-on-github-marketplace/configuring-the-github-marketplace-webhook/
     """
+    http_method_names = ['post', 'head', 'options']
+
     def post(self, request, *args, **kwargs):
         """
             Hook must be configured to receive JSON payload!
