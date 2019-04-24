@@ -27,7 +27,7 @@ open source as well. You don't need this add-on in order to run Kiwi TCMS!
 Changelog
 ---------
 
-v0.1.0 (?? April 2019) - initial release
+v0.1.0 (24 April 2019) - initial release
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-- pending
+- Free plan purchases from Marketplace redirect to Public Tenant
