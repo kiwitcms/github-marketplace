@@ -10,6 +10,11 @@ from django.http import HttpResponseForbidden, HttpResponseRedirect
 
 
 def calculate_signature(secret, contents):
+    """
+        Calculate GitHub signature header.
+
+        WARNING: both parameters must be bytes, not string!
+    """
     return 'sha1=' + hmac.new(
         secret,
         msg=contents,

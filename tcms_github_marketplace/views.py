@@ -18,7 +18,9 @@ class PurchaseHook(TemplateView):
         """
             Hook must be configured to receive JSON payload!
         """
-        utils.verify_signature(request)
+        result = utils.verify_signature(request)
+        if result is not True:
+            return result  # must be an HttpResponse then
 
         payload = json.loads(request.body.decode('utf-8'))
 
