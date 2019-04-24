@@ -6,7 +6,10 @@ from django.conf.urls import include, url
 
 from tcms_github_marketplace import urls as marketplace_urls
 
+from test_project import views
+
 
 urlpatterns = [
+    url(r'^$', views.index),  # needed b/c testing can't resolve redirects
     url(r'^github/marketplace/', include(marketplace_urls)),
 ]

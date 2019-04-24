@@ -8,7 +8,7 @@ test:
 
 .PHONY: pylint
 pylint:
-	pylint --load-plugins=pylint_django -d missing-docstring *.py \
+	pylint --load-plugins=pylint_django -d missing-docstring -d duplicate-code *.py \
 	    tcms_github_marketplace/ test_project/
 
 

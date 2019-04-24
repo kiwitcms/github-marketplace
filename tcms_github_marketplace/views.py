@@ -20,13 +20,14 @@ class PurchaseHook(TemplateView):
         """
         utils.verify_signature(request)
 
-        payload = json.loads(request.POST)
+        payload = json.loads(request.body.decode('utf-8'))
 
         if payload['action'] == 'purchased':
-            utils.handle_purchased(payload)
-        elif payload['action'] == 'cancelled':
-            utils.handle_cancelled(payload)
+            return utils.handle_purchased(payload)
+
+        if payload['action'] == 'cancelled':
+            return utils.handle_cancelled(payload)
 
         raise NotImplementedError(
-            'Unsupported GitHub Marketplace hook action %s' %
+            'Unsupported GitHub Marketplace hook action: "%s"' %
             payload['action'])
