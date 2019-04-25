@@ -27,6 +27,11 @@ open source as well. You don't need this add-on in order to run Kiwi TCMS!
 Changelog
 ---------
 
+v0.1.1 (25 April 2019)
+~~~~~~~~~~~~~~~~~~~~~~
+
+- Handle GitHub hook pings
+
 v0.1.0 (24 April 2019) - initial release
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
