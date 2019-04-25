@@ -4,6 +4,7 @@
 
 import json
 
+from django.http import HttpResponse
 from django.views.generic.base import View
 
 from tcms_github_marketplace import utils
@@ -25,6 +26,10 @@ class PurchaseHook(View):
             return result  # must be an HttpResponse then
 
         payload = json.loads(request.body.decode('utf-8'))
+
+        # ping hook https://developer.github.com/webhooks/#ping-event
+        if 'zen' in payload:
+            return HttpResponse('pong')
 
         if payload['action'] == 'purchased':
             return utils.handle_purchased(payload)

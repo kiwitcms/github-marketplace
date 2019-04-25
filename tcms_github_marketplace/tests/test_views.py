@@ -140,3 +140,42 @@ class PurchaseHookTestCase(TestCase):
 
         # purchases for free plan redirect to / on public tenant
         self.assertRedirects(response, '/')
+
+    def test_hook_ping(self):
+        payload = """
+{
+  "zen": "Mind your words, they are important.",
+  "hook_id": 1234,
+  "hook": {
+    "type": "Marketplace::Listing",
+    "id": 1234,
+    "name": "web",
+    "active": true,
+    "events": [
+      "*"
+    ],
+    "config": {
+      "content_type": "json",
+      "url": "https://kiwitcms.org/hook/",
+      "insecure_ssl": "0"
+    },
+    "updated_at": "2019-04-23T13:23:59Z",
+    "created_at": "2019-04-23T13:23:59Z",
+    "marketplace_listing_id": 1234
+  },
+  "sender": {
+    "login": "atodorov",
+    "id": 1002300
+  }
+}
+""".strip()
+        signature = utils.calculate_signature(settings.KIWI_GITHUB_MARKETPLACE_SECRET,
+                                              json.dumps(json.loads(payload)).encode())
+        response = self.client.post(self.url,
+                                    json.loads(payload),
+                                    content_type='application/json',
+                                    HTTP_X_HUB_SIGNATURE=signature,
+                                    HTTP_X_GITHUB_EVENT='ping')
+
+        # initial ping responds with a pong
+        self.assertContains(response, 'pong')
