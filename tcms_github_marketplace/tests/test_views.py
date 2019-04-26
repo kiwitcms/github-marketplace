@@ -11,7 +11,6 @@ from django.test import TestCase
 from django.http import HttpResponseForbidden
 
 from tcms_github_marketplace import utils
-from tcms_github_marketplace.tests import UserFactory
 from tcms_github_marketplace.tests import LoggedInTestCase
 
 
