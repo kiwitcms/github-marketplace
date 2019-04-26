@@ -1,12 +1,12 @@
 # Copyright (c) 2019 Alexander Todorov <atodorov@MrSenko.com>
 
 # Licensed under the GPL 3.0: https://www.gnu.org/licenses/gpl-3.0.txt
+
 import hmac
 import hashlib
-from datetime import datetime
 
 from django.conf import settings
-from django.http import HttpResponseForbidden, HttpResponseRedirect
+from django.http import HttpResponseForbidden
 
 
 def calculate_signature(secret, contents):
@@ -39,30 +39,3 @@ def verify_signature(request):
         return HttpResponseForbidden()
 
     return True  # b/c of inconsistent-return-statements
-
-
-def handle_purchased(payload):
-    """
-        Handle 'purchased' event, see:
-        https://developer.github.com/marketplace/integrating-with-the-github-marketplace-api/github-marketplace-webhook-events/
-    """
-    # format is 2017-10-25T00:00:00+00:00
-    effective_date = datetime.strptime(payload['effective_date'][:19],
-                                       '%Y-%m-%dT%H:%M:%S')
-    sender = payload['sender']['login']
-    purchase = payload['marketplace_purchase']
-    plan_price = purchase['plan']['monthly_price_in_cents']
-
-    # Free Marketplace plans have nothing to install so they
-    # just redirect to the Public tenant, b/c the user is
-    # already authenticated via OAuth!
-    #
-    # For now we don't even record this event in the database
-    if plan_price == 0:
-        return HttpResponseRedirect('/')
-
-    raise NotImplementedError('Paid plans are not supported yet')
-
-
-def handle_cancelled(payload):
-    raise NotImplementedError('Cancelling events is not implemeted yet')

@@ -3,11 +3,13 @@
 # Licensed under the GPL 3.0: https://www.gnu.org/licenses/gpl-3.0.txt
 
 import json
+from datetime import datetime
 
 from django.http import HttpResponse
 from django.views.generic.base import View
 
 from tcms_github_marketplace import utils
+from tcms_github_marketplace.models import Purchase
 
 
 class PurchaseHook(View):
@@ -20,6 +22,9 @@ class PurchaseHook(View):
     def post(self, request, *args, **kwargs):
         """
             Hook must be configured to receive JSON payload!
+
+            Save the 'purchased' event in the database, see:
+            https://developer.github.com/marketplace/integrating-with-the-github-marketplace-api/github-marketplace-webhook-events/
         """
         result = utils.verify_signature(request)
         if result is not True:
@@ -29,14 +34,17 @@ class PurchaseHook(View):
 
         # ping hook https://developer.github.com/webhooks/#ping-event
         if 'zen' in payload:
-            return HttpResponse('pong')
+            return HttpResponse('pong', content_type='text/plain')
 
-        if payload['action'] == 'purchased':
-            return utils.handle_purchased(payload)
+        # format is 2017-10-25T00:00:00+00:00
+        effective_date = datetime.strptime(payload['effective_date'][:19],
+                                           '%Y-%m-%dT%H:%M:%S')
+        # save payload for future use
+        Purchase.objects.create(
+            action=payload['action'],
+            sender=payload['sender']['login'],
+            effective_date=effective_date,
+            marketplace_purchase=payload['marketplace_purchase'],
+        )
 
-        if payload['action'] == 'cancelled':
-            return utils.handle_cancelled(payload)
-
-        raise NotImplementedError(
-            'Unsupported GitHub Marketplace hook action: "%s"' %
-            payload['action'])
+        return HttpResponse('ok', content_type='text/plain')

@@ -133,13 +133,14 @@ class PurchaseHookTestCase(TestCase):
 """.strip()
         signature = utils.calculate_signature(settings.KIWI_GITHUB_MARKETPLACE_SECRET,
                                               json.dumps(json.loads(payload)).encode())
-        response = self.client.post(self.url,
-                                    json.loads(payload),
-                                    content_type='application/json',
-                                    HTTP_X_HUB_SIGNATURE=signature)
 
-        # purchases for free plan redirect to / on public tenant
-        self.assertRedirects(response, '/')
+        # the hook handler does nothing but save to DB
+        with self.assertNumQueries(1):
+            response = self.client.post(self.url,
+                                        json.loads(payload),
+                                        content_type='application/json',
+                                        HTTP_X_HUB_SIGNATURE=signature)
+            self.assertContains(response, 'ok')
 
     def test_hook_ping(self):
         payload = """
