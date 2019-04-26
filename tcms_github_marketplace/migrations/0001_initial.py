@@ -4,7 +4,7 @@ from django.db import migrations, models
 
 from django.contrib.postgres.fields import JSONField
 from django.contrib.postgres.indexes import GinIndex
-from django.contrib.postgres.operations import BtreeGinExtension
+# from django.contrib.postgres.operations import BtreeGinExtension
 
 
 class Migration(migrations.Migration):
@@ -14,8 +14,8 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        # install btree_gin extension
-        BtreeGinExtension(),
+        # install btree_gin extension if you are running as 'postgres'
+        # BtreeGinExtension(),
 
         migrations.CreateModel(
             name='Purchase',
