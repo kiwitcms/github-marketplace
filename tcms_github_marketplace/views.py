@@ -84,7 +84,7 @@ class Install(View):
         ).order_by('-received_on').first()
 
         if purchase.action == 'purchased':
-            plan_price = purchase.marketplace_purchase['monthly_price_in_cents']
+            plan_price = purchase.marketplace_purchase['plan']['monthly_price_in_cents']
 
             # Free Marketplace plans have nothing to install so they
             # just redirect to the Public tenant
