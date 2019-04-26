@@ -4,3 +4,4 @@ Django
 coveralls
 pylint
 pylint-django
+psycopg2
