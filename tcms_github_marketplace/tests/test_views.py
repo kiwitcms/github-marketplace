@@ -196,7 +196,7 @@ class InstallTestCase(LoggedInTestCase):
    "action":"purchased",
    "effective_date":"2017-10-25T00:00:00+00:00",
    "sender":{
-      "login":"username",
+      "login":"%s",
       "id":3877742,
       "avatar_url":"https://avatars2.githubusercontent.com/u/3877742?v=4",
       "gravatar_id":"",
@@ -219,7 +219,7 @@ class InstallTestCase(LoggedInTestCase):
       "account":{
          "type":"Organization",
          "id":18404719,
-         "login":"username",
+         "login":"%s",
          "organization_billing_email":"username@email.com"
       },
       "billing_cycle":"monthly",
@@ -243,7 +243,7 @@ class InstallTestCase(LoggedInTestCase):
       }
    }
 }
-""".strip()
+""".strip() % (self.tester.username, self.tester.username)
         signature = utils.calculate_signature(settings.KIWI_GITHUB_MARKETPLACE_SECRET,
                                               json.dumps(json.loads(payload)).encode())
 
