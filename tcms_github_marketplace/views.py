@@ -5,8 +5,10 @@
 import json
 from datetime import datetime
 
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic.base import View
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
 
 from tcms_github_marketplace import utils
 from tcms_github_marketplace.models import Purchase
@@ -48,3 +50,52 @@ class PurchaseHook(View):
         )
 
         return HttpResponse('ok', content_type='text/plain')
+
+
+@method_decorator(login_required, name='dispatch')
+class Install(View):
+    """
+        Handles application "installation", see:
+        https://developer.github.com/marketplace/integrating-with-the-github-marketplace-api/handling-new-purchases-and-free-trials/
+
+        1) User makes an initial purchase and GitHub sends marketplace_purchase hook
+           which is handled in PurchaseHook view and the payload is stored in DB.
+        2) GitHub will then redirect to the Installation URL which is this view.
+        3) Because we are an OAuth app begin the authorization flow as soon as
+           GitHub redirects the customer to the Installation URL.
+
+           NOTE: this is achieved by @login_required and configuring the
+           Installation URL (in Marketplace listing) to go through the
+           Python-Social-Auth pipeline which we already have installed in the
+           main application!
+
+        4) Provision resources for customer - actually handled by the code below
+    """
+    http_method_names = ['get', 'head', 'options']
+
+    def get(self, request, *args, **kwargs):
+        """
+            Read marketplace_purchase data for the currently logged in
+            user and figure out how to provision resources.
+        """
+        # we take the most recent purchase event for this user
+        purchase = Purchase.objects.filter(
+            sender=request.user.username
+        ).order_by('-received_on').first()
+
+        if purchase.action == 'purchased':
+            plan_price = purchase.marketplace_purchase['monthly_price_in_cents']
+
+            # Free Marketplace plans have nothing to install so they
+            # just redirect to the Public tenant
+            if plan_price == 0:
+                return HttpResponseRedirect('/')
+
+            raise NotImplementedError('Paid plans are not supported yet')
+
+        if purchase.action == 'cancelled':
+            raise NotImplementedError('Cancelling events is not implemeted yet')
+
+        raise NotImplementedError(
+            'Unsupported GitHub Marketplace action: "%s"' %
+            purchase.action)

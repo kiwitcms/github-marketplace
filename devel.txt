@@ -1,6 +1,7 @@
 -r requirements.txt
 
 Django
+factory_boy
 coveralls
 pylint
 pylint-django

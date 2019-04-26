@@ -8,4 +8,5 @@ from tcms_github_marketplace import views
 
 urlpatterns = [
     url(r'^purchase_hook/$', views.PurchaseHook.as_view(), name='github_marketplace_purchase_hook'),
+    url(r'^install/$', views.Install.as_view(), name='github_marketplace_install'),
 ]
