@@ -358,4 +358,4 @@ class CancelPlanTestCase(InstallTestCase):
             gh_api.assert_called_with('DELETE', self.gh_revoke_url)
 
         # verify user is not present anymore
-        self.assertFalse(get_user_model().objects.exists(username=self.tester.username))
+        self.assertFalse(get_user_model().objects.filter(username=self.tester.username).exists())
