@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
+    'social_django',
 
     'tcms_github_marketplace',
 ]
@@ -41,6 +42,10 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'test_project.urls'
+
+SOCIAL_AUTH_URL_NAMESPACE = 'social'
+SOCIAL_AUTH_GITHUB_KEY = 'oauth_client_id'
+SOCIAL_AUTH_GITHUB_SECRET = 'oauth_client_secret'
 
 # application specific configuration
 # NOTE: must be bytes, not string
