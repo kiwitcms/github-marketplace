@@ -3,6 +3,8 @@
 Django
 factory_boy
 coveralls
+PyGithub
 pylint
 pylint-django
 psycopg2
+social-auth-app-django

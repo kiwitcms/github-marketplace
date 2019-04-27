@@ -42,12 +42,16 @@ class PurchaseHook(View):
         effective_date = datetime.strptime(payload['effective_date'][:19],
                                            '%Y-%m-%dT%H:%M:%S')
         # save payload for future use
-        Purchase.objects.create(
+        purchase = Purchase.objects.create(
             action=payload['action'],
             sender=payload['sender']['login'],
             effective_date=effective_date,
             marketplace_purchase=payload['marketplace_purchase'],
         )
+
+        # plan cancellations must be handled here
+        if purchase.action == 'cancelled':
+            return utils.cancel_plan(purchase)
 
         return HttpResponse('ok', content_type='text/plain')
 
@@ -92,9 +96,6 @@ class Install(View):
                 return HttpResponseRedirect('/')
 
             raise NotImplementedError('Paid plans are not supported yet')
-
-        if purchase.action == 'cancelled':
-            raise NotImplementedError('Cancelling events is not implemeted yet')
 
         raise NotImplementedError(
             'Unsupported GitHub Marketplace action: "%s"' %
