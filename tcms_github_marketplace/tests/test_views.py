@@ -347,7 +347,9 @@ class CancelPlanTestCase(InstallTestCase):
         signature = utils.calculate_signature(settings.KIWI_GITHUB_MARKETPLACE_SECRET,
                                               json.dumps(json.loads(payload)).encode())
 
-        with patch.object(utils.Requester, 'requestJsonAndCheck') as gh_api:
+        with patch.object(utils.Requester,
+                          'requestJsonAndCheck',
+                          return_value=({}, None)) as gh_api:
             response = self.client.post(self.purchase_hook_url,
                                         json.loads(payload),
                                         content_type='application/json',
