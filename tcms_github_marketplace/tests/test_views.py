@@ -275,7 +275,7 @@ class CancelPlanTestCase(InstallTestCase):
             user=cls.tester,
             provider='github',
             uid='12345',
-            extra_data='{"access_token": "TEST-ME", "token_type": "bearer"}')
+            extra_data={"access_token": "TEST-ME", "token_type": "bearer"})
         cls.gh_revoke_url = '/applications/%s/tokens/TEST-ME' % settings.SOCIAL_AUTH_GITHUB_KEY
 
     def test_purchased_free_plan(self):
