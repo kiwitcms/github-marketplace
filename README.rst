@@ -27,6 +27,13 @@ open source as well. You don't need this add-on in order to run Kiwi TCMS!
 Changelog
 ---------
 
+v0.2.0 (27 April 2019)
+~~~~~~~~~~~~~~~~~~~~~~
+
+- Refactor how hooks and installation is handled. Now purchase info
+  is stored in database and we search for it during installation
+- Free plan purchases from Marketplace still redirect to Public Tenant
+
 v0.1.1 (25 April 2019)
 ~~~~~~~~~~~~~~~~~~~~~~
 
