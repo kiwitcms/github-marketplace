@@ -27,6 +27,12 @@ open source as well. You don't need this add-on in order to run Kiwi TCMS!
 Changelog
 ---------
 
+v0.3.1 (03 May 2019)
+~~~~~~~~~~~~~~~~~~~~~~
+
+- Fix index name in models to be the same as in migrations
+
+
 v0.3.0 (27 April 2019)
 ~~~~~~~~~~~~~~~~~~~~~~
 
