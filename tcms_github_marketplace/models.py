@@ -24,7 +24,8 @@ class Purchase(models.Model):
     class Meta:
         indexes = [
             GinIndex(fastupdate=False,
-                     fields=['marketplace_purchase']),
+                     fields=['marketplace_purchase'],
+                     name='tcms_github_marketplace_gin'),
         ]
 
     def __str__(self):
