@@ -1,0 +1,1 @@
+kiwitcms-tenants>=0.2.0
