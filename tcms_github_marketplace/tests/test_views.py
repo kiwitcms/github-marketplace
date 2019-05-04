@@ -265,6 +265,33 @@ class InstallTestCase(LoggedInTestCase):
         self.assertRedirects(response, '/')
 
 
+class OtherInstallTestCase(LoggedInTestCase):
+    """
+        InstallTestCase is kind of special b/c it provides
+        a method which simulates a FREE plan install and is also
+        used in inherited classes.
+
+        This class OTOH contains the rest of the test scenarios for
+        the installation view.
+    """
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.install_url = reverse('github_marketplace_install')
+
+    def test_visit_without_purchase(self):
+        """
+            For when users manage to visit the installation URL
+            without having purchased plans from Marketplace first.
+            See KIWI-TCMS-7D:
+            https://sentry.io/organizations/open-technologies-bulgaria-ltd/issues/1011970996/
+        """
+        # visit Installation URL
+        response = self.client.get(self.install_url)
+
+        # redirect to / on public tenant
+        self.assertRedirects(response, '/')
+
 
 class CancelPlanTestCase(InstallTestCase):
     @classmethod

@@ -87,6 +87,10 @@ class Install(View):
             sender=request.user.username
         ).order_by('-received_on').first()
 
+        # if user somehow visits this URL without having purchased the app
+        if not purchase:
+            return HttpResponseRedirect('/')
+
         if purchase.action == 'purchased':
             plan_price = purchase.marketplace_purchase['plan']['monthly_price_in_cents']
 
