@@ -7,8 +7,8 @@ services:
         restart: always
         ports:
             - 5432:5432
-        volumes:
-            - ./db-init.sh:/opt/app-root/src/postgresql-init/db-init.sh:Z
+#        volumes:
+#            - ./db-init.sh:/opt/app-root/src/postgresql-init/db-init.sh:Z
         environment:
             POSTGRESQL_DATABASE: test_project
             POSTGRESQL_USER: kiwi
