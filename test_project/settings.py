@@ -2,11 +2,7 @@
 
 # Licensed under the GPL 3.0: https://www.gnu.org/licenses/gpl-3.0.txt
 
-import os
-import sys
-
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-sys.path.insert(0, BASE_DIR)
+from tcms.settings.product import *
 
 # these are enabled only for testing purposes
 DEBUG = True
@@ -15,7 +11,7 @@ SECRET_KEY = '7d09f358-6609-11e9-8140-34363b8604e2'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'ENGINE': 'django_tenants.postgresql_backend',
         'NAME': 'test_project',
         'USER': 'kiwi',
         'PASSWORD': 'kiwi',
@@ -24,52 +20,59 @@ DATABASES = {
     }
 }
 
-INSTALLED_APPS = [
-    'django.contrib.auth',
-    'django.contrib.admin',
-    'django.contrib.contenttypes',
-    'django.contrib.messages',
-    'django.contrib.sessions',
-    'django.contrib.staticfiles',
+DATABASE_ROUTERS = [
+    'django_tenants.routers.TenantSyncRouter',
+]
 
+MIDDLEWARE.insert(0, 'django_tenants.middleware.main.TenantMainMiddleware')
+
+TENANT_MODEL = "tcms_tenants.Tenant"
+TENANT_DOMAIN_MODEL = "tcms_tenants.Domain"
+
+INSTALLED_APPS.insert(0, 'django_tenants')
+INSTALLED_APPS.insert(1, 'tcms_tenants')
+INSTALLED_APPS.extend([
     'social_django',
-
     'tcms_github_marketplace',
+])
+
+PUBLIC_VIEWS.extend([
+    'social_django.views.auth',
+    'social_django.views.complete',
+    'social_django.views.disconnect',
+    'tcms_github_marketplace.views.PurchaseHook'
+])
+
+
+TENANT_APPS = [
+    'django.contrib.sites',
+
+    'attachments',
+    'django_comments',
+    'modernrpc',
+    'simple_history',
+
+    'tcms.core.contrib.comments.apps.AppConfig',
+    'tcms.core.contrib.linkreference',
+    'tcms.management',
+    'tcms.testcases.apps.AppConfig',
+    'tcms.testplans.apps.AppConfig',
+    'tcms.testruns.apps.AppConfig',
 ]
 
-TEMPLATES = [
-    {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.static',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-                'django.template.context_processors.i18n',
-            ],
-            'loaders': [
-                'django.template.loaders.filesystem.Loader',
-                'django.template.loaders.app_directories.Loader',
-            ]
-        },
-    },
-]
+# everybody can access the main instance
+SHARED_APPS = INSTALLED_APPS
 
-MIDDLEWARE = [
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.locale.LocaleMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-]
+# Allows serving non-public tenants on a sub-domain
+# WARNING: doesn't work well when you have a non-standard port-number
+KIWI_TENANTS_DOMAIN = 'tenants.localdomain'
 
-STATIC_URL = '/static/'
-STATICFILES_FINDERS = [
-    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-]
+# share login session between tenants
+SESSION_COOKIE_DOMAIN = ".%s" % KIWI_TENANTS_DOMAIN
+
+# attachments storage
+DEFAULT_FILE_STORAGE = "tcms_tenants.storage.TenantFileSystemStorage"
+MULTITENANT_RELATIVE_MEDIA_ROOT = "tenants/%s"
 
 ROOT_URLCONF = 'test_project.urls'
 

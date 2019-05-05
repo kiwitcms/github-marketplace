@@ -1,26 +1,28 @@
 # Copyright (c) 2019 Alexander Todorov <atodorov@MrSenko.com>
 
 # Licensed under the GPL 3.0: https://www.gnu.org/licenses/gpl-3.0.txt
-
+# pylint: disable=too-many-ancestors
 import json
 from http import HTTPStatus
 from unittest.mock import patch
 
 from django.urls import reverse
 from django.conf import settings
-from django.test import TestCase
 from django.http import HttpResponseForbidden
 from django.contrib.auth import get_user_model
 
 from social_django.models import UserSocialAuth
 
 from tcms_github_marketplace import utils
+from tcms_github_marketplace.models import Purchase
 from tcms_github_marketplace.tests import LoggedInTestCase
 
 
-class PurchaseHookTestCase(TestCase):
-    def setUp(self):
-        self.url = reverse('github_marketplace_purchase_hook')
+class PurchaseHookTestCase(LoggedInTestCase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.url = reverse('github_marketplace_purchase_hook')
 
     def test_without_signature_header(self):
         payload = json.loads("""
@@ -82,7 +84,7 @@ class PurchaseHookTestCase(TestCase):
         self.assertIsInstance(response, HttpResponseForbidden)
         self.assertEqual(HTTPStatus.FORBIDDEN, response.status_code)
 
-    def test_purchased_free_plan(self):
+    def test_with_valid_signature_header(self):
         payload = """
 {
    "action":"purchased",
@@ -139,13 +141,16 @@ class PurchaseHookTestCase(TestCase):
         signature = utils.calculate_signature(settings.KIWI_GITHUB_MARKETPLACE_SECRET,
                                               json.dumps(json.loads(payload)).encode())
 
+        initial_purchase_count = Purchase.objects.count()
+
+        response = self.client.post(self.url,
+                                    json.loads(payload),
+                                    content_type='application/json',
+                                    HTTP_X_HUB_SIGNATURE=signature)
+        self.assertContains(response, 'ok')
+
         # the hook handler does nothing but save to DB
-        with self.assertNumQueries(1):
-            response = self.client.post(self.url,
-                                        json.loads(payload),
-                                        content_type='application/json',
-                                        HTTP_X_HUB_SIGNATURE=signature)
-            self.assertContains(response, 'ok')
+        self.assertEqual(initial_purchase_count + 1, Purchase.objects.count())
 
     def test_hook_ping(self):
         payload = """
@@ -189,8 +194,8 @@ class PurchaseHookTestCase(TestCase):
 
 class InstallTestCase(LoggedInTestCase):
     @classmethod
-    def setUpTestData(cls):
-        super().setUpTestData()
+    def setUpClass(cls):
+        super().setUpClass()
         cls.purchase_hook_url = reverse('github_marketplace_purchase_hook')
         cls.install_url = reverse('github_marketplace_install')
 
@@ -275,8 +280,8 @@ class OtherInstallTestCase(LoggedInTestCase):
         the installation view.
     """
     @classmethod
-    def setUpTestData(cls):
-        super().setUpTestData()
+    def setUpClass(cls):
+        super().setUpClass()
         cls.install_url = reverse('github_marketplace_install')
 
     def test_visit_without_purchase(self):
@@ -295,8 +300,8 @@ class OtherInstallTestCase(LoggedInTestCase):
 
 class CancelPlanTestCase(InstallTestCase):
     @classmethod
-    def setUpTestData(cls):
-        super().setUpTestData()
+    def setUpClass(cls):
+        super().setUpClass()
         # simulate existing GitHub login
         UserSocialAuth.objects.create(
             user=cls.tester,
