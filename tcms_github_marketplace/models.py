@@ -12,6 +12,7 @@ class Purchase(models.Model):
         Holds information about GitHub ``marketplace_purchase`` events:
         https://developer.github.com/marketplace/integrating-with-the-github-marketplace-api/github-marketplace-webhook-events/
     """
+    vendor = models.CharField(max_length=16, db_index=True, blank=True, null=True)
     action = models.CharField(max_length=64, db_index=True)
     sender = models.CharField(max_length=64, db_index=True)
     effective_date = models.DateTimeField(db_index=True)
@@ -19,13 +20,13 @@ class Purchase(models.Model):
     # this is for internal purposes
     received_on = models.DateTimeField(db_index=True, auto_now_add=True)
 
-    marketplace_purchase = JSONField()
+    payload = JSONField()
 
     class Meta:
         indexes = [
             GinIndex(fastupdate=False,
-                     fields=['marketplace_purchase'],
-                     name='tcms_github_marketplace_gin'),
+                     fields=['payload'],
+                     name='tcms_github_payload_gin'),
         ]
 
     def __str__(self):

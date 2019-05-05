@@ -10,7 +10,7 @@ from tcms_github_marketplace.models import Purchase
 
 
 class PurchaseAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'action', 'sender', 'effective_date', 'received_on')
+    list_display = ('pk', 'vendor', 'action', 'sender', 'effective_date', 'received_on')
     ordering = ['-pk']
 
     def add_view(self, request, form_url='', extra_context=None):
