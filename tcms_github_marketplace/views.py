@@ -10,6 +10,8 @@ from django.views.generic.base import View
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 
+from tcms_tenants.views import NewTenantView
+
 from tcms_github_marketplace import utils
 from tcms_github_marketplace.models import Purchase
 
@@ -100,8 +102,31 @@ class Install(View):
             if plan_price == 0:
                 return HttpResponseRedirect('/')
 
-            raise NotImplementedError('Paid plans are not supported yet')
+            return HttpResponseRedirect('github_marketplace_create_tenant')
 
         raise NotImplementedError(
             'Unsupported GitHub Marketplace action: "%s"' %
             purchase.action)
+
+
+@method_decorator(login_required, name='dispatch')
+class CreateTenant(NewTenantView):
+    def get_context_data(self, **kwargs):
+        """
+            This view is the same as tcms_tenants.views.NewTenantView
+            but we override some of the hidden fields on the form.
+        """
+        # we take the most recent purchase event for this user
+        purchase = Purchase.objects.filter(
+            sender=self.request.user.username,
+            action='purchased',
+        ).order_by('-received_on').first()
+
+        context = super().get_context_data(**kwargs)
+        context['form'] = context['form'].__class__(
+            initial={
+                'on_trial': False,
+                'paid_until': purchase.effective_date,
+            }
+        )
+        return context
