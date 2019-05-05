@@ -1,0 +1,22 @@
+{% extends "tcms_tenants/new.html" %}
+{% load i18n %}
+
+{% block extra_contents %}
+    <div class="form-group">
+        <label class="col-md-1 col-lg-1" for="id_name">{% trans "Paid until" %}</label>
+        <div class="col-sm-11 col-md-8 col-lg-5 {% if form.paid_until.errors %}has-error{% endif %}">
+            <label>{{ form.paid_until.value }}</label>
+            {{ form.paid_until }}
+            {{ form.paid_until.errors }}
+        </div>
+    </div>
+
+    {{ form.on_trial }}
+
+    <div class="form-group">
+        <label class="col-md-1 col-lg-1" for="id_name">{% trans "Owner" %}</label>
+        <div class="col-sm-11 col-md-8 col-lg-5">
+            <label>{{ request.user }}</label>
+        </div>
+    </div>
+{% endblock %}
