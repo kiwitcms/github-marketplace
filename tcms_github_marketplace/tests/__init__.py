@@ -8,6 +8,9 @@ from django.test import TestCase
 import factory
 from factory.django import DjangoModelFactory
 
+from django_tenants.test.client import TenantClient
+from django_tenants.test.cases import FastTenantTestCase
+
 
 class UserFactory(DjangoModelFactory):
     class Meta:
@@ -18,18 +21,28 @@ class UserFactory(DjangoModelFactory):
     is_staff = True
 
 
-class LoggedInTestCase(TestCase):
-    """
-        Test case class for logged-in users.
-    """
+class LoggedInTestCase(FastTenantTestCase):
+    @classmethod
+    def setup_tenant(cls, tenant):
+        tenant.owner = UserFactory()
 
     @classmethod
-    def setUpTestData(cls):
+    def setUpClass(cls):
+        super().setUpClass()
+
+        # authorize tenant owner
+        cls.tenant.authorized_users.add(cls.tenant.owner)
+
         cls.tester = UserFactory()
         cls.tester.set_password('password')
         cls.tester.save()
 
+        # authorize this user
+        cls.tenant.authorized_users.add(cls.tester)
+
     def setUp(self):
         super().setUp()
+
+        self.client = TenantClient(self.tenant)
         self.client.login(username=self.tester.username,  # nosec:B106:hardcoded_password_funcarg
                           password='password')
