@@ -43,10 +43,11 @@ class PurchaseHook(View):
                                            '%Y-%m-%dT%H:%M:%S')
         # save payload for future use
         purchase = Purchase.objects.create(
+            vendor='github',
             action=payload['action'],
             sender=payload['sender']['login'],
             effective_date=effective_date,
-            marketplace_purchase=payload['marketplace_purchase'],
+            payload=payload,
         )
 
         # plan cancellations must be handled here
@@ -92,7 +93,7 @@ class Install(View):
             return HttpResponseRedirect('/')
 
         if purchase.action == 'purchased':
-            plan_price = purchase.marketplace_purchase['plan']['monthly_price_in_cents']
+            plan_price = purchase.payload['marketplace_purchase']['plan']['monthly_price_in_cents']
 
             # Free Marketplace plans have nothing to install so they
             # just redirect to the Public tenant
