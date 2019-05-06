@@ -122,11 +122,19 @@ class CreateTenant(NewTenantView):
             action='purchased',
         ).order_by('-received_on').first()
 
+        # format is 2017-10-25T00:00:00+00:00
+        paid_until = datetime.strptime(
+            purchase.payload[
+                'marketplace_purchase'
+            ][
+                'next_billing_date'
+            ][:19],
+            '%Y-%m-%dT%H:%M:%S')
         context = super().get_context_data(**kwargs)
         context['form'] = context['form'].__class__(
             initial={
                 'on_trial': False,
-                'paid_until': purchase.effective_date,
+                'paid_until': paid_until,
             }
         )
         return context
