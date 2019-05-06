@@ -20,3 +20,39 @@
         </div>
     </div>
 {% endblock %}
+
+{% block contents %}
+    <div class="row row-cards-pf">
+        <div class="col-sm-12 col-md-12 col-lg-12">
+            <div class="card-pf card-pf-accented card-pf-aggregate-status card-pf-aggregate-status-mini">
+                <h2 class="card-pf-title">
+                    <span class="pficon pficon-tenant"></span>
+                    <span class="card-pf-aggregate-status-count">{% trans 'Private Tenant Warning' %}</span>
+                </h2>
+
+                <div>
+                    <p>
+                    {% blocktrans %}
+You are about to create a Private Tenant for Kiwi TCMS.
+It will take a few minutes until your DB schema is ready!
+After clicking the 'Save' button <strong>do not</strong> close or refresh this page!<br>
+You will be redirected to your new tenant when the creation process is complete!
+If you see a 500 Internal Server Error page please contact
+<a href="mailto:kiwitcms@mrsenko.com">kiwitcms@mrsenko.com</a> immediately!
+                    {% endblocktrans %}
+                    </p>
+                </div>
+
+                <div class="card-pf-body">
+                    <p class="card-pf-aggregate-status-notifications">
+                        <span class="card-pf-aggregate-status-notification">
+                            <span class="pficon pficon-warning-triangle-o"></span>
+                        </span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div><!-- /row -->
+
+    {{ block.super }}
+{% endblock %}
