@@ -10,7 +10,9 @@ from django.views.generic.base import View
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 
+from tcms_tenants.models import Tenant
 from tcms_tenants.views import NewTenantView
+from tcms_tenants import utils as tcms_tenants_utils
 
 from tcms_github_marketplace import utils
 from tcms_github_marketplace.models import Purchase
@@ -111,6 +113,19 @@ class Install(View):
 
 @method_decorator(login_required, name='dispatch')
 class CreateTenant(NewTenantView):
+    def get(self, request, *args, **kwargs):
+        """
+            Doesn't allow user to create more than 1 tenant!
+            If they have a tenant already then we redirect to it!
+            This will also handle recurring billing requests!
+        """
+        tenant = Tenant.objects.filter(owner=request.user).first()
+        if tenant and not request.user.is_superuser:
+            return HttpResponseRedirect(tcms_tenants_utils.tenant_url(request, tenant.schema_name))
+
+        # no tenant owned by the current user then allow them to create one
+        return super().get(request, *args, **kwargs)
+
     def get_context_data(self, **kwargs):
         """
             This view is the same as tcms_tenants.views.NewTenantView
