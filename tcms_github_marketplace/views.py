@@ -3,7 +3,7 @@
 # Licensed under the GPL 3.0: https://www.gnu.org/licenses/gpl-3.0.txt
 
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic.base import View
@@ -137,14 +137,22 @@ class CreateTenant(NewTenantView):
             action='purchased',
         ).order_by('-received_on').first()
 
-        # format is 2017-10-25T00:00:00+00:00
-        paid_until = datetime.strptime(
-            purchase.payload[
-                'marketplace_purchase'
-            ][
-                'next_billing_date'
-            ][:19],
-            '%Y-%m-%dT%H:%M:%S')
+
+        paid_until = datetime.now()
+        mp_purchase = purchase.payload['marketplace_purchase']
+        if mp_purchase['next_billing_date'] is None:
+            if mp_purchase['billing_cycle'] == 'monthly':
+                paid_until += timedelta(days=31)
+            elif mp_purchase['billing_cycle'] == 'yearly':
+                paid_until += timedelta(days=366)
+        else:
+            # format is 2017-10-25T00:00:00+00:00
+            paid_until = datetime.strptime(mp_purchase['next_billing_date'][:19],
+                                           '%Y-%m-%dT%H:%M:%S')
+
+        # above we give them 1 extra day and here we always end at 23:59:59
+        paid_until = paid_until.replace(hour=23, minute=59, second=59)
+
         context = super().get_context_data(**kwargs)
         context['form'] = context['form'].__class__(
             initial={
