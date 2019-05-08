@@ -27,8 +27,23 @@ open source as well. You don't need this add-on in order to run Kiwi TCMS!
 Changelog
 ---------
 
+v0.4.0 (08 May 2019)
+~~~~~~~~~~~~~~~~~~~~
+
+- Don't crash if install URL is visited without purchase
+- Add Purchase admin, accessible only to superuser
+- [db] Rename ``marketplace_purchase`` field to ``payload`` and
+  add ``vendor`` field to ``Purchase`` model
+- Add a view which overrides tenant creation with information
+  from the latest purchase. This is what users will see when creating
+  their private tenants
+- When creating Private Tenant try to correctly set ``paid_until`` date
+  based on ``next_billing_date`` or ``billing_cycle`` fields in the payload
+  sent to us by GitHub
+
+
 v0.3.1 (03 May 2019)
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~
 
 - Fix index name in models to be the same as in migrations
 
