@@ -27,7 +27,7 @@ open source as well. You don't need this add-on in order to run Kiwi TCMS!
 Changelog
 ---------
 
-v0.4.0 (08 May 2019)
+v0.4.1 (08 May 2019)
 ~~~~~~~~~~~~~~~~~~~~
 
 - Don't crash if install URL is visited without purchase
