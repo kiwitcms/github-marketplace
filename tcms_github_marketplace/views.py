@@ -120,6 +120,16 @@ class CreateTenant(NewTenantView):
             If they have a tenant already then we redirect to it!
             This will also handle recurring billing requests!
         """
+        # we take the most recent purchase event for this user
+        purchase = Purchase.objects.filter(
+            sender=self.request.user.username,
+            action='purchased',
+        ).order_by('-received_on').first()
+
+        # if user somehow visits this URL without having purchased the app
+        if not purchase:
+            return HttpResponseRedirect('/')
+
         tenant = Tenant.objects.filter(owner=request.user).first()
         if tenant and not request.user.is_superuser:
             return HttpResponseRedirect(tcms_tenants_utils.tenant_url(request, tenant.schema_name))
