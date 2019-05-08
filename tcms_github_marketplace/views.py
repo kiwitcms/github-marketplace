@@ -5,6 +5,7 @@
 import json
 from datetime import datetime, timedelta
 
+from django.urls import reverse
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic.base import View
 from django.utils.decorators import method_decorator
@@ -104,7 +105,7 @@ class Install(View):
             if plan_price == 0:
                 return HttpResponseRedirect('/')
 
-            return HttpResponseRedirect('github_marketplace_create_tenant')
+            return HttpResponseRedirect(reverse('github_marketplace_create_tenant'))
 
         raise NotImplementedError(
             'Unsupported GitHub Marketplace action: "%s"' %
