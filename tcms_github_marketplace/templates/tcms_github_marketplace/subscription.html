@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load tcms_tenants %}
+{% load github_marketplace %}
+{% block title %}{% trans "Tenant subscriptions" %}{% endblock %}
+
+{% block contents %}
+
+<div class="container-fluid container-cards-pf">
+    <div class="row row-cards-pf">
+        <div class="col-xs-12 col-sm-12 col-md-3">
+            <div class="card-pf card-pf-accented card-pf-aggregate-status">
+                <h2 class="card-pf-title" style="text-align: left">
+                    {% trans "You can access the following tenants" %}
+                </h2>
+
+            {% for tenant in access_tenants %}
+                <h2 class="card-pf-title" style="text-align: left">
+                    <span class="pficon pficon-tenant"></span>{% trans 'Tenant' %}:
+                    <a href="{% tenant_url request tenant.schema_name %}">{% tenant_url request tenant.schema_name %}</a>
+                </h2>
+
+                <h2 class="card-pf-title" style="text-align: left">
+                    <span class="pficon pficon-user"></span>{% trans 'Owner' %}:
+                    <a href="{% url "tcms-profile" tenant.owner.username %}">{{ tenant.owner }}</a>
+                </h2>
+            {% endfor %}
+
+                <div class="card-pf-body"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row row-cards-pf">
+        <div class="col-xs-12 col-sm-12 col-md-12">
+            <div class="card-pf card-pf-accented">
+                <h2 class="card-pf-title">
+                    <span class="pficon pficon-topology"></span>
+                    {% trans 'You own the following tenants' %}
+                </h2>
+
+
+                <div class="card-pf-body">
+                    <div class="list-group">
+                    {% for tenant in own_tenants %}
+                        <div class="list-group-item">
+                            <div class="list-group-item-header">
+                                <div class="list-view-pf-main-info">
+                                    <div class="list-view-pf-body">
+                                        <div class="list-view-pf-description">
+                                            <div class="list-group-item-text">
+                                                <a href="{% tenant_url request tenant.schema_name %}">{% tenant_url request tenant.schema_name %}</a>
+                                            </div>
+                                        </div>
+
+                                        <div class="list-view-pf-additional-info">
+                                            <div class="list-view-pf-additional-info-item">
+                                                <span class="fa fa-dollar" title="{% trans 'Price' %}"></span>
+                                                <strong title="{% trans 'Price' %}">32 / mo</strong>
+                                            </div>
+
+                                            <div class="list-view-pf-additional-info-item">
+                                                <span class="fa fa-pencil" title="{% trans 'Subscription type' %}"></span>
+                                                <strong title="{% trans 'Subscription type' %}">Private Tenant</strong>
+                                            </div>
+
+                                            <div class="list-view-pf-additional-info-item">
+                                                <span class="fa fa-calendar-o" title="{% trans 'Paid until' %}"></span>
+                                                <strong title="{% trans 'Paid until' %}">{{ tenant.paid_until }}</strong>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div> <!-- /main info -->
+                            </div> <!-- /header -->
+                        </div>
+                    {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row row-cards-pf">
+        <div class="col-xs-12 col-sm-12 col-md-12">
+            <div class="card-pf card-pf-accented">
+                <h2 class="card-pf-title">
+                    <span class="pficon pficon-topology"></span>
+                    {% trans 'Transaction history' %}
+                </h2>
+
+                <div class="card-pf-body">
+                    <div class="list-group tree-list-view-pf">
+                    {% for purchase in purchases %}
+                        <div class="list-group-item">
+                            <div class="list-group-item-header">
+                                <div class="list-view-pf-main-info">
+                                    <div class="list-view-pf-left">
+                                        <span class="fa fa-angle-right"></span>
+                                    </div>
+
+                                    <div class="list-view-pf-body">
+                                        <div class="list-view-pf-description">
+                                            <div class="list-group-item-text">
+                                                {{ purchase.action }}
+                                            </div>
+                                        </div>
+
+                                        <div class="list-view-pf-additional-info">
+                                            <div class="list-view-pf-additional-info-item">
+                                                <span class="fa fa-user" title="{% trans 'Sender' %}"></span>
+                                                <strong title="{% trans 'Sender' %}">{{ purchase.sender }}</strong>
+                                            </div>
+
+                                            <div class="list-view-pf-additional-info-item">
+                                                <span class="fa pficon-catalog" title="{% trans 'Vendor' %}"></span>
+                                                <strong title="{% trans 'Vendor' %}">{{ purchase.vendor }}</strong>
+                                            </div>
+
+                                            <div class="list-view-pf-additional-info-item">
+                                                <span class="fa fa-calendar-o" title="{% trans 'Received on' %}"></span>
+                                                <strong title="{% trans 'Received on' %}">{{ purchase.received_on }}</strong>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div> <!-- /main info -->
+                            </div> <!-- /header -->
+                            <div class="list-group-item-container container-fluid">
+                                <div class="list-group-item">
+                                    <div class="list-group-item-header">
+                                        <div class="list-view-pf-main-info">
+                                            <div class="list-view-pf-body">
+                                                <div class="list-view-pf-description">
+                                                    <div class="list-group-item-text">
+                                                        <pre><code>{{ purchase.payload|pretty_json }}</code></pre>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> <!-- / purchase payload -->
+                        </div>
+                    {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+$(document).ready(function() {
+    // collapse all child rows
+    $('.tree-list-view-pf').find(".list-group-item-container").addClass('hidden');
+
+    // click the list-view heading then expand a row
+    $('.list-group-item-header').click(function (event) {
+      if(!$(event.target).is('button, a, input, .fa-ellipsis-v')) {
+        var $this = $(this);
+        $this.find('.fa-angle-right').toggleClass('fa-angle-down');
+        var $itemContainer = $this.siblings('.list-group-item-container');
+        if ($itemContainer.children().length) {
+          $itemContainer.toggleClass('hidden');
+        }
+      }
+    });
+});
+</script>
+{% endblock %}

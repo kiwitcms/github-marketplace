@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 
 from django.urls import reverse
 from django.http import HttpResponse, HttpResponseRedirect
-from django.views.generic.base import View
+from django.views.generic.base import View, TemplateView
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 
@@ -171,4 +171,26 @@ class CreateTenant(NewTenantView):
                 'paid_until': paid_until,
             }
         )
+        return context
+
+
+@method_decorator(login_required, name='dispatch')
+class ViewSubscriptionPlan(TemplateView):
+    """
+        This view shows information about current subscription plan.
+    """
+    template_name = 'tcms_github_marketplace/subscription.html'
+
+    def get_context_data(self, **kwargs):
+        own_tenants = Tenant.objects.filter(owner=self.request.user)
+        purchases = Purchase.objects.filter(
+            sender=self.request.user.username,
+        ).order_by('-received_on')
+
+        context = {
+            'access_tenants': self.request.user.tenant_set.all(),
+            'own_tenants': own_tenants,
+            'purchases': purchases,
+        }
+
         return context
