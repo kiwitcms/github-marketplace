@@ -73,11 +73,28 @@
                                                 <span class="fa fa-calendar-o" title="{% trans 'Paid until' %}"></span>
                                                 <strong title="{% trans 'Paid until' %}">{{ tenant.paid_until }}</strong>
                                             </div>
+
+                                            <div class="list-view-pf-additional-info-item">
+                                                <a class="btn btn-danger"
+                                                   title="{% trans 'Cancel subscription on GitHub' %}"
+                                                   href="https://github.com/settings/billing">
+                                                {% trans 'Cancel' %}
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div> <!-- /main info -->
                             </div> <!-- /header -->
                         </div>
+                    {% empty %}
+                        <p>
+                            {% trans "You don't own any tenants" %}
+                        </p>
+                        <a class="btn btn-primary"
+                           href="https://github.com/marketplace/kiwi-tcms/">
+                            {% trans 'Buy with GitHub' %}
+                        </a>
+
                     {% endfor %}
                     </div>
                 </div>

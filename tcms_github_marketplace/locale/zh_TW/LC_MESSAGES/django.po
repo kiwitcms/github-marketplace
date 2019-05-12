@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-12 19:20+0000\n"
+"POT-Creation-Date: 2019-05-12 21:46+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -77,22 +77,38 @@ msgstr ""
 msgid "Subscription type"
 msgstr ""
 
-#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:94
+#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:79
+msgid "Cancel subscription on GitHub"
+msgstr ""
+
+#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:81
+msgid "Cancel"
+msgstr ""
+
+#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:91
+msgid "You don't own any tenants"
+msgstr ""
+
+#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:95
+msgid "Buy with GitHub"
+msgstr ""
+
+#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:111
 msgid "Transaction history"
 msgstr ""
 
-#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:116
-#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:117
+#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:133
+#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:134
 msgid "Sender"
 msgstr ""
 
-#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:121
-#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:122
+#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:138
+#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:139
 msgid "Vendor"
 msgstr ""
 
-#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:126
-#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:127
+#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:143
+#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:144
 msgid "Received on"
 msgstr ""
 
