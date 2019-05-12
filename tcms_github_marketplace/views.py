@@ -9,6 +9,7 @@ from django.urls import reverse
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic.base import View, TemplateView
 from django.utils.decorators import method_decorator
+from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.decorators import login_required
 
 from tcms_tenants.models import Tenant
@@ -188,10 +189,26 @@ class ViewSubscriptionPlan(TemplateView):
             sender=self.request.user.username,
         ).order_by('-received_on')
 
+        mp_purchase = purchases.first()
+
+        if mp_purchase is not None:
+            mp_purchase = mp_purchase.payload['marketplace_purchase']
+            if mp_purchase['billing_cycle'] == 'monthly':
+                subscription_price = mp_purchase['plan']['monthly_price_in_cents'] // 100
+                subscription_period = _('mo')
+            elif mp_purchase['billing_cycle'] == 'yearly':
+                subscription_price = mp_purchase['plan']['yearly_price_in_cents'] // 100
+                subscription_period = _('yr')
+        else:
+            subscription_price = '-'
+            subscription_period = '-'
+
         context = {
             'access_tenants': self.request.user.tenant_set.all(),
             'own_tenants': own_tenants,
             'purchases': purchases,
+            'subscription_price': subscription_price,
+            'subscription_period': subscription_period,
         }
 
         return context
