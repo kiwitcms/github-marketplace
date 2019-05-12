@@ -171,6 +171,7 @@ class CreateTenant(NewTenantView):
                 'paid_until': paid_until,
             }
         )
+        context['form_action_url'] = reverse('github_marketplace_create_tenant')
         return context
 
 
