@@ -12,5 +12,11 @@ pylint:
 	    -d wildcard-import -d unused-wildcard-import tcms_github_marketplace/ test_project/
 
 
+.PHONY: messages
+messages:
+	./manage.py makemessages --no-obsolete --no-vinaigrette --ignore "test*.py"
+	ls tcms_github_marketplace/locale/*/LC_MESSAGES/*.po | xargs -n 1 -I @ msgattrib -o @ --no-fuzzy @
+
+
 .PHONY: check
 check: pylint test
