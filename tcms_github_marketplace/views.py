@@ -20,6 +20,25 @@ from tcms_github_marketplace import utils
 from tcms_github_marketplace.models import Purchase
 
 
+def calculate_paid_until(mp_purchase):
+    """
+        Calculates when access to paid services must be disabled
+    """
+    paid_until = datetime.now()
+    if mp_purchase['next_billing_date'] is None:
+        if mp_purchase['billing_cycle'] == 'monthly':
+            paid_until += timedelta(days=31)
+        elif mp_purchase['billing_cycle'] == 'yearly':
+            paid_until += timedelta(days=366)
+    else:
+        # format is 2017-10-25T00:00:00+00:00
+        paid_until = datetime.strptime(mp_purchase['next_billing_date'][:19],
+                                       '%Y-%m-%dT%H:%M:%S')
+
+    # above we give them 1 extra day and here we always end at 23:59:59
+    return paid_until.replace(hour=23, minute=59, second=59)
+
+
 class PurchaseHook(View):
     """
         Handles `marketplace_purchase` web hook as described at:
@@ -59,6 +78,17 @@ class PurchaseHook(View):
         # plan cancellations must be handled here
         if purchase.action == 'cancelled':
             return utils.cancel_plan(purchase)
+
+        if purchase.action == 'purchased':
+            # recurring billing events don't redirect to Install URL
+            # they only send a web hook
+            tenant = Tenant.objects.filter(
+                owner__username=purchase.sender,
+                paid_until__isnull=False,
+            ).first()
+            if tenant:
+                tenant.paid_until = calculate_paid_until(purchase.payload['marketplace_purchase'])
+                tenant.save()
 
         return HttpResponse('ok', content_type='text/plain')
 
@@ -119,7 +149,6 @@ class CreateTenant(NewTenantView):
         """
             Doesn't allow user to create more than 1 tenant!
             If they have a tenant already then we redirect to it!
-            This will also handle recurring billing requests!
         """
         # we take the most recent purchase event for this user
         purchase = Purchase.objects.filter(
@@ -132,6 +161,7 @@ class CreateTenant(NewTenantView):
             return HttpResponseRedirect('/')
 
         tenant = Tenant.objects.filter(owner=request.user).first()
+        # only 1 tenant per owner allowed
         if tenant and not request.user.is_superuser:
             return HttpResponseRedirect(tcms_tenants_utils.tenant_url(request, tenant.schema_name))
 
@@ -148,22 +178,7 @@ class CreateTenant(NewTenantView):
             sender=self.request.user.username,
             action='purchased',
         ).order_by('-received_on').first()
-
-
-        paid_until = datetime.now()
-        mp_purchase = purchase.payload['marketplace_purchase']
-        if mp_purchase['next_billing_date'] is None:
-            if mp_purchase['billing_cycle'] == 'monthly':
-                paid_until += timedelta(days=31)
-            elif mp_purchase['billing_cycle'] == 'yearly':
-                paid_until += timedelta(days=366)
-        else:
-            # format is 2017-10-25T00:00:00+00:00
-            paid_until = datetime.strptime(mp_purchase['next_billing_date'][:19],
-                                           '%Y-%m-%dT%H:%M:%S')
-
-        # above we give them 1 extra day and here we always end at 23:59:59
-        paid_until = paid_until.replace(hour=23, minute=59, second=59)
+        paid_until = calculate_paid_until(purchase.payload['marketplace_purchase'])
 
         context = super().get_context_data(**kwargs)
         context['form'] = context['form'].__class__(
