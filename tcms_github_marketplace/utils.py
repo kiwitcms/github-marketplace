@@ -14,6 +14,8 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.http import HttpResponse, HttpResponseForbidden
 
+from tcms.utils.user import delete_user
+
 
 def calculate_signature(secret, contents):
     """
@@ -83,8 +85,9 @@ def cancel_plan(purchase):
     # store token in a variable so we can remove it later
     customer_token = UserSocialAuth.objects.get(user=customer).extra_data['access_token']
 
-    # Remove all customer data before attempting to revoke GitHub token
-    customer.delete()
+    # Remove tenand and all customer data across all tenants
+    # before attempting to revoke GitHub token
+    delete_user(customer)
 
     # Revoke the OAuth token your app received for the customer.
     revoke_oauth_token(customer_token)
