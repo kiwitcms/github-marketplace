@@ -27,6 +27,18 @@ open source as well. You don't need this add-on in order to run Kiwi TCMS!
 Changelog
 ---------
 
+
+v0.5.0 (15 May 2019)
+~~~~~~~~~~~~~~~~~~~~
+
+- Handle recurring purchases
+- Don't crash if visiting Create Tenant without a purchase
+- Show tenants which user can access and which they own
+- Show purchase history with Buy/Cancel buttons
+- Use ``prism.js`` for syntax highlighting
+- Add translation files
+
+
 v0.4.1 (08 May 2019)
 ~~~~~~~~~~~~~~~~~~~~
 
