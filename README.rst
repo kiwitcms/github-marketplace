@@ -28,6 +28,13 @@ Changelog
 ---------
 
 
+v0.5.1 (16 May 2019)
+~~~~~~~~~~~~~~~~~~~~
+
+- Use the new ``delete_user()`` function when cancelling subscriptions
+- Extend UI card in subscription page to 6 columns b/c long URL
+
+
 v0.5.0 (15 May 2019)
 ~~~~~~~~~~~~~~~~~~~~
 
