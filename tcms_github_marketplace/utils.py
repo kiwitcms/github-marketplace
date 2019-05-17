@@ -98,7 +98,14 @@ def cancel_plan(purchase):
 
 def calculate_paid_until(mp_purchase):
     """
-        Calculates when access to paid services must be disabled
+        Calculates when access to paid services must be disabled.
+
+        Note: until now we've seen GitHub send only payload where
+        next_billing_date is None and this is what we test with.
+
+        Most likely we need to update the calculation to take into
+        account effective_date instead and not rely on next_billing_date
+        at all !!!
     """
     paid_until = datetime.now()
     if mp_purchase['next_billing_date'] is None:

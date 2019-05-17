@@ -2,7 +2,9 @@
 
 # Licensed under the GPL 3.0: https://www.gnu.org/licenses/gpl-3.0.txt
 
+import json
 from http import HTTPStatus
+from datetime import datetime, timedelta
 
 from django.urls import reverse
 from django.http import HttpResponseForbidden
@@ -30,3 +32,81 @@ class VerifySignatureTestCase(TestCase):
 
         self.assertIsInstance(result, HttpResponseForbidden)
         self.assertEqual(HTTPStatus.FORBIDDEN, result.status_code)
+
+
+class CalculatePaidUntilTestCase(TestCase):
+    def test_monthly_cycle(self):
+        mp_purchase = json.loads("""
+{
+  "account":{
+     "type":"Organization",
+     "id":18404719,
+     "login":"username",
+     "organization_billing_email":"username@email.com"
+  },
+  "billing_cycle":"monthly",
+  "unit_count":1,
+  "on_free_trial":false,
+  "free_trial_ends_on":null,
+  "next_billing_date":null,
+  "plan":{
+     "id":435,
+     "name":"Public Tenant",
+     "description":"Basic Plan",
+     "monthly_price_in_cents":3200,
+     "yearly_price_in_cents":32000,
+     "price_model":"flat",
+     "has_free_trial":false,
+     "unit_name":"seat",
+     "bullets":[
+        "Is Basic",
+        "Because Basic "
+     ]
+  }
+}
+""".strip())
+        paid_until = utils.calculate_paid_until(mp_purchase)
+        # for testing purposes
+        paid_until = paid_until.replace(microsecond=0)
+        expected = datetime.now() + timedelta(days=31)
+        expected = expected.replace(hour=23, minute=59, second=59, microsecond=0)
+
+        self.assertEqual(paid_until, expected)
+
+    def test_yearly_cycle(self):
+        mp_purchase = json.loads("""
+{
+  "account":{
+     "type":"Organization",
+     "id":18404719,
+     "login":"username",
+     "organization_billing_email":"username@email.com"
+  },
+  "billing_cycle":"yearly",
+  "unit_count":1,
+  "on_free_trial":false,
+  "free_trial_ends_on":null,
+  "next_billing_date":null,
+  "plan":{
+     "id":435,
+     "name":"Public Tenant",
+     "description":"Basic Plan",
+     "monthly_price_in_cents":3200,
+     "yearly_price_in_cents":32000,
+     "price_model":"flat",
+     "has_free_trial":false,
+     "unit_name":"seat",
+     "bullets":[
+        "Is Basic",
+        "Because Basic "
+     ]
+  }
+}
+""".strip())
+        paid_until = utils.calculate_paid_until(mp_purchase)
+        # for testing purposes
+        paid_until = paid_until.replace(microsecond=0)
+        expected = datetime.now() + timedelta(days=366)
+        expected = expected.replace(hour=23, minute=59, second=59, microsecond=0)
+
+        self.assertEqual(paid_until, expected)
