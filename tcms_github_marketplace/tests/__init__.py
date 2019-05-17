@@ -19,12 +19,15 @@ class UserFactory(DjangoModelFactory):
     username = factory.Sequence(lambda n: 'User%d' % n)
     email = factory.LazyAttribute(lambda user: '%s@kiwitcms.org' % user.username)
     is_staff = True
+    is_superuser = False
 
 
 class LoggedInTestCase(FastTenantTestCase):
     @classmethod
     def setup_tenant(cls, tenant):
         tenant.owner = UserFactory()
+        tenant.owner.set_password('password')
+        tenant.owner.save()
 
     @classmethod
     def setUpClass(cls):
