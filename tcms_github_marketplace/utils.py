@@ -4,6 +4,7 @@
 
 import hmac
 import hashlib
+from datetime import datetime, timedelta
 
 from github import MainClass
 from github.Requester import Requester
@@ -93,3 +94,22 @@ def cancel_plan(purchase):
     revoke_oauth_token(customer_token)
 
     return HttpResponse('cancelled', content_type='text/plain')
+
+
+def calculate_paid_until(mp_purchase):
+    """
+        Calculates when access to paid services must be disabled
+    """
+    paid_until = datetime.now()
+    if mp_purchase['next_billing_date'] is None:
+        if mp_purchase['billing_cycle'] == 'monthly':
+            paid_until += timedelta(days=31)
+        elif mp_purchase['billing_cycle'] == 'yearly':
+            paid_until += timedelta(days=366)
+    else:
+        # format is 2017-10-25T00:00:00+00:00
+        paid_until = datetime.strptime(mp_purchase['next_billing_date'][:19],
+                                       '%Y-%m-%dT%H:%M:%S')
+
+    # above we give them 1 extra day and here we always end at 23:59:59
+    return paid_until.replace(hour=23, minute=59, second=59)
