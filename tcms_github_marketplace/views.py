@@ -3,7 +3,7 @@
 # Licensed under the GPL 3.0: https://www.gnu.org/licenses/gpl-3.0.txt
 
 import json
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from django.urls import reverse
 from django.http import HttpResponse, HttpResponseRedirect
@@ -18,25 +18,6 @@ from tcms_tenants import utils as tcms_tenants_utils
 
 from tcms_github_marketplace import utils
 from tcms_github_marketplace.models import Purchase
-
-
-def calculate_paid_until(mp_purchase):
-    """
-        Calculates when access to paid services must be disabled
-    """
-    paid_until = datetime.now()
-    if mp_purchase['next_billing_date'] is None:
-        if mp_purchase['billing_cycle'] == 'monthly':
-            paid_until += timedelta(days=31)
-        elif mp_purchase['billing_cycle'] == 'yearly':
-            paid_until += timedelta(days=366)
-    else:
-        # format is 2017-10-25T00:00:00+00:00
-        paid_until = datetime.strptime(mp_purchase['next_billing_date'][:19],
-                                       '%Y-%m-%dT%H:%M:%S')
-
-    # above we give them 1 extra day and here we always end at 23:59:59
-    return paid_until.replace(hour=23, minute=59, second=59)
 
 
 class PurchaseHook(View):
@@ -87,7 +68,9 @@ class PurchaseHook(View):
                 paid_until__isnull=False,
             ).first()
             if tenant:
-                tenant.paid_until = calculate_paid_until(purchase.payload['marketplace_purchase'])
+                tenant.paid_until = utils.calculate_paid_until(
+                    purchase.payload['marketplace_purchase']
+                )
                 tenant.save()
 
         return HttpResponse('ok', content_type='text/plain')
@@ -178,7 +161,7 @@ class CreateTenant(NewTenantView):
             sender=self.request.user.username,
             action='purchased',
         ).order_by('-received_on').first()
-        paid_until = calculate_paid_until(purchase.payload['marketplace_purchase'])
+        paid_until = utils.calculate_paid_until(purchase.payload['marketplace_purchase'])
 
         context = super().get_context_data(**kwargs)
         context['form'] = context['form'].__class__(
