@@ -4,7 +4,7 @@
 
 import hmac
 import hashlib
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from github import MainClass
 from github.Requester import Requester
@@ -99,24 +99,12 @@ def cancel_plan(purchase):
 def calculate_paid_until(mp_purchase, effective_date):
     """
         Calculates when access to paid services must be disabled.
-
-        Note: until now we've seen GitHub send only payload where
-        next_billing_date is None and this is what we test with.
-
-        Most likely we need to update the calculation to take into
-        account effective_date instead and not rely on next_billing_date
-        at all !!!
     """
     paid_until = effective_date
-    if mp_purchase['next_billing_date'] is None:
-        if mp_purchase['billing_cycle'] == 'monthly':
-            paid_until += timedelta(days=31)
-        elif mp_purchase['billing_cycle'] == 'yearly':
-            paid_until += timedelta(days=366)
-    else:
-        # format is 2017-10-25T00:00:00+00:00
-        paid_until = datetime.strptime(mp_purchase['next_billing_date'][:19],
-                                       '%Y-%m-%dT%H:%M:%S')
+    if mp_purchase['billing_cycle'] == 'monthly':
+        paid_until += timedelta(days=31)
+    elif mp_purchase['billing_cycle'] == 'yearly':
+        paid_until += timedelta(days=366)
 
     # above we give them 1 extra day and here we always end at 23:59:59
     return paid_until.replace(hour=23, minute=59, second=59)
