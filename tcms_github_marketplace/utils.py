@@ -96,7 +96,7 @@ def cancel_plan(purchase):
     return HttpResponse('cancelled', content_type='text/plain')
 
 
-def calculate_paid_until(mp_purchase):
+def calculate_paid_until(mp_purchase, effective_date):
     """
         Calculates when access to paid services must be disabled.
 
@@ -107,7 +107,7 @@ def calculate_paid_until(mp_purchase):
         account effective_date instead and not rely on next_billing_date
         at all !!!
     """
-    paid_until = datetime.now()
+    paid_until = effective_date
     if mp_purchase['next_billing_date'] is None:
         if mp_purchase['billing_cycle'] == 'monthly':
             paid_until += timedelta(days=31)
