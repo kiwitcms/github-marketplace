@@ -144,7 +144,7 @@ class CreateTenant(NewTenantView):
             If they have a tenant already then we redirect to it!
         """
         # if user somehow visits this URL without having purchased the app
-        if not self.purchase:
+        if not self.purchase and not request.user.is_superuser:
             return HttpResponseRedirect('/')
 
         tenant = Tenant.objects.filter(owner=request.user).first()
