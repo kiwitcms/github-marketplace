@@ -204,6 +204,7 @@ class PurchaseHookTestCase(LoggedInTestCase):
         # b/c we will update only tenant which are currently/have been previously
         # been paid for !!!
         self.tenant.paid_until = datetime(2019, 3, 30, 23, 59, 59, 0)
+        self.tenant.organization = 'kiwitcms'  # just b/c the payload uses an org
         self.tenant.save()
 
         payload = """
@@ -234,7 +235,7 @@ class PurchaseHookTestCase(LoggedInTestCase):
       "account":{
          "type":"Organization",
          "id":18404719,
-         "login":"%s",
+         "login":"kiwitcms",
          "organization_billing_email":"username@email.com"
       },
       "billing_cycle":"monthly",
@@ -258,7 +259,7 @@ class PurchaseHookTestCase(LoggedInTestCase):
       }
    }
 }
-""".strip() % (self.tenant.owner.username, self.tenant.owner.username)
+""".strip() % (self.tenant.owner.username)
         signature = utils.calculate_signature(settings.KIWI_GITHUB_MARKETPLACE_SECRET,
                                               json.dumps(json.loads(payload)).encode())
 
@@ -594,7 +595,7 @@ class CreateTenantTestCase(LoggedInTestCase):
    },
    "marketplace_purchase":{
       "account":{
-         "type":"Organization",
+         "type":"User",
          "id":18404719,
          "login":"%s",
          "organization_billing_email":"username@email.com"

@@ -108,3 +108,16 @@ def calculate_paid_until(mp_purchase, effective_date):
 
     # above we give them 1 extra day and here we always end at 23:59:59
     return paid_until.replace(hour=23, minute=59, second=59)
+
+
+def organization_from_purchase(purchase):
+    """
+        Helps support organizational purchases
+    """
+    if purchase is None:
+        return None
+
+    if purchase.payload['marketplace_purchase']['account']['type'] == 'Organization':
+        return purchase.payload['marketplace_purchase']['account']['login']
+
+    return None
