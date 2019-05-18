@@ -55,6 +55,7 @@ class PurchaseHook(View):
             effective_date=effective_date,
             payload=payload,
         )
+        organization = utils.organization_from_purchase(purchase)
 
         # plan cancellations must be handled here
         if purchase.action == 'cancelled':
@@ -65,6 +66,7 @@ class PurchaseHook(View):
             # they only send a web hook
             tenant = Tenant.objects.filter(
                 owner__username=purchase.sender,
+                organization=organization,
                 paid_until__isnull=False,
             ).first()
             if tenant:
@@ -134,11 +136,13 @@ class CreateTenant(NewTenantView):
 
         # we take the most recent purchase event for this user
         # where they purchase a paid plan
-        self.purchase = Purchase.objects.filter(  # pylint: disable=attribute-defined-outside-init
+        # pylint: disable=attribute-defined-outside-init
+        self.purchase = Purchase.objects.filter(
             sender=request.user.username,
             action='purchased',
             payload__marketplace_purchase__plan__monthly_price_in_cents__gt=0,
         ).order_by('-received_on').first()
+        self.organization = utils.organization_from_purchase(self.purchase)
 
     def get(self, request, *args, **kwargs):
         """
@@ -149,8 +153,12 @@ class CreateTenant(NewTenantView):
         if not self.purchase and not request.user.is_superuser:
             return HttpResponseRedirect('/')
 
-        tenant = Tenant.objects.filter(owner=request.user).first()
-        # only 1 tenant per owner allowed
+        tenant = Tenant.objects.filter(
+            owner=request.user,
+            organization=self.organization,
+        ).first()
+
+        # only 1 tenant per owner+organization combo allowed
         if tenant and not request.user.is_superuser:
             return HttpResponseRedirect(tcms_tenants_utils.tenant_url(request, tenant.schema_name))
 
@@ -171,6 +179,7 @@ class CreateTenant(NewTenantView):
             initial={
                 'on_trial': False,
                 'paid_until': paid_until,
+                'organization': self.organization,
             }
         )
         context['form_action_url'] = reverse('github_marketplace_create_tenant')
