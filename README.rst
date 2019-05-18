@@ -28,6 +28,14 @@ Changelog
 ---------
 
 
+v0.6.0 (16 May 2019)
+~~~~~~~~~~~~~~~~~~~~
+
+- Handle purchases for organizations
+- Do no use ``next_billing_date`` and use ``effective_date``
+  when calculating ``paid_until``
+
+
 v0.5.1 (16 May 2019)
 ~~~~~~~~~~~~~~~~~~~~
 
