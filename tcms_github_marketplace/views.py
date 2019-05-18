@@ -129,19 +129,22 @@ class Install(View):
 
 @method_decorator(login_required, name='dispatch')
 class CreateTenant(NewTenantView):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+
+        # we take the most recent purchase event for this user
+        self.purchase = Purchase.objects.filter(  # pylint: disable=attribute-defined-outside-init
+            sender=request.user.username,
+            action='purchased',
+        ).order_by('-received_on').first()
+
     def get(self, request, *args, **kwargs):
         """
             Doesn't allow user to create more than 1 tenant!
             If they have a tenant already then we redirect to it!
         """
-        # we take the most recent purchase event for this user
-        purchase = Purchase.objects.filter(
-            sender=self.request.user.username,
-            action='purchased',
-        ).order_by('-received_on').first()
-
         # if user somehow visits this URL without having purchased the app
-        if not purchase:
+        if not self.purchase:
             return HttpResponseRedirect('/')
 
         tenant = Tenant.objects.filter(owner=request.user).first()
@@ -157,14 +160,9 @@ class CreateTenant(NewTenantView):
             This view is the same as tcms_tenants.views.NewTenantView
             but we override some of the hidden fields on the form.
         """
-        # we take the most recent purchase event for this user
-        purchase = Purchase.objects.filter(
-            sender=self.request.user.username,
-            action='purchased',
-        ).order_by('-received_on').first()
         paid_until = utils.calculate_paid_until(
-            purchase.payload['marketplace_purchase'],
-            purchase.effective_date)
+            self.purchase.payload['marketplace_purchase'],
+            self.purchase.effective_date)
 
         context = super().get_context_data(**kwargs)
         context['form'] = context['form'].__class__(
