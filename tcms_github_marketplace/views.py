@@ -133,9 +133,11 @@ class CreateTenant(NewTenantView):
         super().setup(request, *args, **kwargs)
 
         # we take the most recent purchase event for this user
+        # where they purchase a paid plan
         self.purchase = Purchase.objects.filter(  # pylint: disable=attribute-defined-outside-init
             sender=request.user.username,
             action='purchased',
+            payload__marketplace_purchase__plan__monthly_price_in_cents__gt=0,
         ).order_by('-received_on').first()
 
     def get(self, request, *args, **kwargs):
