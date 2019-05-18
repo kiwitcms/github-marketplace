@@ -69,7 +69,8 @@ class PurchaseHook(View):
             ).first()
             if tenant:
                 tenant.paid_until = utils.calculate_paid_until(
-                    purchase.payload['marketplace_purchase']
+                    purchase.payload['marketplace_purchase'],
+                    purchase.effective_date,
                 )
                 tenant.save()
 
@@ -161,7 +162,9 @@ class CreateTenant(NewTenantView):
             sender=self.request.user.username,
             action='purchased',
         ).order_by('-received_on').first()
-        paid_until = utils.calculate_paid_until(purchase.payload['marketplace_purchase'])
+        paid_until = utils.calculate_paid_until(
+            purchase.payload['marketplace_purchase'],
+            purchase.effective_date)
 
         context = super().get_context_data(**kwargs)
         context['form'] = context['form'].__class__(

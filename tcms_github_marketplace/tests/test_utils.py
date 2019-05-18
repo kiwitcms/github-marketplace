@@ -4,7 +4,7 @@
 
 import json
 from http import HTTPStatus
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from django.urls import reverse
 from django.http import HttpResponseForbidden
@@ -65,11 +65,9 @@ class CalculatePaidUntilTestCase(TestCase):
   }
 }
 """.strip())
-        paid_until = utils.calculate_paid_until(mp_purchase)
-        # for testing purposes
-        paid_until = paid_until.replace(microsecond=0)
-        expected = datetime.now() + timedelta(days=31)
-        expected = expected.replace(hour=23, minute=59, second=59, microsecond=0)
+        effective_date = datetime(2019, 4, 1, 0, 0, 0, 0)
+        paid_until = utils.calculate_paid_until(mp_purchase, effective_date)
+        expected = datetime(2019, 5, 2, 23, 59, 59, 0)  # 31 days
 
         self.assertEqual(paid_until, expected)
 
@@ -103,10 +101,8 @@ class CalculatePaidUntilTestCase(TestCase):
   }
 }
 """.strip())
-        paid_until = utils.calculate_paid_until(mp_purchase)
-        # for testing purposes
-        paid_until = paid_until.replace(microsecond=0)
-        expected = datetime.now() + timedelta(days=366)
-        expected = expected.replace(hour=23, minute=59, second=59, microsecond=0)
+        effective_date = datetime(2019, 4, 1, 0, 0, 0, 0)
+        paid_until = utils.calculate_paid_until(mp_purchase, effective_date)
+        expected = datetime(2020, 4, 1, 23, 59, 59, 0)  # 366 days
 
         self.assertEqual(paid_until, expected)

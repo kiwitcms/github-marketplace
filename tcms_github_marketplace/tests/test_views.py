@@ -5,7 +5,7 @@
 import json
 from http import HTTPStatus
 from unittest.mock import patch
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from django.urls import reverse
 from django.conf import settings
@@ -200,16 +200,16 @@ class PurchaseHookTestCase(LoggedInTestCase):
             Install URL but only send webhook payloads so we must
             extend tenant.paid_until while handling the hook event
         """
-        # tenant has expired yesterday (artificial example)
+        # tenant has expired
         # b/c we will update only tenant which are currently/have been previously
         # been paid for !!!
-        self.tenant.paid_until = datetime.now() - timedelta(days=1)
+        self.tenant.paid_until = datetime(2019, 3, 30, 23, 59, 59, 0)
         self.tenant.save()
 
         payload = """
 {
    "action":"purchased",
-   "effective_date":"2017-10-25T00:00:00+00:00",
+   "effective_date":"2019-04-01T00:00:00+00:00",
    "sender":{
       "login":"%s",
       "id":3877742,
@@ -271,7 +271,7 @@ class PurchaseHookTestCase(LoggedInTestCase):
 
         # paid_until date was increased minimum 30 days
         self.tenant.refresh_from_db()
-        self.assertGreater(self.tenant.paid_until, datetime.now()+timedelta(days=30))
+        self.assertGreater(self.tenant.paid_until, datetime(2019, 5, 1, 23, 59, 59, 0))
 
 
 class InstallTestCase(LoggedInTestCase):
@@ -736,7 +736,7 @@ class CreateTenantTestCase(LoggedInTestCase):
         payload = """
 {
    "action":"purchased",
-   "effective_date":"2017-10-25T00:00:00+00:00",
+   "effective_date":"2019-04-01T00:00:00+00:00",
    "sender":{
       "login":"%s",
       "id":3877742,
@@ -768,7 +768,7 @@ class CreateTenantTestCase(LoggedInTestCase):
       "unit_count":1,
       "on_free_trial":false,
       "free_trial_ends_on":null,
-      "next_billing_date":"2017-11-05T00:00:00+00:00",
+      "next_billing_date":null,
       "plan":{
          "id":435,
          "name":"Public Tenant",
@@ -799,7 +799,7 @@ class CreateTenantTestCase(LoggedInTestCase):
 
         # visit the create tenant page
         response = self.client.get(self.create_tenant_url)
-        expected_paid_until = utils.calculate_paid_until(payload['marketplace_purchase'])
+        expected_paid_until = datetime(2019, 5, 2, 23, 59, 59, 0)
         expected_paid_until = expected_paid_until.isoformat().replace('T', ' ')
 
         self.assertContains(response, 'New tenant')
