@@ -229,7 +229,7 @@ class PurchaseHookTestCase(LoggedInTestCase):
       "received_events_url":"https://api.github.com/users/username/received_events",
       "type":"User",
       "site_admin":true,
-      "email":"username@email.com"
+      "email":"%s"
    },
    "marketplace_purchase":{
       "account":{
@@ -259,7 +259,7 @@ class PurchaseHookTestCase(LoggedInTestCase):
       }
    }
 }
-""".strip() % (self.tenant.owner.username)
+""".strip() % (self.tenant.owner.username, self.tenant.owner.email)
         signature = utils.calculate_signature(settings.KIWI_GITHUB_MARKETPLACE_SECRET,
                                               json.dumps(json.loads(payload)).encode())
 
@@ -305,7 +305,7 @@ class InstallTestCase(LoggedInTestCase):
       "received_events_url":"https://api.github.com/users/username/received_events",
       "type":"User",
       "site_admin":true,
-      "email":"username@email.com"
+      "email":"%s"
    },
    "marketplace_purchase":{
       "account":{
@@ -335,7 +335,7 @@ class InstallTestCase(LoggedInTestCase):
       }
    }
 }
-""".strip() % (self.tester.username, self.tester.username)
+""".strip() % (self.tester.username, self.tester.email, self.tester.username)
         signature = utils.calculate_signature(settings.KIWI_GITHUB_MARKETPLACE_SECRET,
                                               json.dumps(json.loads(payload)).encode())
 
@@ -404,7 +404,7 @@ class OtherInstallTestCase(LoggedInTestCase):
       "received_events_url":"https://api.github.com/users/username/received_events",
       "type":"User",
       "site_admin":true,
-      "email":"username@email.com"
+      "email":"%s"
    },
    "marketplace_purchase":{
       "account":{
@@ -434,7 +434,7 @@ class OtherInstallTestCase(LoggedInTestCase):
       }
    }
 }
-""".strip() % (self.tester.username, self.tester.username)
+""".strip() % (self.tester.username, self.tester.email, self.tester.username)
         signature = utils.calculate_signature(settings.KIWI_GITHUB_MARKETPLACE_SECRET,
                                               json.dumps(json.loads(payload)).encode())
 
@@ -496,7 +496,7 @@ class CancelPlanTestCase(InstallTestCase):
     "received_events_url": "https://api.github.com/users/kiwitcms-bot/received_events",
     "type": "User",
     "site_admin": false,
-    "email": "bot@kiwitcms.org"
+    "email": "%s"
   },
   "marketplace_purchase": {
     "account": {
@@ -529,7 +529,7 @@ class CancelPlanTestCase(InstallTestCase):
     }
   }
 }
-""".strip() % (self.tester.username, self.tester.username)
+""".strip() % (self.tester.username, self.tester.email, self.tester.username)
         signature = utils.calculate_signature(settings.KIWI_GITHUB_MARKETPLACE_SECRET,
                                               json.dumps(json.loads(payload)).encode())
 
@@ -591,7 +591,7 @@ class CreateTenantTestCase(LoggedInTestCase):
       "received_events_url":"https://api.github.com/users/username/received_events",
       "type":"User",
       "site_admin":true,
-      "email":"username@email.com"
+      "email":"%s"
    },
    "marketplace_purchase":{
       "account":{
@@ -621,7 +621,7 @@ class CreateTenantTestCase(LoggedInTestCase):
       }
    }
 }
-""".strip() % (self.tenant.owner.username, self.tenant.owner.username)
+""".strip() % (self.tenant.owner.username, self.tenant.owner.email, self.tenant.owner.username)
         signature = utils.calculate_signature(settings.KIWI_GITHUB_MARKETPLACE_SECRET,
                                               json.dumps(json.loads(payload)).encode())
 
@@ -672,7 +672,7 @@ class CreateTenantTestCase(LoggedInTestCase):
       "received_events_url":"https://api.github.com/users/username/received_events",
       "type":"User",
       "site_admin":true,
-      "email":"username@email.com"
+      "email":"%s"
    },
    "marketplace_purchase":{
       "account":{
@@ -702,7 +702,7 @@ class CreateTenantTestCase(LoggedInTestCase):
       }
    }
 }
-""".strip() % (self.tenant.owner.username, self.tenant.owner.username)
+""".strip() % (self.tenant.owner.username, self.tenant.owner.email, self.tenant.owner.username)
         signature = utils.calculate_signature(settings.KIWI_GITHUB_MARKETPLACE_SECRET,
                                               json.dumps(json.loads(payload)).encode())
 
@@ -756,7 +756,7 @@ class CreateTenantTestCase(LoggedInTestCase):
       "received_events_url":"https://api.github.com/users/username/received_events",
       "type":"User",
       "site_admin":true,
-      "email":"username@email.com"
+      "email":"%s"
    },
    "marketplace_purchase":{
       "account":{
@@ -786,7 +786,7 @@ class CreateTenantTestCase(LoggedInTestCase):
       }
    }
 }
-""".strip() % (self.tester.username, self.tester.username)
+""".strip() % (self.tester.username, self.tester.email, self.tester.username)
         payload = json.loads(payload)
         signature = utils.calculate_signature(settings.KIWI_GITHUB_MARKETPLACE_SECRET,
                                               json.dumps(payload).encode())
@@ -847,7 +847,7 @@ class CreateTenantTestCase(LoggedInTestCase):
       "received_events_url":"https://api.github.com/users/username/received_events",
       "type":"User",
       "site_admin":true,
-      "email":"username@email.com"
+      "email":"%s"
    },
    "marketplace_purchase":{
       "account":{
@@ -877,7 +877,7 @@ class CreateTenantTestCase(LoggedInTestCase):
       }
    }
 }
-""".strip() % (self.tester.username, self.tester.username)
+""".strip() % (self.tester.username, self.tester.email, self.tester.username)
         payload = json.loads(payload)
         signature = utils.calculate_signature(settings.KIWI_GITHUB_MARKETPLACE_SECRET,
                                               json.dumps(payload).encode())

@@ -77,7 +77,7 @@ def cancel_plan(purchase):
         Cancells the current plan from Marketplace:
         https://developer.github.com/marketplace/integrating-with-the-github-marketplace-api/cancelling-plans/
     """
-    customer = get_user_model().objects.get(username=purchase.sender)
+    customer = get_user_model().objects.get(email=purchase.sender)
 
     # Deactivate the account of the customer who cancelled their plan.
     customer.is_active = False
