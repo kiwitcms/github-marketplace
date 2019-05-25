@@ -278,7 +278,14 @@ class ViewSubscriptionPlan(TemplateView):
 
         mp_purchase = purchases.first()
 
+        cancel_url = None
         if mp_purchase is not None:
+            if mp_purchase.vendor.lower() == 'github':
+                cancel_url = "https://github.com/settings/billing"
+
+            if mp_purchase.vendor.lower() == 'fastspring':
+                cancel_url = mp_purchase.payload['data']['account']['url']
+
             mp_purchase = mp_purchase.payload['marketplace_purchase']
             if mp_purchase['billing_cycle'] == 'monthly':
                 subscription_price = mp_purchase['plan']['monthly_price_in_cents'] // 100
@@ -286,6 +293,8 @@ class ViewSubscriptionPlan(TemplateView):
             elif mp_purchase['billing_cycle'] == 'yearly':
                 subscription_price = mp_purchase['plan']['yearly_price_in_cents'] // 100
                 subscription_period = _('yr')
+
+            subscription_price = int(subscription_price)
         else:
             subscription_price = '-'
             subscription_period = '-'
@@ -296,6 +305,7 @@ class ViewSubscriptionPlan(TemplateView):
             'purchases': purchases,
             'subscription_price': subscription_price,
             'subscription_period': subscription_period,
+            'cancel_url': cancel_url,
         }
 
         return context

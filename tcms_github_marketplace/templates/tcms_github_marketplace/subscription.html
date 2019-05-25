@@ -84,13 +84,15 @@
                                                 <strong title="{% trans 'Paid until' %}">{{ tenant.paid_until }}</strong>
                                             </div>
 
+                                            {% if cancel_url %}
                                             <div class="list-view-pf-additional-info-item">
                                                 <a class="btn btn-danger"
-                                                   title="{% trans 'Cancel subscription on GitHub' %}"
-                                                   href="https://github.com/settings/billing">
+                                                   title="{% trans 'Cancel subscription' %}"
+                                                   href="{{ cancel_url }}">
                                                 {% trans 'Cancel' %}
                                                 </a>
                                             </div>
+                                            {% endif %}
                                         </div>
                                     </div>
                                 </div> <!-- /main info -->
