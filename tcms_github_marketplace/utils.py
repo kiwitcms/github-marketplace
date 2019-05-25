@@ -4,6 +4,7 @@
 
 import hmac
 import hashlib
+from base64 import b64encode
 from datetime import timedelta
 
 from github import MainClass
@@ -45,6 +46,31 @@ def verify_signature(request):
     # due to security reasons do not use '==' operator
     # https://docs.python.org/3/library/hmac.html#hmac.compare_digest
     if not hmac.compare_digest(signature, expected):
+        return HttpResponseForbidden()
+
+    return True  # b/c of inconsistent-return-statements
+
+
+def verify_hmac(request):
+    """
+        Verifies request comes from FastSpring, see:
+        https://docs.fastspring.com/integrating-with-fastspring/webhooks#Webhooks-securityMessageSecret/Security
+    """
+    received_signature = request.headers.get('X-FS-Signature', None)
+    if not received_signature:
+        return HttpResponseForbidden()
+
+    # HMAC SHA256
+    payload_signature = hmac.new(
+        settings.KIWI_FASTSPRING_SECRET,
+        msg=request.body,
+        digestmod=hashlib.sha256).digest()
+    # turn binary string into str !!!
+    payload_signature = b64encode(payload_signature).decode()
+
+    # due to security reasons do not use '==' operator
+    # https://docs.python.org/3/library/hmac.html#hmac.compare_digest
+    if not hmac.compare_digest(received_signature, payload_signature):
         return HttpResponseForbidden()
 
     return True  # b/c of inconsistent-return-statements
