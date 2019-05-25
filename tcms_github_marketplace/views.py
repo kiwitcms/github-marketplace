@@ -87,8 +87,7 @@ class FastSpringHook(View):
     http_method_names = ['post', 'head', 'options']
 
     def post(self, request, *args, **kwargs):
-# todo: verify hmac
-        result = utils.verify_signature(request)
+        result = utils.verify_hmac(request)
         if result is not True:
             return result  # must be an HttpResponse then
 
