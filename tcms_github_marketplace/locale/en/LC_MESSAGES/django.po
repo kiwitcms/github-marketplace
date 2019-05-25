@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-18 17:35+0000\n"
+"POT-Creation-Date: 2019-05-25 19:57+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -61,38 +61,38 @@ msgstr ""
 msgid "Paid until"
 msgstr ""
 
-#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:89
-msgid "Cancel subscription on GitHub"
+#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:90
+msgid "Cancel subscription"
 msgstr ""
 
-#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:91
+#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:92
 msgid "Cancel"
 msgstr ""
 
-#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:101
+#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:103
 msgid "You don't own any tenants"
 msgstr ""
 
-#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:105
+#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:107
 msgid "Buy with GitHub"
 msgstr ""
 
-#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:121
+#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:123
 msgid "Transaction history"
 msgstr ""
 
-#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:143
-#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:144
+#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:145
+#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:146
 msgid "Sender"
 msgstr ""
 
-#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:148
-#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:149
+#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:150
+#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:151
 msgid "Vendor"
 msgstr ""
 
-#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:153
-#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:154
+#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:155
+#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:156
 msgid "Received on"
 msgstr ""
 
@@ -115,10 +115,10 @@ msgid ""
 "                    "
 msgstr ""
 
-#: tcms_github_marketplace/views.py:208
+#: tcms_github_marketplace/views.py:292
 msgid "mo"
 msgstr ""
 
-#: tcms_github_marketplace/views.py:211
+#: tcms_github_marketplace/views.py:295
 msgid "yr"
 msgstr ""
