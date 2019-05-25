@@ -27,6 +27,12 @@ open source as well. You don't need this add-on in order to run Kiwi TCMS!
 Changelog
 ---------
 
+v0.7.0 (25 May 2019)
+~~~~~~~~~~~~~~~~~~~~
+
+- Handle purchases from FastSpring
+- ``Purchase.sender`` is now an ``EmailField``
+
 
 v0.6.0 (16 May 2019)
 ~~~~~~~~~~~~~~~~~~~~
