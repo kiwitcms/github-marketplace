@@ -98,6 +98,7 @@ class FastSpringHook(View):
         for event in payload['events']:
             # timestamp is in milliseconds
             effective_date = datetime.fromtimestamp(event['created'] / 1000)
+            event_data = event['data']
             action = event['type']
 
             # we add additional information to the payload because the rest of
@@ -114,7 +115,7 @@ class FastSpringHook(View):
             event['marketplace_purchase'] = {
                 'billing_cycle': 'monthly',
                 'plan': {
-                    'monthly_price_in_cents': event['subtotal'] * 100,
+                    'monthly_price_in_cents': event_data['subtotalInPayoutCurrency'] * 100,
                 },
                 'account': {
                     'type': 'User',  # no organization support here
@@ -126,7 +127,7 @@ class FastSpringHook(View):
             purchase = Purchase.objects.create(
                 vendor='fastspring',
                 action=action,
-                sender=event['account']['contact']['email'],
+                sender=event_data['account']['contact']['email'],
                 effective_date=effective_date,
                 payload=event,
             )
