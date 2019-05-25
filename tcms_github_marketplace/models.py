@@ -14,7 +14,7 @@ class Purchase(models.Model):
     """
     vendor = models.CharField(max_length=16, db_index=True, blank=True, null=True)
     action = models.CharField(max_length=64, db_index=True)
-    sender = models.CharField(max_length=64, db_index=True)
+    sender = models.EmailField(db_index=True)
     effective_date = models.DateTimeField(db_index=True)
 
     # this is for internal purposes
