@@ -27,7 +27,7 @@ open source as well. You don't need this add-on in order to run Kiwi TCMS!
 Changelog
 ---------
 
-v0.7.0 (25 May 2019)
+v0.7.1 (25 May 2019)
 ~~~~~~~~~~~~~~~~~~~~
 
 - Handle purchases from FastSpring
