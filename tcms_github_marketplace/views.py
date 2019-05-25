@@ -79,6 +79,83 @@ class PurchaseHook(View):
         return HttpResponse('ok', content_type='text/plain')
 
 
+class FastSpringHook(View):
+    """
+        Handles web hook events as described at:
+        https://docs.fastspring.com/integrating-with-fastspring/webhooks
+    """
+    http_method_names = ['post', 'head', 'options']
+
+    def post(self, request, *args, **kwargs):
+# todo: verify hmac
+        result = utils.verify_signature(request)
+        if result is not True:
+            return result  # must be an HttpResponse then
+
+        payload = json.loads(request.body.decode('utf-8'))
+
+        # Your webhooks endpoint should be able to receive 1 or more event.
+        # Multiple webhooks might be combined in a single payload.
+        for event in payload['events']:
+            # timestamp is in milliseconds
+            effective_date = datetime.fromtimestamp(event['created'] / 1000)
+            action = event['type']
+
+            # we add additional information to the payload because the rest of
+            # the code has been designed to work only with GitHub's format
+            if event['type'] == 'subscription.activated':
+                action = 'purchased'
+
+            if event['type'] == 'subscription.charge.completed':
+                action = 'purchased'
+
+            if event['type'] == 'subscription.cancelled':
+                action = 'cancelled'
+
+            event['marketplace_purchase'] = {
+                'billing_cycle': 'monthly',
+                'plan': {
+                    'monthly_price_in_cents': event['subtotal'] * 100,
+                },
+                'account': {
+                    'type': 'User',  # no organization support here
+                },
+            }
+            ### end of transcoding the data format to that of GitHub
+
+            # save payload for future use
+            purchase = Purchase.objects.create(
+                vendor='fastspring',
+                action=action,
+                sender=event['account']['contact']['email'],
+                effective_date=effective_date,
+                payload=event,
+            )
+
+            # can't redirect the user, they will receive an email
+            # telling them to go to Create Tenant page
+            if event['type'] == 'subscription.activated':
+                pass
+
+            # recurring billing
+            if event['type'] == 'subscription.charge.completed':
+                tenant = Tenant.objects.filter(
+                    owner__email=purchase.sender,
+                    paid_until__isnull=False,
+                ).first()
+                if tenant:
+                    tenant.paid_until = utils.calculate_paid_until(
+                        purchase.payload['marketplace_purchase'],
+                        purchase.effective_date,
+                    )
+                    tenant.save()
+
+            if event['type'] == 'subscription.cancelled':
+                return utils.cancel_plan(purchase)
+
+        return HttpResponse('ok', content_type='text/plain')
+
+
 @method_decorator(login_required, name='dispatch')
 class Install(View):
     """
