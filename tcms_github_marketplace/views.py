@@ -51,7 +51,7 @@ class PurchaseHook(View):
         purchase = Purchase.objects.create(
             vendor='github',
             action=payload['action'],
-            sender=payload['sender']['login'],
+            sender=payload['sender']['email'],
             effective_date=effective_date,
             payload=payload,
         )
@@ -65,7 +65,7 @@ class PurchaseHook(View):
             # recurring billing events don't redirect to Install URL
             # they only send a web hook
             tenant = Tenant.objects.filter(
-                owner__username=purchase.sender,
+                owner__email=purchase.sender,
                 organization=organization,
                 paid_until__isnull=False,
             ).first()
@@ -184,7 +184,7 @@ class Install(View):
         """
         # we take the most recent purchase event for this user
         purchase = Purchase.objects.filter(
-            sender=request.user.username
+            sender=request.user.email
         ).order_by('-received_on').first()
 
         # if user somehow visits this URL without having purchased the app
@@ -215,7 +215,7 @@ class CreateTenant(NewTenantView):
         # where they purchase a paid plan
         # pylint: disable=attribute-defined-outside-init
         self.purchase = Purchase.objects.filter(
-            sender=request.user.username,
+            sender=request.user.email,
             action='purchased',
             payload__marketplace_purchase__plan__monthly_price_in_cents__gt=0,
         ).order_by('-received_on').first()
@@ -273,7 +273,7 @@ class ViewSubscriptionPlan(TemplateView):
     def get_context_data(self, **kwargs):
         own_tenants = Tenant.objects.filter(owner=self.request.user)
         purchases = Purchase.objects.filter(
-            sender=self.request.user.username,
+            sender=self.request.user.email,
         ).order_by('-received_on')
 
         mp_purchase = purchases.first()
