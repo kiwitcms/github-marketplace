@@ -110,14 +110,21 @@ def cancel_plan(purchase):
     customer.save()
 
     # store token in a variable so we can remove it later
-    customer_token = UserSocialAuth.objects.get(user=customer).extra_data['access_token']
+    customer_token = None
+    user_social_auth = UserSocialAuth.objects.filter(user=customer).first()
+    if user_social_auth:
+        customer_token = user_social_auth.extra_data['access_token']
 
-    # Remove tenand and all customer data across all tenants
+    # Remove tenant and all customer data across all tenants
     # before attempting to revoke GitHub token
     delete_user(customer)
 
     # Revoke the OAuth token your app received for the customer.
-    revoke_oauth_token(customer_token)
+    if customer_token:
+        try:
+            revoke_oauth_token(customer_token)
+        except:  # pylint: disable=bare-except
+            pass
 
     return HttpResponse('cancelled', content_type='text/plain')
 
