@@ -27,6 +27,15 @@ open source as well. You don't need this add-on in order to run Kiwi TCMS!
 Changelog
 ---------
 
+
+v0.7.2 (29 May 2019)
+~~~~~~~~~~~~~~~~~~~~
+
+- Show vendor specific cancel URL
+- Don't crash when revoking GitHub tokens
+- Update subscription link via FastSpring
+
+
 v0.7.1 (25 May 2019)
 ~~~~~~~~~~~~~~~~~~~~
 
