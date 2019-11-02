@@ -86,7 +86,7 @@ class FastSpringHook(View):
     """
     http_method_names = ['post', 'head', 'options']
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):  # pylint: disable=too-many-branches
         result = utils.verify_hmac(request)
         if result is not True:
             return result  # must be an HttpResponse then
@@ -112,10 +112,21 @@ class FastSpringHook(View):
             if event['type'] == 'subscription.cancelled':
                 action = 'cancelled'
 
+            sub_total_in_payout_currency = 0
+            if 'subtotalInPayoutCurrency' in event_data:
+                sub_total_in_payout_currency = event_data['subtotalInPayoutCurrency']
+            elif 'subtotalInPayoutCurrency' in event_data['subscription']:
+                sub_total_in_payout_currency = event_data[
+                    'subscription']['subtotalInPayoutCurrency']
+            elif 'subtotalInPayoutCurrency' in event_data['order']:
+                sub_total_in_payout_currency = event_data['order']['subtotalInPayoutCurrency']
+            else:
+                raise Exception('subtotalInPayoutCurrency not found in FastSpring data')
+
             event['marketplace_purchase'] = {
                 'billing_cycle': 'monthly',
                 'plan': {
-                    'monthly_price_in_cents': event_data['subtotalInPayoutCurrency'] * 100,
+                    'monthly_price_in_cents': sub_total_in_payout_currency * 100,
                 },
                 'account': {
                     'type': 'User',  # no organization support here
