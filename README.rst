@@ -28,6 +28,12 @@ Changelog
 ---------
 
 
+v0.7.3 (02 Nov 2019)
+~~~~~~~~~~~~~~~~~~~~
+
+- Fix a bug in reading pricing info when renewing subscriptions
+  via FastSpring
+
 v0.7.2 (29 May 2019)
 ~~~~~~~~~~~~~~~~~~~~
 
