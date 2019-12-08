@@ -23,6 +23,7 @@ from tcms_github_marketplace import utils
 from tcms_github_marketplace.models import Purchase
 
 
+# pylint: disable=unused-argument
 class PurchaseHook(View):
     """
         Handles `marketplace_purchase` web hook as described at:
