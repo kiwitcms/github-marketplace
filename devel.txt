@@ -2,6 +2,7 @@
 
 Django
 factory_boy
+flake8
 coveralls
 PyGithub
 pylint

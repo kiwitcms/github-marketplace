@@ -5,6 +5,10 @@ test:
 	    --omit "tcms_github_marketplace/tests/*.py" \
 	    ./manage.py test -v2 tcms_github_marketplace.tests
 
+FLAKE8_EXCLUDE=.git
+.PHONY: flake8
+flake8:
+	@flake8 --exclude=$(FLAKE8_EXCLUDE) tcms_github_marketplace/
 
 .PHONY: pylint
 pylint:
@@ -19,4 +23,4 @@ messages:
 
 
 .PHONY: check
-check: pylint test
+check: flake8 pylint test
