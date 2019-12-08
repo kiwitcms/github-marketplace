@@ -37,7 +37,8 @@ class PurchaseHook(View):
             Save the 'purchased' event in the database, see:
             https://developer.github.com/marketplace/integrating-with-the-github-marketplace-api/github-marketplace-webhook-events/
         """
-        result = github.verify_signature(request, settings.KIWI_GITHUB_MARKETPLACE_SECRET)
+        result = github.verify_signature(
+            request, settings.KIWI_GITHUB_MARKETPLACE_SECRET)
         if result is not True:
             return result  # must be an HttpResponse then
 
@@ -124,7 +125,8 @@ class FastSpringHook(View):
             elif 'subtotalInPayoutCurrency' in event_data['order']:
                 sub_total_in_payout_currency = event_data['order']['subtotalInPayoutCurrency']
             else:
-                raise Exception('subtotalInPayoutCurrency not found in FastSpring data')
+                raise Exception(
+                    'subtotalInPayoutCurrency not found in FastSpring data')
 
             event['marketplace_purchase'] = {
                 'billing_cycle': 'monthly',
@@ -135,7 +137,7 @@ class FastSpringHook(View):
                     'type': 'User',  # no organization support here
                 },
             }
-            ### end of transcoding the data format to that of GitHub
+            # end of transcoding the data format to that of GitHub
 
             # save payload for future use
             purchase = Purchase.objects.create(
@@ -176,9 +178,11 @@ class Install(View):
         Handles application "installation", see:
         https://developer.github.com/marketplace/integrating-with-the-github-marketplace-api/handling-new-purchases-and-free-trials/
 
-        1) User makes an initial purchase and GitHub sends marketplace_purchase hook
-           which is handled in PurchaseHook view and the payload is stored in DB.
-        2) GitHub will then redirect to the Installation URL which is this view.
+        1) User makes an initial purchase and GitHub sends
+           `marketplace_purchase` hook which is handled in PurchaseHook view
+           and the payload is stored in DB.
+        2) GitHub will then redirect to the Installation URL which is this
+           view.
         3) Because we are an OAuth app begin the authorization flow as soon as
            GitHub redirects the customer to the Installation URL.
 
@@ -187,7 +191,7 @@ class Install(View):
            Python-Social-Auth pipeline which we already have installed in the
            main application!
 
-        4) Provision resources for customer - actually handled by the code below
+        4) Provision resources for customer - actually handled below
     """
     http_method_names = ['get', 'head', 'options']
 
@@ -213,7 +217,9 @@ class Install(View):
             if plan_price == 0:
                 return HttpResponseRedirect('/')
 
-            return HttpResponseRedirect(reverse('github_marketplace_create_tenant'))
+            return HttpResponseRedirect(
+                reverse('github_marketplace_create_tenant')
+            )
 
         raise NotImplementedError(
             'Unsupported GitHub Marketplace action: "%s"' %
@@ -251,7 +257,9 @@ class CreateTenant(NewTenantView):
 
         # only 1 tenant per owner+organization combo allowed
         if tenant and not request.user.is_superuser:
-            return HttpResponseRedirect(tcms_tenants_utils.tenant_url(request, tenant.schema_name))
+            return HttpResponseRedirect(
+                tcms_tenants_utils.tenant_url(request, tenant.schema_name)
+            )
 
         # no tenant owned by the current user then allow them to create one
         return super().get(request, *args, **kwargs)
@@ -273,7 +281,8 @@ class CreateTenant(NewTenantView):
                 'organization': self.organization,
             }
         )
-        context['form_action_url'] = reverse('github_marketplace_create_tenant')
+        context['form_action_url'] = reverse(
+            'github_marketplace_create_tenant')
         return context
 
 

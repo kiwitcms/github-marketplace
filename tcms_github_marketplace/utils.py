@@ -91,7 +91,7 @@ def cancel_plan(purchase):
     if customer_token:
         try:
             revoke_oauth_token(customer_token)
-        except:  # pylint: disable=bare-except
+        except:  # noqa:E722, pylint: disable=bare-except
             pass
 
     return HttpResponse('cancelled', content_type='text/plain')

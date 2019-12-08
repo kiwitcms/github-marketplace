@@ -20,11 +20,13 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Purchase',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(auto_created=True, primary_key=True,
+                                        serialize=False, verbose_name='ID')),
                 ('action', models.CharField(db_index=True, max_length=64)),
                 ('sender', models.CharField(db_index=True, max_length=64)),
                 ('effective_date', models.DateTimeField(db_index=True)),
-                ('received_on', models.DateTimeField(auto_now_add=True, db_index=True)),
+                ('received_on', models.DateTimeField(auto_now_add=True,
+                                                     db_index=True)),
                 ('marketplace_purchase', JSONField()),
             ],
         ),

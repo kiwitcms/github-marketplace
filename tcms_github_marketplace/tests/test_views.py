@@ -84,7 +84,8 @@ class PurchaseHookTestCase(LoggedInTestCase):
    }
 }
 """.strip())
-        response = self.client.post(self.url, payload, content_type='application/json')
+        response = self.client.post(
+            self.url, payload, content_type='application/json')
 
         # missing signature should cause failure
         self.assertIsInstance(response, HttpResponseForbidden)
@@ -206,10 +207,11 @@ class PurchaseHookTestCase(LoggedInTestCase):
             extend tenant.paid_until while handling the hook event
         """
         # tenant has expired
-        # b/c we will update only tenant which are currently/have been previously
-        # been paid for !!!
+        # b/c we will update only tenants which
+        # are currently/have been previously paid for !!!
         self.tenant.paid_until = datetime(2019, 3, 30, 23, 59, 59, 0)
-        self.tenant.organization = 'kiwitcms'  # just b/c the payload uses an org
+        # just b/c the payload uses an organization
+        self.tenant.organization = 'kiwitcms'
         self.tenant.save()
 
         payload = """
@@ -278,7 +280,8 @@ class PurchaseHookTestCase(LoggedInTestCase):
 
         # paid_until date was increased minimum 30 days
         self.tenant.refresh_from_db()
-        self.assertGreater(self.tenant.paid_until, datetime(2019, 5, 1, 23, 59, 59, 0))
+        self.assertGreater(self.tenant.paid_until,
+                           datetime(2019, 5, 1, 23, 59, 59, 0))
 
 
 class InstallTestCase(LoggedInTestCase):
@@ -457,7 +460,8 @@ class OtherInstallTestCase(LoggedInTestCase):
         response = self.client.get(self.install_url)
 
         # purchases for paid plans redirect to Create Tenant page
-        self.assertRedirects(response, reverse('github_marketplace_create_tenant'))
+        self.assertRedirects(response, reverse(
+            'github_marketplace_create_tenant'))
 
 
 class CancelPlanTestCase(InstallTestCase):
@@ -470,7 +474,8 @@ class CancelPlanTestCase(InstallTestCase):
             provider='github',
             uid='12345',
             extra_data={"access_token": "TEST-ME", "token_type": "bearer"})
-        cls.gh_revoke_url = '/applications/%s/tokens/TEST-ME' % settings.SOCIAL_AUTH_GITHUB_KEY
+        cls.gh_revoke_url = '/applications/%s/tokens/TEST-ME' % \
+                            settings.SOCIAL_AUTH_GITHUB_KEY
 
     def test_purchased_free_plan(self):
         # override so we don't execute it twice inside this class
@@ -553,7 +558,8 @@ class CancelPlanTestCase(InstallTestCase):
             gh_api.assert_called_with('DELETE', self.gh_revoke_url)
 
         # verify user is not present anymore
-        self.assertFalse(get_user_model().objects.filter(username=self.tester.username).exists())
+        self.assertFalse(get_user_model().objects.filter(
+            username=self.tester.username).exists())
 
 
 class CreateTenantTestCase(LoggedInTestCase):
@@ -630,7 +636,9 @@ class CreateTenantTestCase(LoggedInTestCase):
       }
    }
 }
-""".strip() % (self.tenant.owner.username, self.tenant.owner.email, self.tenant.owner.username)
+""".strip() % (self.tenant.owner.username,
+               self.tenant.owner.email,
+               self.tenant.owner.username)
         signature = github.calculate_signature(
             settings.KIWI_GITHUB_MARKETPLACE_SECRET,
             json.dumps(json.loads(payload)).encode())
@@ -651,10 +659,12 @@ class CreateTenantTestCase(LoggedInTestCase):
 
         fake_request = RequestFactory().get(self.create_tenant_url)
         fake_request.user = self.tenant.owner
-        expected_url = tcms_tenants_utils.tenant_url(fake_request, self.tenant.schema_name)
+        expected_url = tcms_tenants_utils.tenant_url(
+            fake_request, self.tenant.schema_name)
 
         # redirects to / on own tenant
-        self.assertRedirects(response, expected_url, fetch_redirect_response=False)
+        self.assertRedirects(response, expected_url,
+                             fetch_redirect_response=False)
 
     def test_visit_superuser(self):
         """
@@ -712,7 +722,9 @@ class CreateTenantTestCase(LoggedInTestCase):
       }
    }
 }
-""".strip() % (self.tenant.owner.username, self.tenant.owner.email, self.tenant.owner.username)
+""".strip() % (self.tenant.owner.username,
+               self.tenant.owner.email,
+               self.tenant.owner.username)
         signature = github.calculate_signature(
             settings.KIWI_GITHUB_MARKETPLACE_SECRET,
             json.dumps(json.loads(payload)).encode())
@@ -821,15 +833,18 @@ class CreateTenantTestCase(LoggedInTestCase):
         self.assertContains(response, 'Paid until')
         self.assertContains(
             response,
-            '<input type="hidden" name="paid_until" value="%s" id="id_paid_until">' %
+            '<input type="hidden" name="paid_until"'
+            ' value="%s" id="id_paid_until">' %
             expected_paid_until,
             html=True)
         self.assertContains(
             response,
-            '<input type="hidden" name="on_trial" value="False" id="id_on_trial">',
+            '<input type="hidden" name="on_trial"'
+            ' value="False" id="id_on_trial">',
             html=True)
         self.assertContains(response, 'Owner')
-        self.assertContains(response, "<label>%s</label>" % self.tester.username)
+        self.assertContains(response, "<label>%s</label>" %
+                            self.tester.username)
 
     def test_visit_after_free_purchase(self):
         """
