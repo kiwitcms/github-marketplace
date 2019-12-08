@@ -8,7 +8,8 @@ test:
 FLAKE8_EXCLUDE=.git
 .PHONY: flake8
 flake8:
-	@flake8 --exclude=$(FLAKE8_EXCLUDE) tcms_github_marketplace/
+# ignore "line too long"
+	@flake8 --exclude=$(FLAKE8_EXCLUDE) --ignore=E501 tcms_github_marketplace/
 
 .PHONY: pylint
 pylint:

@@ -23,10 +23,15 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='purchase',
             name='vendor',
-            field=models.CharField(blank=True, db_index=True, max_length=16, null=True),
+            field=models.CharField(blank=True,
+                                   db_index=True,
+                                   max_length=16,
+                                   null=True),
         ),
         migrations.AddIndex(
             model_name='purchase',
-            index=GinIndex(fastupdate=False, fields=['payload'], name='tcms_github_payload_gin'),
+            index=GinIndex(fastupdate=False,
+                           fields=['payload'],
+                           name='tcms_github_payload_gin'),
         ),
     ]

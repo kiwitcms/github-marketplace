@@ -19,9 +19,11 @@ class PurchaseAdminTestCase(LoggedInTestCase):
         self.tester.save()
 
     def test_changelist_unauthorized_for_regular_user(self):
-        response = self.client.get(reverse('admin:tcms_github_marketplace_purchase_changelist'))
+        response = self.client.get(
+            reverse('admin:tcms_github_marketplace_purchase_changelist'))
         self.assertIsInstance(response, HttpResponseForbidden)
-        self.assertIn('Unauthorized', str(response.content, encoding=settings.DEFAULT_CHARSET))
+        self.assertIn('Unauthorized', str(response.content,
+                                          encoding=settings.DEFAULT_CHARSET))
 
     def test_changelist_authorized_for_superuser(self):
         # create an object so we can use its values to validate
@@ -37,7 +39,8 @@ class PurchaseAdminTestCase(LoggedInTestCase):
         self.tester.is_superuser = True
         self.tester.save()
 
-        response = self.client.get(reverse('admin:tcms_github_marketplace_purchase_changelist'))
+        response = self.client.get(
+            reverse('admin:tcms_github_marketplace_purchase_changelist'))
 
         # assert all columns that must be visible
         self.assertContains(response, purchase.pk)
