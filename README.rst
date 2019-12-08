@@ -28,6 +28,14 @@ Changelog
 ---------
 
 
+v0.7.4 (08 Dec 2019)
+~~~~~~~~~~~~~~~~~~~~
+
+- ``utils.verify_signature()`` moved to ``tcms.utils.github`` as of
+  Kiwi TCMS v7.2
+- flake8 & pylint fixes
+
+
 v0.7.3 (02 Nov 2019)
 ~~~~~~~~~~~~~~~~~~~~
 
