@@ -1,6 +1,5 @@
 -r requirements.txt
 
-Django
 factory_boy
 flake8
 coveralls
