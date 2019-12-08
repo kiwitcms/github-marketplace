@@ -14,6 +14,9 @@ from django.http import HttpResponseForbidden
 from django.contrib.auth import get_user_model
 
 from social_django.models import UserSocialAuth
+
+from tcms.utils import github
+
 from tcms_tenants import utils as tcms_tenants_utils
 
 from tcms_github_marketplace import utils
@@ -141,8 +144,9 @@ class PurchaseHookTestCase(LoggedInTestCase):
    }
 }
 """.strip()
-        signature = utils.calculate_signature(settings.KIWI_GITHUB_MARKETPLACE_SECRET,
-                                              json.dumps(json.loads(payload)).encode())
+        signature = github.calculate_signature(
+            settings.KIWI_GITHUB_MARKETPLACE_SECRET,
+            json.dumps(json.loads(payload)).encode())
 
         initial_purchase_count = Purchase.objects.count()
 
@@ -183,8 +187,9 @@ class PurchaseHookTestCase(LoggedInTestCase):
   }
 }
 """.strip()
-        signature = utils.calculate_signature(settings.KIWI_GITHUB_MARKETPLACE_SECRET,
-                                              json.dumps(json.loads(payload)).encode())
+        signature = github.calculate_signature(
+            settings.KIWI_GITHUB_MARKETPLACE_SECRET,
+            json.dumps(json.loads(payload)).encode())
         response = self.client.post(self.url,
                                     json.loads(payload),
                                     content_type='application/json',
@@ -260,8 +265,9 @@ class PurchaseHookTestCase(LoggedInTestCase):
    }
 }
 """.strip() % (self.tenant.owner.username, self.tenant.owner.email)
-        signature = utils.calculate_signature(settings.KIWI_GITHUB_MARKETPLACE_SECRET,
-                                              json.dumps(json.loads(payload)).encode())
+        signature = github.calculate_signature(
+            settings.KIWI_GITHUB_MARKETPLACE_SECRET,
+            json.dumps(json.loads(payload)).encode())
 
         # send marketplace_purchase hook
         response = self.client.post(self.url,
@@ -336,8 +342,9 @@ class InstallTestCase(LoggedInTestCase):
    }
 }
 """.strip() % (self.tester.username, self.tester.email, self.tester.username)
-        signature = utils.calculate_signature(settings.KIWI_GITHUB_MARKETPLACE_SECRET,
-                                              json.dumps(json.loads(payload)).encode())
+        signature = github.calculate_signature(
+            settings.KIWI_GITHUB_MARKETPLACE_SECRET,
+            json.dumps(json.loads(payload)).encode())
 
         # first simulate marketplace_purchase hook
         response = self.client.post(self.purchase_hook_url,
@@ -435,8 +442,9 @@ class OtherInstallTestCase(LoggedInTestCase):
    }
 }
 """.strip() % (self.tester.username, self.tester.email, self.tester.username)
-        signature = utils.calculate_signature(settings.KIWI_GITHUB_MARKETPLACE_SECRET,
-                                              json.dumps(json.loads(payload)).encode())
+        signature = github.calculate_signature(
+            settings.KIWI_GITHUB_MARKETPLACE_SECRET,
+            json.dumps(json.loads(payload)).encode())
 
         # first simulate marketplace_purchase hook
         response = self.client.post(self.purchase_hook_url,
@@ -530,8 +538,9 @@ class CancelPlanTestCase(InstallTestCase):
   }
 }
 """.strip() % (self.tester.username, self.tester.email, self.tester.username)
-        signature = utils.calculate_signature(settings.KIWI_GITHUB_MARKETPLACE_SECRET,
-                                              json.dumps(json.loads(payload)).encode())
+        signature = github.calculate_signature(
+            settings.KIWI_GITHUB_MARKETPLACE_SECRET,
+            json.dumps(json.loads(payload)).encode())
 
         with patch.object(utils.Requester,
                           'requestJsonAndCheck',
@@ -622,8 +631,9 @@ class CreateTenantTestCase(LoggedInTestCase):
    }
 }
 """.strip() % (self.tenant.owner.username, self.tenant.owner.email, self.tenant.owner.username)
-        signature = utils.calculate_signature(settings.KIWI_GITHUB_MARKETPLACE_SECRET,
-                                              json.dumps(json.loads(payload)).encode())
+        signature = github.calculate_signature(
+            settings.KIWI_GITHUB_MARKETPLACE_SECRET,
+            json.dumps(json.loads(payload)).encode())
 
         # first simulate marketplace_purchase hook
         response = self.client.post(self.purchase_hook_url,
@@ -703,8 +713,9 @@ class CreateTenantTestCase(LoggedInTestCase):
    }
 }
 """.strip() % (self.tenant.owner.username, self.tenant.owner.email, self.tenant.owner.username)
-        signature = utils.calculate_signature(settings.KIWI_GITHUB_MARKETPLACE_SECRET,
-                                              json.dumps(json.loads(payload)).encode())
+        signature = github.calculate_signature(
+            settings.KIWI_GITHUB_MARKETPLACE_SECRET,
+            json.dumps(json.loads(payload)).encode())
 
         # first simulate marketplace_purchase hook
         response = self.client.post(self.purchase_hook_url,
@@ -788,8 +799,9 @@ class CreateTenantTestCase(LoggedInTestCase):
 }
 """.strip() % (self.tester.username, self.tester.email, self.tester.username)
         payload = json.loads(payload)
-        signature = utils.calculate_signature(settings.KIWI_GITHUB_MARKETPLACE_SECRET,
-                                              json.dumps(payload).encode())
+        signature = github.calculate_signature(
+            settings.KIWI_GITHUB_MARKETPLACE_SECRET,
+            json.dumps(payload).encode())
 
         # first simulate marketplace_purchase hook
         response = self.client.post(self.purchase_hook_url,
@@ -879,8 +891,9 @@ class CreateTenantTestCase(LoggedInTestCase):
 }
 """.strip() % (self.tester.username, self.tester.email, self.tester.username)
         payload = json.loads(payload)
-        signature = utils.calculate_signature(settings.KIWI_GITHUB_MARKETPLACE_SECRET,
-                                              json.dumps(payload).encode())
+        signature = github.calculate_signature(
+            settings.KIWI_GITHUB_MARKETPLACE_SECRET,
+            json.dumps(payload).encode())
 
         # first simulate marketplace_purchase hook
         response = self.client.post(self.purchase_hook_url,
