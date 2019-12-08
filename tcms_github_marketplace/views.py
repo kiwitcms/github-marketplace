@@ -5,12 +5,15 @@
 import json
 from datetime import datetime
 
+from django.conf import settings
 from django.urls import reverse
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic.base import View, TemplateView
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.decorators import login_required
+
+from tcms.utils import github
 
 from tcms_tenants.models import Tenant
 from tcms_tenants.views import NewTenantView
@@ -34,7 +37,7 @@ class PurchaseHook(View):
             Save the 'purchased' event in the database, see:
             https://developer.github.com/marketplace/integrating-with-the-github-marketplace-api/github-marketplace-webhook-events/
         """
-        result = utils.verify_signature(request)
+        result = github.verify_signature(request, settings.KIWI_GITHUB_MARKETPLACE_SECRET)
         if result is not True:
             return result  # must be an HttpResponse then
 
