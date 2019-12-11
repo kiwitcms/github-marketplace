@@ -9,8 +9,8 @@ from django.urls import reverse
 from django.conf import settings
 from django.http import HttpResponseForbidden
 
+from tcms_tenants.tests import LoggedInTestCase
 from tcms_github_marketplace.models import Purchase
-from tcms_github_marketplace.tests import LoggedInTestCase
 
 
 class PurchaseAdminTestCase(LoggedInTestCase):
