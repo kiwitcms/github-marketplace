@@ -1,6 +1,6 @@
 .PHONY: test
 test:
-	PYTHONWARNINGS=d AUTO_CREATE_SCHEMA='' coverage run \
+	EXECUTOR=standard PYTHONWARNINGS=d AUTO_CREATE_SCHEMA='' coverage run \
 	    --include "tcms_github_marketplace/*.py" \
 	    --omit "tcms_github_marketplace/tests/*.py" \
 	    ./manage.py test -v2 tcms_github_marketplace.tests
