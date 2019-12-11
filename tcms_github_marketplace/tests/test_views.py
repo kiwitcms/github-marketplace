@@ -17,14 +17,13 @@ from social_django.models import UserSocialAuth
 
 from tcms.utils import github
 
-from tcms_tenants import utils as tcms_tenants_utils
+import tcms_tenants
 
 from tcms_github_marketplace import utils
 from tcms_github_marketplace.models import Purchase
-from tcms_github_marketplace.tests import LoggedInTestCase
 
 
-class PurchaseHookTestCase(LoggedInTestCase):
+class PurchaseHookTestCase(tcms_tenants.tests.LoggedInTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
@@ -284,7 +283,7 @@ class PurchaseHookTestCase(LoggedInTestCase):
                            datetime(2019, 5, 1, 23, 59, 59, 0))
 
 
-class InstallTestCase(LoggedInTestCase):
+class InstallTestCase(tcms_tenants.tests.LoggedInTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
@@ -363,7 +362,7 @@ class InstallTestCase(LoggedInTestCase):
         self.assertRedirects(response, '/')
 
 
-class OtherInstallTestCase(LoggedInTestCase):
+class OtherInstallTestCase(tcms_tenants.tests.LoggedInTestCase):
     """
         InstallTestCase is kind of special b/c it provides
         a method which simulates a FREE plan install and is also
@@ -562,7 +561,7 @@ class CancelPlanTestCase(InstallTestCase):
             username=self.tester.username).exists())
 
 
-class CreateTenantTestCase(LoggedInTestCase):
+class CreateTenantTestCase(tcms_tenants.tests.LoggedInTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
@@ -659,7 +658,7 @@ class CreateTenantTestCase(LoggedInTestCase):
 
         fake_request = RequestFactory().get(self.create_tenant_url)
         fake_request.user = self.tenant.owner
-        expected_url = tcms_tenants_utils.tenant_url(
+        expected_url = tcms_tenants.utils.tenant_url(
             fake_request, self.tenant.schema_name)
 
         # redirects to / on own tenant
