@@ -60,7 +60,7 @@ def revoke_oauth_token(token):
                        None, MainClass.DEFAULT_BASE_URL,
                        MainClass.DEFAULT_TIMEOUT, None, None,
                        'KiwiTCMS/Python', MainClass.DEFAULT_PER_PAGE,
-                       False, True, None)
+                       True, None)
 
     revoke_url = '/applications/%s/tokens/%s' % (settings.SOCIAL_AUTH_GITHUB_KEY, token)
     _headers, _data = gh_api.requestJsonAndCheck('DELETE', revoke_url)
