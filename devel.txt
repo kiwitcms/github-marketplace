@@ -3,7 +3,7 @@
 factory_boy
 flake8
 coveralls
-PyGithub
+PyGithub>=1.45
 pylint
 pylint-django
 psycopg2

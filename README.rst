@@ -34,6 +34,12 @@ open source as well. You don't need this add-on in order to run Kiwi TCMS!
 Changelog
 ---------
 
+v0.8 (07 Jan 2020)
+~~~~~~~~~~~~~~~~~~
+
+- Compatible with PyGithub v1.45+ which will be used in the upcoming
+  Kiwi TCMS v7.3
+
 
 v0.7.4 (08 Dec 2019)
 ~~~~~~~~~~~~~~~~~~~~
