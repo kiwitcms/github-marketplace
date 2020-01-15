@@ -34,6 +34,12 @@ open source as well. You don't need this add-on in order to run Kiwi TCMS!
 Changelog
 ---------
 
+v0.8.1 (15 Jan 2020)
+~~~~~~~~~~~~~~~~~~~~
+
+- Replace ``ugettext_lazy`` with ``gettext_lazy`` for Django 3.0
+
+
 v0.8 (07 Jan 2020)
 ~~~~~~~~~~~~~~~~~~
 
