@@ -229,6 +229,14 @@ class Install(View):
 
 @method_decorator(login_required, name='dispatch')
 class CreateTenant(NewTenantView):
+    def dispatch(self, request, *args, **kwargs):
+        """
+            Jump over NewTenantView class b/c it requires the tcms_tenants.add_tenant
+            permission while on Marketplace we allow everyone who had paid their subscription
+            to create tenants!
+        """
+        return super(NewTenantView, self).dispatch(request, *args, **kwargs)  # pylint: disable=bad-super-call
+
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
 
