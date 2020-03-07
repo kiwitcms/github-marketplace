@@ -568,6 +568,11 @@ class CreateTenantTestCase(tcms_tenants.tests.LoggedInTestCase):
         cls.create_tenant_url = reverse('github_marketplace_create_tenant')
         cls.purchase_hook_url = reverse('github_marketplace_purchase_hook')
 
+        # Make sure we don't have any permissions set up b/c
+        # tcms_tenants.views.NewTenantsView requires permissions while
+        # CreateTenant is supposed to jump over that
+        cls.tester.user_permissions.all().delete()
+
     def test_visit_without_purchase(self):
         """
             If user visits the Create Tenant page
