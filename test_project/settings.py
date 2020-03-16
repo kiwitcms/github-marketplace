@@ -5,6 +5,14 @@
 
 import os
 import sys
+
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+# site-packages/tcms_settings_dir/ must be before ./tcms_settings_dir/
+# so we can load multi_tenant.py first!
+if BASE_DIR in sys.path:
+    sys.path.remove(BASE_DIR)
+    sys.path.append(BASE_DIR)
+
 import pkg_resources
 
 # pretend this is a plugin during testing & development
@@ -17,8 +25,6 @@ dist._ep_map = {'kiwitcms.plugins': {'kiwitcms_tenants_devel': entry_point}}
 pkg_resources.working_set.add(dist)
 
 from tcms.settings.product import *
-
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 # check for a clean devel environment
 if os.path.exists(os.path.join(BASE_DIR, "kiwitcms_github_marketplace.egg-info")):
