@@ -34,6 +34,7 @@ setup(
     license='GPLv3+',
     install_requires=get_install_requires('requirements.txt'),
     packages=find_packages(exclude=['test_project*', '*.tests']),
+    zip_safe=False,
     include_package_data=True,
     entry_points={"kiwitcms.plugins": ["github/marketplace = tcms_github_marketplace"]},
     classifiers=[
