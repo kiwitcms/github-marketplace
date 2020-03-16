@@ -9,12 +9,12 @@ FLAKE8_EXCLUDE=.git
 .PHONY: flake8
 flake8:
 # ignore "line too long"
-	@flake8 --exclude=$(FLAKE8_EXCLUDE) --ignore=E501 tcms_github_marketplace/
+	@flake8 --exclude=$(FLAKE8_EXCLUDE) --ignore=E501 tcms_github_marketplace/ tcms_settings_dir/
 
 .PHONY: pylint
 pylint:
 	pylint --load-plugins=pylint_django -d missing-docstring -d duplicate-code *.py \
-	    -d wildcard-import -d unused-wildcard-import tcms_github_marketplace/ test_project/
+	    -d wildcard-import -d unused-wildcard-import tcms_github_marketplace/ test_project/ tcms_settings_dir/
 
 
 .PHONY: messages
