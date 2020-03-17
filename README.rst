@@ -47,6 +47,21 @@ automatically!
 Changelog
 ---------
 
+v1.0 (17 Mar 2020)
+~~~~~~~~~~~~~~~~~~~~
+
+- Turn into proper Kiwi TCMS plugin and install settings overrides under
+  ``tcms_settings_dir/`` (compatible with Kiwi TCMS v8.2 or later)
+
+  - does not need ``MENU_ITEMS`` and ``PUBLIC_VIEWS`` override anymore
+  - does not need to load ``tcms_github_marketplace`` in ``INSTALLED_APPS`
+    manually
+- Jump over ``tcms_tenants.views.NewTenantView`` b/c it requires
+  ``tcms_tenants.add_tenant`` permission and here we don't need that
+- Exclude public tenant from recurring purchase hooks
+- Do not attempt delete for superuser cancelling their tenant purchases
+
+
 v0.8.1 (15 Jan 2020)
 ~~~~~~~~~~~~~~~~~~~~
 
