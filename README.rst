@@ -51,10 +51,10 @@ v1.0 (17 Mar 2020)
 ~~~~~~~~~~~~~~~~~~~~
 
 - Turn into proper Kiwi TCMS plugin and install settings overrides under
-  ``tcms_settings_dir/`` (compatible with Kiwi TCMS v8.2 or later)
+  ``tcms_settings_dir/`` (compatible with Kiwi TCMS v8.2 or later):
 
   - does not need ``MENU_ITEMS`` and ``PUBLIC_VIEWS`` override anymore
-  - does not need to load ``tcms_github_marketplace`` in ``INSTALLED_APPS`
+  - does not need to load ``tcms_github_marketplace`` in ``INSTALLED_APPS``
     manually
 - Jump over ``tcms_tenants.views.NewTenantView`` b/c it requires
   ``tcms_tenants.add_tenant`` permission and here we don't need that
