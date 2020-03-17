@@ -72,6 +72,8 @@ def cancel_plan(purchase):
         https://developer.github.com/marketplace/integrating-with-the-github-marketplace-api/cancelling-plans/
     """
     customer = get_user_model().objects.get(email=purchase.sender)
+    if customer.is_superuser:
+        return HttpResponse('super-user not deleted from DB', content_type='text/plain')
 
     # Deactivate the account of the customer who cancelled their plan.
     customer.is_active = False
