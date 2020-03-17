@@ -73,7 +73,7 @@ class PurchaseHook(View):
                 owner__email=purchase.sender,
                 organization=organization,
                 paid_until__isnull=False,
-            ).first()
+            ).exclude(schema_name='public').first()
             if tenant:
                 tenant.paid_until = utils.calculate_paid_until(
                     purchase.payload['marketplace_purchase'],
@@ -159,7 +159,7 @@ class FastSpringHook(View):
                 tenant = Tenant.objects.filter(
                     owner__email=purchase.sender,
                     paid_until__isnull=False,
-                ).first()
+                ).exclude(schema_name='public').first()
                 if tenant:
                     tenant.paid_until = utils.calculate_paid_until(
                         purchase.payload['marketplace_purchase'],
