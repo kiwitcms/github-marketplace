@@ -31,6 +31,19 @@ This package provides the GitHub Marketplace integration for the
 Everyting that we do is open and that's why this piece of code is
 open source as well. You don't need this add-on in order to run Kiwi TCMS!
 
+
+Installation and configuration
+------------------------------
+
+    pip install kiwitcms-github-marketplace
+
+Then make sure ``KIWI_GITHUB_MARKETPLACE_SECRET`` and
+``KIWI_FASTSPRING_SECRET`` settings are configured as binary strings,
+e.g. ``b'secret'`. The rest of the settings are installed into
+``tcms_settings_dir/marketplace.py`` and Kiwi TCMS will pick them up
+automatically!
+
+
 Changelog
 ---------
 
