@@ -3,9 +3,8 @@
 # Licensed under the GPL 3.0: https://www.gnu.org/licenses/gpl-3.0.txt
 # pylint: disable=too-many-ancestors
 
-from datetime import datetime
-
 from django.urls import reverse
+from django.utils import timezone
 from django.conf import settings
 from django.http import HttpResponseForbidden
 
@@ -32,7 +31,7 @@ class PurchaseAdminTestCase(LoggedInTestCase):
             vendor='test-suite',
             action='test-admin-changelist-view',
             sender=self.tester.username,
-            effective_date=datetime.now(),
+            effective_date=timezone.now(),
             payload={},
         )
 
@@ -68,7 +67,7 @@ class PurchaseAdminTestCase(LoggedInTestCase):
             vendor='test-suite',
             action='test-admin-delete-view',
             sender=self.tester.username,
-            effective_date=datetime.now(),
+            effective_date=timezone.now(),
             payload={},
         )
 

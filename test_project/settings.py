@@ -1,5 +1,7 @@
-# Copyright (c) 2019 Alexander Todorov <atodorov@MrSenko.com>
-
+# pylint: disable=wildcard-import, unused-wildcard-import
+#
+# Copyright (c) 2019-2020 Alexander Todorov <atodorov@MrSenko.com>
+#
 # Licensed under the GPL 3.0: https://www.gnu.org/licenses/gpl-3.0.txt
 # pylint: disable=invalid-name, protected-access, wrong-import-position
 
@@ -47,7 +49,7 @@ DEBUG = True
 TEMPLATE_DEBUG = True
 LOCALE_PATHS = [os.path.join(BASE_DIR, 'tcms_github_marketplace', 'locale')]
 
-DATABASES['default'].update({
+DATABASES['default'].update({  # pylint: disable=objects-update-used
     'NAME': 'test_project',
     'USER': 'kiwi',
     'PASSWORD': 'kiwi',
