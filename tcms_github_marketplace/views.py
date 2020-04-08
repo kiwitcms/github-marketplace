@@ -23,7 +23,6 @@ from tcms_github_marketplace import utils
 from tcms_github_marketplace.models import Purchase
 
 
-# pylint: disable=unused-argument
 class PurchaseHook(View):
     """
         Handles `marketplace_purchase` web hook as described at:
@@ -31,7 +30,7 @@ class PurchaseHook(View):
     """
     http_method_names = ['post', 'head', 'options']
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):  # pylint: disable=unused-argument
         """
             Hook must be configured to receive JSON payload!
 
@@ -91,7 +90,7 @@ class FastSpringHook(View):
     """
     http_method_names = ['post', 'head', 'options']
 
-    def post(self, request, *args, **kwargs):  # pylint: disable=too-many-branches
+    def post(self, request, *args, **kwargs):  # pylint: disable=too-many-branches,unused-argument
         result = utils.verify_hmac(request)
         if result is not True:
             return result  # must be an HttpResponse then
@@ -196,7 +195,7 @@ class Install(View):
     """
     http_method_names = ['get', 'head', 'options']
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):  # pylint: disable=unused-argument
         """
             Read marketplace_purchase data for the currently logged in
             user and figure out how to provision resources.
