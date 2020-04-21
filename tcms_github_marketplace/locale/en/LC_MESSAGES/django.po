@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-29 18:43+0000\n"
+"POT-Creation-Date: 2020-04-21 18:31+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,10 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: tcms_github_marketplace/menu.py:11
+msgid "Subscriptions"
+msgstr ""
 
 #: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:11
 msgid "Tenant subscriptions"
@@ -115,10 +119,10 @@ msgid ""
 "                    "
 msgstr ""
 
-#: tcms_github_marketplace/views.py:292
+#: tcms_github_marketplace/views.py:325
 msgid "mo"
 msgstr ""
 
-#: tcms_github_marketplace/views.py:295
+#: tcms_github_marketplace/views.py:328
 msgid "yr"
 msgstr ""
