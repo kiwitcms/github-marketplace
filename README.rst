@@ -47,8 +47,15 @@ automatically!
 Changelog
 ---------
 
+v1.1 (24 Apr 2020)
+~~~~~~~~~~~~~~~~~~
+
+- Bug fix: display form errors when creating new tenant
+- Update template strings
+
+
 v1.0 (17 Mar 2020)
-~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~
 
 - Turn into proper Kiwi TCMS plugin and install settings overrides under
   ``tcms_settings_dir/`` (compatible with Kiwi TCMS v8.2 or later):
