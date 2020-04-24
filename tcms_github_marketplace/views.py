@@ -284,7 +284,7 @@ class CreateTenant(NewTenantView):
             self.purchase.effective_date)
 
         context = super().get_context_data(**kwargs)
-        context['form'] = context['form'].__class__(
+        context['form'] = kwargs.get('form') or context['form'].__class__(
             initial={
                 'on_trial': False,
                 'paid_until': paid_until,
