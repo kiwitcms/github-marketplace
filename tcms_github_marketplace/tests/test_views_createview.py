@@ -105,8 +105,8 @@ class CreateTenantTestCase(tcms_tenants.tests.LoggedInTestCase):
                 'paid_until': expected_paid_until,
             })
 
-        self.assertContains(response, 'Invalid string used for the schema name.')
-        self.assertContains(response, 'Valid schema_name pattern: ^[a-z0-9]{1,63}$')
+        self.assertContains(response, 'Invalid string')
+        self.assertContains(response, 'Validation pattern: ^[a-z0-9]{1,63}$')
         self.assertFalse(
             tcms_tenants.models.Tenant.objects.filter(schema_name='kiwi-tcms').exists())
 
@@ -372,7 +372,7 @@ class CreateTenantTestCase(tcms_tenants.tests.LoggedInTestCase):
         self.assertContains(response, 'Private Tenant Warning')
         self.assertContains(response, 'action="%s"' % self.create_tenant_url)
         self.assertContains(response, 'Paid until')
-        self.assertContains(response, 'Valid schema_name pattern: ^[a-z0-9]{1,63}$')
+        self.assertContains(response, 'Validation pattern: ^[a-z0-9]{1,63}$')
         self.assertContains(
             response,
             '<input type="hidden" name="paid_until"'
