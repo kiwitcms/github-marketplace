@@ -47,6 +47,14 @@ automatically!
 Changelog
 ---------
 
+v1.2 (06 Aug 2020)
+~~~~~~~~~~~~~~~~~~
+
+- Require kiwitcms-tenants>=1.1
+- Subscribe button is now a drop-down listing all platforms oferring a
+  Private Tenant subscription
+
+
 v1.1 (24 Apr 2020)
 ~~~~~~~~~~~~~~~~~~
 
