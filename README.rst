@@ -39,7 +39,7 @@ Installation and configuration
 
 Then make sure ``KIWI_GITHUB_MARKETPLACE_SECRET`` and
 ``KIWI_FASTSPRING_SECRET`` settings are configured as binary strings,
-e.g. ``b'secret'`.
+e.g. ``b'secret'``.
 
 
 Changelog
