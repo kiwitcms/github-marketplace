@@ -1,9 +1,8 @@
-# Copyright (c) 2019 Alexander Todorov <atodorov@MrSenko.com>
+# Copyright (c) 2019-2020 Alexander Todorov <atodorov@MrSenko.com>
 
 # Licensed under the GPL 3.0: https://www.gnu.org/licenses/gpl-3.0.txt
 
 from django.db import models
-from django.contrib.postgres.fields import JSONField
 from django.contrib.postgres.indexes import GinIndex
 
 
@@ -20,7 +19,7 @@ class Purchase(models.Model):
     # this is for internal purposes
     received_on = models.DateTimeField(db_index=True, auto_now_add=True)
 
-    payload = JSONField()
+    payload = models.JSONField()
 
     class Meta:
         indexes = [
