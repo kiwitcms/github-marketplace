@@ -34,16 +34,6 @@ if os.path.exists(os.path.join(BASE_DIR, "kiwitcms_github_marketplace.egg-info")
     sys.exit(1)
 
 
-# import the settings which automatically get distributed with this package
-marketplace_settings = os.path.join(
-    BASE_DIR, 'tcms_settings_dir', 'marketplace.py')
-
-# Kiwi TCMS loads extra settings in the same way using exec()
-exec(  # pylint: disable=exec-used
-    open(marketplace_settings, "rb").read(),
-    globals()
-)
-
 # these are enabled only for testing purposes
 DEBUG = True
 TEMPLATE_DEBUG = True
@@ -60,12 +50,6 @@ DATABASES['default'].update({  # pylint: disable=objects-update-used
 
 INSTALLED_APPS.extend([
     'social_django',
-])
-
-PUBLIC_VIEWS.extend([
-    'social_django.views.auth',
-    'social_django.views.complete',
-    'social_django.views.disconnect',
 ])
 
 
