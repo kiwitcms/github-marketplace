@@ -8,4 +8,4 @@ pylint
 pylint-django
 psycopg2
 social-auth-app-django
-kiwitcms
+kiwitcms>8.6
