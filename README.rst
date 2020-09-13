@@ -39,13 +39,21 @@ Installation and configuration
 
 Then make sure ``KIWI_GITHUB_MARKETPLACE_SECRET`` and
 ``KIWI_FASTSPRING_SECRET`` settings are configured as binary strings,
-e.g. ``b'secret'`. The rest of the settings are installed into
-``tcms_settings_dir/marketplace.py`` and Kiwi TCMS will pick them up
-automatically!
+e.g. ``b'secret'`.
 
 
 Changelog
 ---------
+
+v1.3 (13 Sep 2020)
+~~~~~~~~~~~~~~~~~~
+
+- Tested with Kiwi TCMS > 8.6
+- Refactor deprecation warnings with Django 3.1
+- Start using the new standard models.JSONField()
+- Remove ``tcms_settings_dir/marketplace.py`` b/c ``settings.PUBLIC_VIEWS``
+  has been removed
+
 
 v1.2 (06 Aug 2020)
 ~~~~~~~~~~~~~~~~~~
