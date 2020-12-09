@@ -45,6 +45,12 @@ e.g. ``b'secret'``.
 Changelog
 ---------
 
+v1.3.1 (09 Dec 2020)
+~~~~~~~~~~~~~~~~~~~~
+
+- Fix traceback when trying to create tenant and user is not logged in
+
+
 v1.3 (13 Sep 2020)
 ~~~~~~~~~~~~~~~~~~
 
