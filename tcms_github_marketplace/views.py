@@ -230,26 +230,28 @@ class Install(View):
 
 @method_decorator(login_required, name='dispatch')
 class CreateTenant(NewTenantView):
+    purchase = None
+    organization = None
+
     def dispatch(self, request, *args, **kwargs):
         """
             Jump over NewTenantView class b/c it requires the tcms_tenants.add_tenant
             permission while on Marketplace we allow everyone who had paid their subscription
             to create tenants!
         """
-        return super(NewTenantView, self).dispatch(request, *args, **kwargs)  # pylint: disable=bad-super-call
-
-    def setup(self, request, *args, **kwargs):
-        super().setup(request, *args, **kwargs)
-
         # we take the most recent purchase event for this user
         # where they purchase a paid plan
         # pylint: disable=attribute-defined-outside-init
-        self.purchase = Purchase.objects.filter(
-            sender=request.user.email,
-            action='purchased',
-            payload__marketplace_purchase__plan__monthly_price_in_cents__gt=0,
-        ).order_by('-received_on').first()
-        self.organization = utils.organization_from_purchase(self.purchase)
+        if not self.purchase:
+            self.purchase = Purchase.objects.filter(
+                sender=request.user.email,
+                action='purchased',
+                payload__marketplace_purchase__plan__monthly_price_in_cents__gt=0,
+            ).order_by('-received_on').first()
+        if not self.organization:
+            self.organization = utils.organization_from_purchase(self.purchase)
+
+        return super(NewTenantView, self).dispatch(request, *args, **kwargs)  # pylint: disable=bad-super-call
 
     def get(self, request, *args, **kwargs):
         """
