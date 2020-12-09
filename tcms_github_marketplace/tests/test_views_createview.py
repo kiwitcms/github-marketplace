@@ -110,6 +110,15 @@ class CreateTenantTestCase(tcms_tenants.tests.LoggedInTestCase):
         self.assertFalse(
             tcms_tenants.models.Tenant.objects.filter(schema_name='kiwi-tcms').exists())
 
+    def test_visit_not_logged_in(self):
+        self.client.logout()
+        response = self.client.get(self.create_tenant_url)
+
+        # requires login
+        self.assertRedirects(
+            response,
+            reverse('tcms-login') + '?next=%s' % self.create_tenant_url)
+
     def test_visit_without_purchase(self):
         """
             If user visits the Create Tenant page
