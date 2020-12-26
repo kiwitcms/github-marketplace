@@ -45,6 +45,14 @@ e.g. ``b'secret'``.
 Changelog
 ---------
 
+
+v1.3.2 (26 Dec 2020)
+~~~~~~~~~~~~~~~~~~~~
+
+- Don't fail when cancelling GitHub FREE subscriptions for senders which
+  don't exist
+
+
 v1.3.1 (09 Dec 2020)
 ~~~~~~~~~~~~~~~~~~~~
 
