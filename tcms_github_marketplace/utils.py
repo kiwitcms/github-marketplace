@@ -71,7 +71,13 @@ def cancel_plan(purchase):
         Cancells the current plan from Marketplace:
         https://developer.github.com/marketplace/integrating-with-the-github-marketplace-api/cancelling-plans/
     """
-    customer = get_user_model().objects.get(email=purchase.sender)
+    customer = get_user_model().objects.filter(email=purchase.sender).first()
+
+    # this can happen for users who have installed the FREE subscription
+    # but their accounts were removed due to inactivity. Nothing else to do.
+    if not customer:
+        return HttpResponse('Sender not found', content_type='text/plain')
+
     if customer.is_superuser:
         return HttpResponse('super-user not deleted from DB', content_type='text/plain')
 
