@@ -45,6 +45,11 @@ e.g. ``b'secret'``.
 Changelog
 ---------
 
+v1.3.3 (25 Jan 2021)
+~~~~~~~~~~~~~~~~~~~~
+
+- Allow POST request (web hooks) without CSRF token
+
 
 v1.3.2 (26 Dec 2020)
 ~~~~~~~~~~~~~~~~~~~~
