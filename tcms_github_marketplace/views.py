@@ -1,6 +1,6 @@
 # pylint: disable=missing-permission-required
 #
-# Copyright (c) 2019-2020 Alexander Todorov <atodorov@MrSenko.com>
+# Copyright (c) 2019-2021 Alexander Todorov <atodorov@MrSenko.com>
 #
 # Licensed under the GPL 3.0: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -10,6 +10,7 @@ from datetime import datetime
 from django.conf import settings
 from django.urls import reverse
 from django.http import HttpResponse, HttpResponseRedirect
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import View, TemplateView
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
@@ -25,6 +26,7 @@ from tcms_github_marketplace import utils
 from tcms_github_marketplace.models import Purchase
 
 
+@method_decorator(csrf_exempt, name='dispatch')
 class PurchaseHook(View):
     """
         Handles `marketplace_purchase` web hook as described at:
@@ -85,6 +87,7 @@ class PurchaseHook(View):
         return HttpResponse('ok', content_type='text/plain')
 
 
+@method_decorator(csrf_exempt, name='dispatch')
 class FastSpringHook(View):
     """
         Handles web hook events as described at:
