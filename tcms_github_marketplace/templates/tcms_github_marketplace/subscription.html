@@ -102,20 +102,11 @@
                         <p>
                         {% trans "You don't own any tenants" %}
                         </p>
+                        <a class="btn btn-primary"
+                           href="https://mrsenko.onfastspring.com/kiwitcms-private-tenant">
+                            {% trans 'Subscribe via FastSpring' %}
+                        </a>
 
-                        <div class="dropdown btn-group">
-                            <button type="button" class="btn btn-primary dropdown-toggle"
-                                data-toggle="dropdown"
-                                aria-haspopup="true"
-                                aria-expanded="false">
-                                {% trans 'Subscribe' %}
-                                <span class="caret"></span>
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li><a href="https://mrsenko.onfastspring.com/kiwitcms-private-tenant">{% trans 'directly with Kiwi TCMS' %}</a></li>
-                                <li><a href="https://github.com/marketplace/kiwi-tcms/#pricing-and-setup">{% trans 'via GitHub Marketplace' %}</a></li>
-                            </ul>
-                        </div>
                     {% endfor %}
                     </div>
                 </div>
