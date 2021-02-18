@@ -32,7 +32,13 @@ class PurchaseAdminTestCase(LoggedInTestCase):
             action='test-admin-changelist-view',
             sender=self.tester.username,
             effective_date=timezone.now(),
-            payload={},
+            payload={
+                'marketplace_purchase': {
+                    'plan': {
+                        'monthly_price_in_cents': 2520,
+                    }
+                }
+            },
         )
 
         self.tester.is_superuser = True
@@ -44,6 +50,9 @@ class PurchaseAdminTestCase(LoggedInTestCase):
         # assert all columns that must be visible
         self.assertContains(response, purchase.pk)
         self.assertContains(response, purchase.vendor)
+        # shows price column
+        self.assertContains(response, 'Price $/mo')
+        self.assertContains(response, '25')
         self.assertContains(response, purchase.action)
         self.assertContains(response, purchase.sender)
         # timestamps are formatted according to localization
@@ -68,7 +77,13 @@ class PurchaseAdminTestCase(LoggedInTestCase):
             action='test-admin-delete-view',
             sender=self.tester.username,
             effective_date=timezone.now(),
-            payload={},
+            payload={
+                'marketplace_purchase': {
+                    'plan': {
+                        'monthly_price_in_cents': 2520,
+                    }
+                }
+            },
         )
 
         response = self.client.get(
