@@ -1,5 +1,5 @@
-GitHub Marketplace integration for Kiwi TCMS
-============================================
+Marketplace integrations for Kiwi TCMS
+======================================
 
 .. image:: https://travis-ci.org/kiwitcms/github-marketplace.svg?branch=master
     :target: https://travis-ci.org/kiwitcms/github-marketplace
@@ -26,8 +26,8 @@ GitHub Marketplace integration for Kiwi TCMS
 Introduction
 ------------
 
-This package provides the GitHub Marketplace integration for the
-`Kiwi TCMS multi-tenant SaaS <https://github.com/marketplace/kiwi-tcms>`_.
+This package provides the marketplace/payment integration for the
+`Kiwi TCMS multi-tenant SaaS <https://kiwitcms.org/#subscriptions>`_.
 Everyting that we do is open and that's why this piece of code is
 open source as well. You don't need this add-on in order to run Kiwi TCMS!
 
@@ -44,6 +44,13 @@ e.g. ``b'secret'``.
 
 Changelog
 ---------
+
+v1.3.4 (18 Feb 2021)
+~~~~~~~~~~~~~~~~~~~~
+
+- Show new column in purchase admin
+- Stop advertising GitHub Marketplace subscriptions
+
 
 v1.3.3 (25 Jan 2021)
 ~~~~~~~~~~~~~~~~~~~~
