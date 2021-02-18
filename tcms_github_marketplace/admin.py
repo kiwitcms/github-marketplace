@@ -10,9 +10,13 @@ from tcms_github_marketplace.models import Purchase
 
 
 class PurchaseAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'vendor', 'action', 'sender',
+    list_display = ('pk', 'vendor', 'price_column', 'action', 'sender',
                     'effective_date', 'received_on')
     ordering = ['-pk']
+
+    def price_column(self, purchase):  # pylint: disable=no-self-use
+        return int(purchase.payload['marketplace_purchase']['plan']['monthly_price_in_cents'] / 100)
+    price_column.short_description = "Price $/mo"
 
     def add_view(self, request, form_url='', extra_context=None):
         return HttpResponseRedirect(
