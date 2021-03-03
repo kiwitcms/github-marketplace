@@ -45,6 +45,12 @@ e.g. ``b'secret'``.
 Changelog
 ---------
 
+v1.4.0 (03 Mar 2021)
+~~~~~~~~~~~~~~~~~~~~
+
+- Don't delete users upon cancellation via GitHub
+
+
 v1.3.4 (18 Feb 2021)
 ~~~~~~~~~~~~~~~~~~~~
 
