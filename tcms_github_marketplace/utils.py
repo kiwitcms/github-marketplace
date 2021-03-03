@@ -91,7 +91,7 @@ def cancel_plan(purchase):
     if user_social_auth:
         customer_token = user_social_auth.extra_data['access_token']
 
-    # Remove tenant and all customer data across all tenants
+    # Remove user and all of their data across all tenants
     # before attempting to revoke GitHub token
     delete_user(customer)
 
