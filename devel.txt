@@ -9,3 +9,4 @@ pylint-django
 psycopg2
 social-auth-app-django
 kiwitcms>8.6
+textdistance
