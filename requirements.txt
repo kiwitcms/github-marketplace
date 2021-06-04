@@ -1,1 +1,1 @@
-kiwitcms-tenants>=1.1
+kiwitcms-tenants>=1.5
