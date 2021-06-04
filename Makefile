@@ -5,6 +5,7 @@ KIWI_INCLUDE_PATH="../Kiwi/"
 test:
 	if [ ! -d "$(KIWI_INCLUDE_PATH)/kiwi_lint" ]; then \
 	    git clone --depth 1 https://github.com/kiwitcms/Kiwi.git $(KIWI_INCLUDE_PATH); \
+	    pip install -U -r $(KIWI_INCLUDE_PATH)/requirements/base.txt; \
 	fi
 
 	PYTHONPATH=.:$(KIWI_INCLUDE_PATH) EXECUTOR=standard PYTHONWARNINGS=d AUTO_CREATE_SCHEMA='' coverage run \
@@ -24,6 +25,7 @@ flake8:
 pylint:
 	if [ ! -d "$(KIWI_INCLUDE_PATH)/kiwi_lint" ]; then \
 	    git clone --depth 1 https://github.com/kiwitcms/Kiwi.git $(KIWI_INCLUDE_PATH); \
+	    pip install -U -r $(KIWI_INCLUDE_PATH)/requirements/base.txt; \
 	fi
 
 	PYTHONPATH=.:$(KIWI_INCLUDE_PATH) DJANGO_SETTINGS_MODULE="test_project.settings" \
