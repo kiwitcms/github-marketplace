@@ -395,6 +395,10 @@ class CreateTenantTestCase(tcms_tenants.tests.LoggedInTestCase):
         self.assertContains(response, "<label>%s</label>" %
                             self.tester.username)
 
+        self.assertContains(response, 'Organization')
+        self.assertContains(response, "<label>%s</label>" %
+                            self.tester.username)
+
     def test_visit_after_free_purchase(self):
         """
             If user visits the Create Tenant page

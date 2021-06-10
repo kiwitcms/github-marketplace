@@ -281,23 +281,18 @@ class CreateTenant(NewTenantView):
         # no tenant owned by the current user then allow them to create one
         return super().get(request, *args, **kwargs)
 
-    def get_context_data(self, **kwargs):
-        """
-            This view is the same as tcms_tenants.views.NewTenantView
-            but we override some of the hidden fields on the form.
-        """
+    def get_form_kwargs(self):
         paid_until = utils.calculate_paid_until(
             self.purchase.payload['marketplace_purchase'],
             self.purchase.effective_date)
 
+        kwargs = super().get_form_kwargs()
+        kwargs["initial"]["paid_until"] = paid_until
+        kwargs["initial"]["organization"] = self.organization
+        return kwargs
+
+    def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['form'] = kwargs.get('form') or context['form'].__class__(
-            initial={
-                'publicly_readable': False,
-                'paid_until': paid_until,
-                'organization': self.organization,
-            }
-        )
         context['form_action_url'] = reverse(
             'github_marketplace_create_tenant')
         return context
