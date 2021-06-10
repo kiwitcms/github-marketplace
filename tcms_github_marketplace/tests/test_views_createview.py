@@ -1,4 +1,4 @@
-# Copyright (c) 2019 Alexander Todorov <atodorov@MrSenko.com>
+# Copyright (c) 2019-2021 Alexander Todorov <atodorov@MrSenko.com>
 
 # Licensed under the GPL 3.0: https://www.gnu.org/licenses/gpl-3.0.txt
 # pylint: disable=too-many-ancestors
@@ -101,7 +101,7 @@ class CreateTenantTestCase(tcms_tenants.tests.LoggedInTestCase):
             {
                 'name': 'Dash Is Not Allowed',
                 'schema_name': 'kiwi-tcms',
-                'on_trial': False,
+                'publicly_readable': False,
                 'paid_until': expected_paid_until,
             })
 
@@ -390,9 +390,7 @@ class CreateTenantTestCase(tcms_tenants.tests.LoggedInTestCase):
             html=True)
         self.assertContains(
             response,
-            '<input type="hidden" name="on_trial"'
-            ' value="False" id="id_on_trial">',
-            html=True)
+            'class="bootstrap-switch" name="publicly_readable" type="checkbox"')
         self.assertContains(response, 'Owner')
         self.assertContains(response, "<label>%s</label>" %
                             self.tester.username)

@@ -293,7 +293,7 @@ class CreateTenant(NewTenantView):
         context = super().get_context_data(**kwargs)
         context['form'] = kwargs.get('form') or context['form'].__class__(
             initial={
-                'on_trial': False,
+                'publicly_readable': False,
                 'paid_until': paid_until,
                 'organization': self.organization,
             }
