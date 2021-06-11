@@ -45,6 +45,15 @@ e.g. ``b'secret'``.
 Changelog
 ---------
 
+v1.5.0 (11 Jul 2021)
+~~~~~~~~~~~~~~~~~~~~
+
+- Test with Kiwi TCMS v10.1 or later
+- Require kiwitcms-tenants>=1.5 in order to support public read-only tenants
+- Migrate to Python 3.8
+- Internal refactoring
+
+
 v1.4.0 (03 Mar 2021)
 ~~~~~~~~~~~~~~~~~~~~
 
