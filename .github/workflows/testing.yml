@@ -1,0 +1,40 @@
+name: testing
+
+on:
+  push:
+    branches: master
+  pull_request:
+
+jobs:
+
+  postgres:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.8]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Create database
+        run: |
+          docker-compose pull db
+          docker-compose run -d -p 5432:5432 --name postgresql_database db
+
+      - name: Execute tests
+        run: |
+          pip install -r devel.txt
+
+          docker exec -i postgresql_database psql -c "CREATE EXTENSION IF NOT EXISTS btree_gin;"
+          docker exec -i postgresql_database psql -c "ALTER USER kiwi CREATEDB;"
+
+          make check
+
+      - name: Send coverage to Coveralls
+        run: |
+          coverage report -m
+          coveralls --service=github
