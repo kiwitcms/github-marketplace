@@ -27,6 +27,7 @@ jobs:
 
       - name: Execute tests
         run: |
+          pip install -U pip wheel setuptools
           pip install -r devel.txt
 
           docker exec -i postgresql_database psql -c "CREATE EXTENSION IF NOT EXISTS btree_gin;"
