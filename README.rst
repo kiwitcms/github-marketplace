@@ -1,9 +1,6 @@
 Marketplace integrations for Kiwi TCMS
 ======================================
 
-.. image:: https://travis-ci.org/kiwitcms/github-marketplace.svg?branch=master
-    :target: https://travis-ci.org/kiwitcms/github-marketplace
-
 .. image:: https://coveralls.io/repos/github/kiwitcms/github-marketplace/badge.svg?branch=master
    :target: https://coveralls.io/github/kiwitcms/github-marketplace?branch=master
 
