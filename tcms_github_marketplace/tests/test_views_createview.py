@@ -26,6 +26,16 @@ class CreateTenantTestCase(tcms_tenants.tests.LoggedInTestCase):
         # CreateTenant is supposed to jump over that
         cls.tester.user_permissions.all().delete()
 
+    @classmethod
+    def use_existing_tenant(cls):
+        cls.setup_tenant(cls.tenant)
+
+    @classmethod
+    def setup_tenant(cls, tenant):
+        super().setup_tenant(tenant)
+        tenant.organization = ""  # instead of None
+        tenant.save()
+
     def test_invalid_schema_name_shows_errors(self):
         payload = """
 {
