@@ -124,9 +124,9 @@ def organization_from_purchase(purchase):
         Helps support organizational purchases
     """
     if purchase is None:
-        return None
+        return ""
 
     if purchase.payload['marketplace_purchase']['account']['type'] == 'Organization':
         return purchase.payload['marketplace_purchase']['account']['login']
 
-    return None
+    return ""
