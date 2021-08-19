@@ -282,12 +282,14 @@ class CreateTenant(NewTenantView):
         return super().get(request, *args, **kwargs)
 
     def get_form_kwargs(self):
-        paid_until = utils.calculate_paid_until(
-            self.purchase.payload['marketplace_purchase'],
-            self.purchase.effective_date)
-
         kwargs = super().get_form_kwargs()
-        kwargs["initial"]["paid_until"] = paid_until
+
+        if self.purchase:
+            paid_until = utils.calculate_paid_until(
+                self.purchase.payload['marketplace_purchase'],
+                self.purchase.effective_date)
+            kwargs["initial"]["paid_until"] = paid_until
+
         kwargs["initial"]["organization"] = self.organization
         return kwargs
 
