@@ -594,3 +594,20 @@ class CreateTenantTestCase(tcms_tenants.tests.LoggedInTestCase):
         )
         # should still redirect to the tenant which was created in the previous step
         self.assertRedirects(response, expected_url, fetch_redirect_response=False)
+
+    def test_post_to_create_tenant_without_purchase_should_not_work(self):
+        response = self.client.post(
+            self.create_tenant_url,
+            {
+                'name': 'Second Tenant',
+                'schema_name': 't2',
+                # this is what the default form view sends
+                'owner': self.tester.pk,
+                'publicly_readable': False,
+                'paid_until': timezone.now() + timedelta(days=30),
+            }
+        )
+        self.assertRedirects(response, '/')
+
+        tenant = tcms_tenants.models.Tenant.objects.filter(schema_name='t2').first()
+        self.assertIsNone(tenant)
