@@ -3,9 +3,10 @@
 # Licensed under the GPL 3.0: https://www.gnu.org/licenses/gpl-3.0.txt
 # pylint: disable=too-many-ancestors
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.urls import reverse
+from django.utils import timezone
 from django.conf import settings
 from django.test import RequestFactory
 
@@ -35,6 +36,10 @@ class CreateTenantTestCase(tcms_tenants.tests.LoggedInTestCase):
         super().setup_tenant(tenant)
         tenant.organization = ""  # instead of None
         tenant.save()
+
+    def tearDown(self):
+        self.client.logout()
+        super().tearDown()
 
     def test_invalid_schema_name_shows_errors(self):
         payload = """
@@ -485,3 +490,107 @@ class CreateTenantTestCase(tcms_tenants.tests.LoggedInTestCase):
 
         # redirects to / on public tenant
         self.assertRedirects(response, '/')
+
+    def test_creating_tenant_after_purchase_should_work(self):
+        payload = """
+{
+   "action":"purchased",
+   "effective_date":"2021-08-20T00:00:00+00:00",
+   "sender":{
+      "login":"%s",
+      "id":3877742,
+      "avatar_url":"https://avatars2.githubusercontent.com/u/3877742?v=4",
+      "gravatar_id":"",
+      "url":"https://api.github.com/users/username",
+      "html_url":"https://github.com/username",
+      "followers_url":"https://api.github.com/users/username/followers",
+      "following_url":"https://api.github.com/users/username/following{/other_user}",
+      "gists_url":"https://api.github.com/users/username/gists{/gist_id}",
+      "starred_url":"https://api.github.com/users/username/starred{/owner}{/repo}",
+      "subscriptions_url":"https://api.github.com/users/username/subscriptions",
+      "organizations_url":"https://api.github.com/users/username/orgs",
+      "repos_url":"https://api.github.com/users/username/repos",
+      "events_url":"https://api.github.com/users/username/events{/privacy}",
+      "received_events_url":"https://api.github.com/users/username/received_events",
+      "type":"User",
+      "site_admin":true,
+      "email":"%s"
+   },
+   "marketplace_purchase":{
+      "account":{
+         "type":"User",
+         "id":18404719,
+         "login":"%s",
+         "organization_billing_email":"username@email.com"
+      },
+      "billing_cycle":"monthly",
+      "unit_count":1,
+      "on_free_trial":false,
+      "free_trial_ends_on":null,
+      "next_billing_date":null,
+      "plan":{
+         "id":435,
+         "name":"Public Tenant",
+         "description":"Basic Plan",
+         "monthly_price_in_cents":3200,
+         "yearly_price_in_cents":32000,
+         "price_model":"flat",
+         "has_free_trial":true,
+         "unit_name":"seat",
+         "bullets":[
+            "Is Basic",
+            "Because Basic "
+         ]
+      }
+   }
+}
+""".strip() % (self.tester.username, self.tester.email, self.tester.username)
+        payload = json.loads(payload)
+        signature = github.calculate_signature(
+            settings.KIWI_GITHUB_MARKETPLACE_SECRET,
+            json.dumps(payload).encode())
+
+        # first simulate marketplace_purchase hook
+        response = self.client.post(self.purchase_hook_url,
+                                    payload,
+                                    content_type='application/json',
+                                    HTTP_X_HUB_SIGNATURE=signature)
+        self.assertContains(response, 'ok')
+
+        # create the tenant
+        response = self.client.post(
+            self.create_tenant_url,
+            {
+                'name': 'Tenant, Inc.',
+                'schema_name': 'tinc',
+                # this is what the default form view sends
+                'owner': self.tester.pk,
+                'organization': '',
+                'publicly_readable': False,
+                'paid_until': timezone.now() + timedelta(days=30),
+            }
+        )
+
+        fake_request = RequestFactory().get(self.create_tenant_url)
+        fake_request.user = self.tester
+        expected_url = tcms_tenants.utils.tenant_url(fake_request, "tinc")
+        self.assertRedirects(response, expected_url, fetch_redirect_response=False)
+
+        tenant = tcms_tenants.models.Tenant.objects.get(schema_name='tinc')
+        self.assertEqual(tenant.owner, self.tester)
+
+        # Simulate POST refresh after a 504 with a possible change in values
+        response = self.client.post(
+            self.create_tenant_url,
+            {
+                'name': '2nd Tenant, Inc.',
+                'schema_name': 'tinc2',
+                # this is what the default form view sends
+                'owner': self.tester.pk,
+                'organization': '',
+                'publicly_readable': False,
+                'paid_until': timezone.now() + timedelta(days=30),
+            }
+        )
+        # should still redirect to the tenant which was created in the previous step
+        self.assertRedirects(response, expected_url, fetch_redirect_response=False)
