@@ -258,7 +258,7 @@ class CreateTenant(NewTenantView):
 
         return super(NewTenantView, self).dispatch(request, *args, **kwargs)  # pylint: disable=bad-super-call
 
-    def get(self, request, *args, **kwargs):
+    def check(self, request):
         """
             Doesn't allow user to create more than 1 tenant!
             If they have a tenant already then we redirect to it!
@@ -278,8 +278,13 @@ class CreateTenant(NewTenantView):
                 tcms_tenants_utils.tenant_url(request, tenant.schema_name)
             )
 
-        # no tenant owned by the current user then allow them to create one
-        return super().get(request, *args, **kwargs)
+        return None
+
+    def get(self, request, *args, **kwargs):
+        return self.check(request) or super().get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.check(request) or super().post(request, *args, **kwargs)
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
