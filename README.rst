@@ -42,6 +42,18 @@ e.g. ``b'secret'``.
 Changelog
 ---------
 
+v1.6.0 (29 Aug 2021)
+~~~~~~~~~~~~~~~~~~~~
+
+- Fix a bug which allowed users to create multiple tenants
+- Fix `Sentry #KIWI-TCMS-H2 <https://sentry.io/organizations/kiwitcms/issues/2584184445>`
+- Fix issues discovered by newest pylint
+- Don't allow user to create multiple tenants if they refresh the page, e.g.
+  after a 504 response. Instead redirect them to previously existing tenant
+- Migrate from Travis CI to GitHub Actions
+- Improvements of tests & CI
+
+
 v1.5.0 (11 Jul 2021)
 ~~~~~~~~~~~~~~~~~~~~
 
