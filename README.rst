@@ -42,6 +42,16 @@ e.g. ``b'secret'``.
 Changelog
 ---------
 
+v1.7.0 (30 Sep 2021)
+~~~~~~~~~~~~~~~~~~~~
+
+- Search tenants either by owner email or username. Fixes an issue where
+  some tenant owners use the billing email as their username, while
+  changing the contact email in the Kiwi TCMS database
+- Adjust for backwards incompatible changes in PyGithub 1.55
+- Use f-strings
+
+
 v1.6.0 (29 Aug 2021)
 ~~~~~~~~~~~~~~~~~~~~
 
