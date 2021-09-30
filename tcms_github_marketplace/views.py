@@ -7,6 +7,7 @@
 import json
 from datetime import datetime
 
+from django.db.models import Q
 from django.conf import settings
 from django.urls import reverse
 from django.http import HttpResponse, HttpResponseRedirect
@@ -163,7 +164,7 @@ class FastSpringHook(View):
             # recurring billing
             if event['type'] == 'subscription.charge.completed':
                 tenant = Tenant.objects.filter(
-                    owner__email=purchase.sender,
+                    Q(owner__email=purchase.sender) | Q(owner__username=purchase.sender),
                     paid_until__isnull=False,
                 ).exclude(schema_name='public').first()
                 if tenant:
