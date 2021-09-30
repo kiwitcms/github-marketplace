@@ -230,8 +230,7 @@ class Install(View):
             )
 
         raise NotImplementedError(
-            'Unsupported GitHub Marketplace action: "%s"' %
-            purchase.action)
+            f'Unsupported GitHub Marketplace action: "{purchase.action}"')
 
 
 @method_decorator(login_required, name='dispatch')

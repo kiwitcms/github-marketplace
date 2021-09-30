@@ -1,4 +1,4 @@
-# Copyright (c) 2019-2020 Alexander Todorov <atodorov@MrSenko.com>
+# Copyright (c) 2019-2021 Alexander Todorov <atodorov@MrSenko.com>
 
 # Licensed under the GPL 3.0: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -29,6 +29,4 @@ class Purchase(models.Model):
         ]
 
     def __str__(self):
-        return "Purchase %s from %s on %s" % (self.action,
-                                              self.sender,
-                                              self.received_on.isoformat())
+        return f"Purchase {self.action} from {self.sender} on {self.received_on.isoformat()}"
