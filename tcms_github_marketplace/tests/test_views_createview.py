@@ -132,7 +132,7 @@ class CreateTenantTestCase(tcms_tenants.tests.LoggedInTestCase):
         # requires login
         self.assertRedirects(
             response,
-            reverse('tcms-login') + '?next=%s' % self.create_tenant_url)
+            reverse('tcms-login') + f'?next={self.create_tenant_url}')
 
     def test_visit_without_purchase(self):
         """
@@ -394,25 +394,22 @@ class CreateTenantTestCase(tcms_tenants.tests.LoggedInTestCase):
 
         self.assertContains(response, 'New tenant')
         self.assertContains(response, 'Private Tenant Warning')
-        self.assertContains(response, 'action="%s"' % self.create_tenant_url)
+        self.assertContains(response, f'action="{self.create_tenant_url}"')
         self.assertContains(response, 'Paid until')
         self.assertContains(response, 'Validation pattern: ^[a-z0-9]{1,63}$')
         self.assertContains(
             response,
             '<input type="hidden" name="paid_until"'
-            ' value="%s" id="id_paid_until">' %
-            expected_paid_until,
+            f' value="{expected_paid_until}" id="id_paid_until">',
             html=True)
         self.assertContains(
             response,
             'class="bootstrap-switch" name="publicly_readable" type="checkbox"')
         self.assertContains(response, 'Owner')
-        self.assertContains(response, "<label>%s</label>" %
-                            self.tester.username)
+        self.assertContains(response, f"<label>{self.tester.username}</label>")
 
         self.assertContains(response, 'Organization')
-        self.assertContains(response, "<label>%s</label>" %
-                            self.tester.username)
+        self.assertContains(response, f"<label>{self.tester.username}</label>")
 
     def test_visit_after_free_purchase(self):
         """

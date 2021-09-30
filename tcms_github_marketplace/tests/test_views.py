@@ -473,8 +473,7 @@ class CancelPlanTestCase(InstallTestCase):
             provider='github',
             uid='12345',
             extra_data={"access_token": "TEST-ME", "token_type": "bearer"})
-        cls.gh_revoke_url = '/applications/%s/tokens/TEST-ME' % \
-                            settings.SOCIAL_AUTH_GITHUB_KEY
+        cls.gh_revoke_url = f'/applications/{settings.SOCIAL_AUTH_GITHUB_KEY}/tokens/TEST-ME'
 
     def test_purchased_free_plan(self):
         # override so we don't execute it twice inside this class
