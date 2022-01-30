@@ -8,7 +8,8 @@ test:
 	    pip install -U -r $(KIWI_INCLUDE_PATH)/requirements/base.txt; \
 	fi
 
-	PYTHONPATH=.:$(KIWI_INCLUDE_PATH) EXECUTOR=standard PYTHONWARNINGS=d AUTO_CREATE_SCHEMA='' coverage run \
+	PYTHONPATH=.:$(KIWI_INCLUDE_PATH) EXECUTOR=standard PYTHONWARNINGS=d AUTO_CREATE_SCHEMA='' \
+	KIWI_TENANTS_DOMAIN="example.com" coverage run \
 	    --include "tcms_github_marketplace/*.py" \
 	    --omit "tcms_github_marketplace/tests/*.py" \
 	    ./manage.py test -v2 tcms_github_marketplace.tests
