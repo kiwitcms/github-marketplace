@@ -24,32 +24,31 @@ class TestQuayIOAccount(unittest.TestCase):
         ]
     )
     def test_email_conversion_to_account_name(self, email, expected):
-        account = docker.QuayIOAccount(email)
-        self.assertEqual(account.name, expected)
+        with docker.QuayIOAccount(email) as account:
+            self.assertEqual(account.name, expected)
 
     def test_username(self):
-        account = docker.QuayIOAccount("bob@example.com")
-        self.assertEqual(account.username, "kiwitcms+bob_example_com")
+        with docker.QuayIOAccount("bob@example.com") as account:
+            self.assertEqual(account.username, "kiwitcms+bob_example_com")
 
     @unittest.skipUnless(
         os.getenv("QUAY_IO_TOKEN"),
         "QUAY_IO_TOKEN is not defined",
     )
     def test_create_account(self):
-        try:
-            now = timezone.now().strftime("%Y%m%d%H%M%S")
-            account = docker.QuayIOAccount(f"testing-{now}@example.com")
+        now = timezone.now().strftime("%Y%m%d%H%M%S")
+        with docker.QuayIOAccount(f"testing-{now}@example.com") as account:
+            try:
+                response = account.create()
+                self.assertIn("name", response)
+                self.assertIn("token", response)
+                self.assertEqual(response["name"], f"kiwitcms+{account.name}")
 
-            response = account.create()
-            self.assertIn("name", response)
-            self.assertIn("token", response)
-            self.assertEqual(response["name"], f"kiwitcms+{account.name}")
-
-            # try a second time
-            response = account.create()
-            self.assertIn("Existing robot with name", response["message"])
-        finally:
-            account.delete()
+                # try a second time
+                response = account.create()
+                self.assertIn("Existing robot with name", response["message"])
+            finally:
+                account.delete()
 
     @unittest.skipUnless(
         os.getenv("QUAY_IO_TOKEN"),
@@ -57,30 +56,32 @@ class TestQuayIOAccount(unittest.TestCase):
     )
     def test_delete_account(self):
         now = timezone.now().strftime("%Y%m%d%H%M%S")
-        account = docker.QuayIOAccount(f"testing-{now}@example.del")
+        with docker.QuayIOAccount(f"testing-{now}@example.del") as account:
+            account.create()
+            time.sleep(1)
 
-        response = account.delete()
-        self.assertEqual(response, "")
+            response = account.delete()
+            self.assertEqual(response, "")
 
-        # try a second time
-        response = account.delete()
-        response = json.loads(response)
-        self.assertIn("Could not find robot with username", response["message"])
+            # try a second time
+            response = account.delete()
+            response = json.loads(response)
+            self.assertIn("Could not find robot with username", response["message"])
 
     @unittest.skipUnless(
         os.getenv("QUAY_IO_TOKEN"),
         "QUAY_IO_TOKEN is not defined",
     )
     def test_allow_read_access(self):
-        try:
-            now = timezone.now().strftime("%Y%m%d%H%M%S")
-            account = docker.QuayIOAccount(f"testing-{now}@example.com")
-            account.create()
+        now = timezone.now().strftime("%Y%m%d%H%M%S")
+        with docker.QuayIOAccount(f"testing-{now}@example.com") as account:
+            try:
+                account.create()
 
-            for _ in range(2):
-                response = account.allow_read_access("kiwi")
-                self.assertEqual(response["role"], "read")
-                self.assertEqual(response["name"], account.username)
-                self.assertEqual(response["is_robot"], True)
-        finally:
-            account.delete()
+                for _ in range(2):
+                    response = account.allow_read_access("kiwi")
+                    self.assertEqual(response["role"], "read")
+                    self.assertEqual(response["name"], account.username)
+                    self.assertEqual(response["is_robot"], True)
+            finally:
+                account.delete()
