@@ -13,6 +13,13 @@ class QuayIOAccount:
         self._api = None
         self._email = email
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        if self._api:
+            self._api.session.session.close()
+
     @property
     def api(self):
         """
