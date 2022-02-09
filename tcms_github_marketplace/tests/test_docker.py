@@ -27,9 +27,29 @@ class TestQuayIOAccount(unittest.TestCase):
         with docker.QuayIOAccount(email) as account:
             self.assertEqual(account.name, expected)
 
+    @unittest.skipUnless(
+        os.getenv("QUAY_IO_TOKEN"),
+        "QUAY_IO_TOKEN is not defined",
+    )
     def test_username(self):
         with docker.QuayIOAccount("bob@example.com") as account:
-            self.assertEqual(account.username, "kiwitcms+bob_example_com")
+            try:
+                account.create()
+                self.assertEqual(account.username, "kiwitcms+bob_example_com")
+            finally:
+                account.delete()
+
+    @unittest.skipUnless(
+        os.getenv("QUAY_IO_TOKEN"),
+        "QUAY_IO_TOKEN is not defined",
+    )
+    def test_token(self):
+        with docker.QuayIOAccount("token@example.io") as account:
+            try:
+                account.create()
+                self.assertNotEqual(account.token, "")
+            finally:
+                account.delete()
 
     @unittest.skipUnless(
         os.getenv("QUAY_IO_TOKEN"),
@@ -83,5 +103,31 @@ class TestQuayIOAccount(unittest.TestCase):
                     self.assertEqual(response["role"], "read")
                     self.assertEqual(response["name"], account.username)
                     self.assertEqual(response["is_robot"], True)
+            finally:
+                account.delete()
+
+    @unittest.skipUnless(
+        os.getenv("QUAY_IO_TOKEN"),
+        "QUAY_IO_TOKEN is not defined",
+    )
+    def test_regenerate_token(self):
+        now = timezone.now().strftime("%Y%m%d%H%M%S")
+        with docker.QuayIOAccount(f"testing-{now}@example.token") as account:
+            try:
+                account.create()
+                first_token = account.token
+
+                response = account.regenerate_token()
+                self.assertNotEqual(account.token, first_token)
+                self.assertNotEqual(response["token"], first_token)
+
+                self.assertEqual(
+                    response["token"],
+                    account._token,  # pylint: disable=protected-access
+                )
+                self.assertEqual(
+                    response["name"],
+                    account._username,  # pylint: disable=protected-access
+                )
             finally:
                 account.delete()
