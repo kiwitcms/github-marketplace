@@ -38,6 +38,9 @@ jobs:
           docker-compose run -d -p 5432:5432 --name postgresql_database db
 
       - name: Execute tests
+        env:
+          QUAY_IO_TOKEN: ${{ secrets.QUAY_IO_TOKEN }}
+
         run: |
           pip install -U pip wheel setuptools
           pip install -r devel.txt
