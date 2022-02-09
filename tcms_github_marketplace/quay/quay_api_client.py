@@ -68,3 +68,8 @@ class QuayApiClient:
         response = self.session.put(endpoint, json={"role": role})
 
         return response.json()
+
+    def regenerate_robot_token(self, robot_shortname, orgname):
+        endpoint = f"organization/{orgname}/robots/{robot_shortname}/regenerate"
+        response = self.session.post(endpoint)
+        return response.json()

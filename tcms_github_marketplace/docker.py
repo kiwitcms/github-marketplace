@@ -12,6 +12,8 @@ class QuayIOAccount:
     def __init__(self, email):
         self._api = None
         self._email = email
+        self._token = None
+        self._username = None
 
     def __enter__(self):
         return self
@@ -44,12 +46,24 @@ class QuayIOAccount:
 
     @property
     def username(self):
-        return f"{self.organization}+{self.name}"
+        if not self._username:
+            self._update_token_and_username()
+        return self._username
 
     @property
     def token(self):
-        # self.api.get_robot_from_organization(self.name, self.organization)
-        raise NotImplementedError
+        if not self._token:
+            self._update_token_and_username()
+        return self._token
+
+    def _update_token_and_username(self, response=None):
+        if not response:
+            response = self.api.get_robot_from_organization(
+                self.name, self.organization
+            )
+
+        self._token = response["token"]
+        self._username = response["name"]
 
     def create(self):
         """
@@ -70,4 +84,6 @@ class QuayIOAccount:
         return self.api.update_user_permissions(self.username, repository, role="read")
 
     def regenerate_token(self):
-        raise NotImplementedError
+        response = self.api.regenerate_robot_token(self.name, self.organization)
+        self._update_token_and_username(response)
+        return response
