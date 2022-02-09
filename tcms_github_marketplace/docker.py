@@ -2,10 +2,26 @@
 
 # Licensed under the GPL 3.0: https://www.gnu.org/licenses/gpl-3.0.txt
 
+from django.conf import settings
+from .quay import QuayApiClient
+
 
 class QuayIOAccount:
+    organization = "kiwitcms"
+
     def __init__(self, email):
+        self._api = None
         self._email = email
+
+    @property
+    def api(self):
+        """
+        Initialize API client only when needed
+        """
+        if not self._api:
+            self._api = QuayApiClient(token=settings.QUAY_IO_TOKEN)
+
+        return self._api
 
     @property
     def name(self):
@@ -20,14 +36,31 @@ class QuayIOAccount:
         )
 
     @property
+    def username(self):
+        return f"{self.organization}+{self.name}"
+
+    @property
     def token(self):
+        # self.api.get_robot_from_organization(self.name, self.organization)
         raise NotImplementedError
 
     def create(self):
-        raise NotImplementedError
+        """
+        Will create a robot account if it doesn't exist. Will not crash if a
+        robot account with this name already exists.
+        """
+        return self.api.create_robot_in_organization(self.name, self.organization)
 
-    def assign_permissions(self):
-        raise NotImplementedError
+    def delete(self):
+        """
+        Note: if response is not empty string then it's a JSON string containing error
+        message. Currently we don't handle this!
+        """
+        return self.api.delete_robot_from_organization(self.name, self.organization)
+
+    def allow_read_access(self, repo_name):
+        repository = f"{self.organization}/{repo_name}"
+        return self.api.update_user_permissions(self.username, repository, role="read")
 
     def regenerate_token(self):
         raise NotImplementedError
