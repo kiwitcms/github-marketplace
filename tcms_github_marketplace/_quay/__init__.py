@@ -1,6 +1,1 @@
-"""pubtools_quay."""
-
-# Ensure all hookspecs are declared.
-from . import hooks
-
-__all__ = ["hooks"]
+from .quay_api_client import QuayApiClient  # noqa: F401

@@ -1,13 +1,15 @@
 import requests
 from requests.adapters import HTTPAdapter
-from requests.packages.urllib3.util.retry import Retry
+from urllib3.util import Retry
 
 
 # pylint: disable=bad-option-value,useless-object-inheritance
 class QuaySession(object):
     """Helper class to support Quay requests and authentication."""
 
-    def __init__(self, hostname=None, retries=3, backoff_factor=2, verify=False, api="docker"):
+    def __init__(  # pylint: disable=too-many-arguments
+        self, hostname=None, retries=3, backoff_factor=2, verify=False, api="docker"
+    ):
         """
         Initialize.
 
@@ -24,7 +26,7 @@ class QuaySession(object):
                 Which API queries to construct. Supported values: 'docker', 'quay'
         """
         if api not in ("docker", "quay"):
-            raise ValueError("Unknown API type: '{0}'".format(api))
+            raise ValueError(f"Unknown API type: '{api}'")
         self.api = api
 
         self.session = requests.Session()
@@ -132,8 +134,8 @@ class QuaySession(object):
 
         if "http://" not in self.hostname and "https://" not in self.hostname:
             return schema.format("https://", self.hostname.rstrip("/"), endpoint)
-        else:
-            return schema.format("", self.hostname.rstrip("/"), endpoint)
+
+        return schema.format("", self.hostname.rstrip("/"), endpoint)
 
     def set_auth_token(self, token):
         """
@@ -143,4 +145,4 @@ class QuaySession(object):
             token (str):
                 Bearer token.
         """
-        self.session.headers["Authorization"] = "Bearer {0}".format(token)
+        self.session.headers["Authorization"] = f"Bearer {token}"
