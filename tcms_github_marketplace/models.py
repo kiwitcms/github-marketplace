@@ -8,9 +8,10 @@ from django.contrib.postgres.indexes import GinIndex
 
 class Purchase(models.Model):
     """
-        Holds information about GitHub ``marketplace_purchase`` events:
-        https://developer.github.com/marketplace/integrating-with-the-github-marketplace-api/github-marketplace-webhook-events/
+    Holds information about GitHub ``marketplace_purchase`` events:
+    https://developer.github.com/marketplace/integrating-with-the-github-marketplace-api/github-marketplace-webhook-events/
     """
+
     vendor = models.CharField(max_length=16, db_index=True, blank=True, null=True)
     action = models.CharField(max_length=64, db_index=True)
     sender = models.EmailField(db_index=True)
@@ -23,9 +24,9 @@ class Purchase(models.Model):
 
     class Meta:
         indexes = [
-            GinIndex(fastupdate=False,
-                     fields=['payload'],
-                     name='tcms_github_payload_gin'),
+            GinIndex(
+                fastupdate=False, fields=["payload"], name="tcms_github_payload_gin"
+            ),
         ]
 
     def __str__(self):

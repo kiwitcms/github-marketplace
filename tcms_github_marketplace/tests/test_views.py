@@ -27,10 +27,11 @@ class PurchaseHookTestCase(tcms_tenants.tests.LoggedInTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.url = reverse('github_marketplace_purchase_hook')
+        cls.url = reverse("github_marketplace_purchase_hook")
 
     def test_without_signature_header(self):
-        payload = json.loads("""
+        payload = json.loads(
+            """
 {
    "action":"purchased",
    "effective_date":"2017-10-25T00:00:00+00:00",
@@ -82,9 +83,9 @@ class PurchaseHookTestCase(tcms_tenants.tests.LoggedInTestCase):
       }
    }
 }
-""".strip())
-        response = self.client.post(
-            self.url, payload, content_type='application/json')
+""".strip()
+        )
+        response = self.client.post(self.url, payload, content_type="application/json")
 
         # missing signature should cause failure
         self.assertIsInstance(response, HttpResponseForbidden)
@@ -146,15 +147,18 @@ class PurchaseHookTestCase(tcms_tenants.tests.LoggedInTestCase):
 """.strip()
         signature = github.calculate_signature(
             settings.KIWI_GITHUB_MARKETPLACE_SECRET,
-            json.dumps(json.loads(payload)).encode())
+            json.dumps(json.loads(payload)).encode(),
+        )
 
         initial_purchase_count = Purchase.objects.count()
 
-        response = self.client.post(self.url,
-                                    json.loads(payload),
-                                    content_type='application/json',
-                                    HTTP_X_HUB_SIGNATURE=signature)
-        self.assertContains(response, 'ok')
+        response = self.client.post(
+            self.url,
+            json.loads(payload),
+            content_type="application/json",
+            HTTP_X_HUB_SIGNATURE=signature,
+        )
+        self.assertContains(response, "ok")
 
         # the hook handler does nothing but save to DB
         self.assertEqual(initial_purchase_count + 1, Purchase.objects.count())
@@ -189,28 +193,31 @@ class PurchaseHookTestCase(tcms_tenants.tests.LoggedInTestCase):
 """.strip()
         signature = github.calculate_signature(
             settings.KIWI_GITHUB_MARKETPLACE_SECRET,
-            json.dumps(json.loads(payload)).encode())
-        response = self.client.post(self.url,
-                                    json.loads(payload),
-                                    content_type='application/json',
-                                    HTTP_X_HUB_SIGNATURE=signature,
-                                    HTTP_X_GITHUB_EVENT='ping')
+            json.dumps(json.loads(payload)).encode(),
+        )
+        response = self.client.post(
+            self.url,
+            json.loads(payload),
+            content_type="application/json",
+            HTTP_X_HUB_SIGNATURE=signature,
+            HTTP_X_GITHUB_EVENT="ping",
+        )
 
         # initial ping responds with a pong
-        self.assertContains(response, 'pong')
+        self.assertContains(response, "pong")
 
     def test_recurring_billing_hook(self):
         """
-            According to GitHub recurring billing events do not redirect to
-            Install URL but only send webhook payloads so we must
-            extend tenant.paid_until while handling the hook event
+        According to GitHub recurring billing events do not redirect to
+        Install URL but only send webhook payloads so we must
+        extend tenant.paid_until while handling the hook event
         """
         # tenant has expired
         # b/c we will update only tenants which
         # are currently/have been previously paid for !!!
         self.tenant.paid_until = datetime(2019, 3, 30, 23, 59, 59, 0)
         # just b/c the payload uses an organization
-        self.tenant.organization = 'kiwitcms'
+        self.tenant.organization = "kiwitcms"
         self.tenant.save()
 
         payload = """
@@ -265,30 +272,35 @@ class PurchaseHookTestCase(tcms_tenants.tests.LoggedInTestCase):
       }
    }
 }
-""".strip() % (self.tenant.owner.username, self.tenant.owner.email)
+""".strip() % (
+            self.tenant.owner.username,
+            self.tenant.owner.email,
+        )
         signature = github.calculate_signature(
             settings.KIWI_GITHUB_MARKETPLACE_SECRET,
-            json.dumps(json.loads(payload)).encode())
+            json.dumps(json.loads(payload)).encode(),
+        )
 
         # send marketplace_purchase hook
-        response = self.client.post(self.url,
-                                    json.loads(payload),
-                                    content_type='application/json',
-                                    HTTP_X_HUB_SIGNATURE=signature)
-        self.assertContains(response, 'ok')
+        response = self.client.post(
+            self.url,
+            json.loads(payload),
+            content_type="application/json",
+            HTTP_X_HUB_SIGNATURE=signature,
+        )
+        self.assertContains(response, "ok")
 
         # paid_until date was increased minimum 30 days
         self.tenant.refresh_from_db()
-        self.assertGreater(self.tenant.paid_until,
-                           datetime(2019, 5, 1, 23, 59, 59, 0))
+        self.assertGreater(self.tenant.paid_until, datetime(2019, 5, 1, 23, 59, 59, 0))
 
 
 class InstallTestCase(tcms_tenants.tests.LoggedInTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.purchase_hook_url = reverse('github_marketplace_purchase_hook')
-        cls.install_url = reverse('github_marketplace_install')
+        cls.purchase_hook_url = reverse("github_marketplace_purchase_hook")
+        cls.install_url = reverse("github_marketplace_install")
 
     def test_purchased_free_plan(self):
         payload = """
@@ -343,52 +355,60 @@ class InstallTestCase(tcms_tenants.tests.LoggedInTestCase):
       }
    }
 }
-""".strip() % (self.tester.username, self.tester.email, self.tester.username)
+""".strip() % (
+            self.tester.username,
+            self.tester.email,
+            self.tester.username,
+        )
         signature = github.calculate_signature(
             settings.KIWI_GITHUB_MARKETPLACE_SECRET,
-            json.dumps(json.loads(payload)).encode())
+            json.dumps(json.loads(payload)).encode(),
+        )
 
         # first simulate marketplace_purchase hook
-        response = self.client.post(self.purchase_hook_url,
-                                    json.loads(payload),
-                                    content_type='application/json',
-                                    HTTP_X_HUB_SIGNATURE=signature)
-        self.assertContains(response, 'ok')
+        response = self.client.post(
+            self.purchase_hook_url,
+            json.loads(payload),
+            content_type="application/json",
+            HTTP_X_HUB_SIGNATURE=signature,
+        )
+        self.assertContains(response, "ok")
 
         # then simulate redirection to Installation URL
         response = self.client.get(self.install_url)
 
         # purchases for free plan redirect to / on public tenant
-        self.assertRedirects(response, '/')
+        self.assertRedirects(response, "/")
 
 
 class OtherInstallTestCase(tcms_tenants.tests.LoggedInTestCase):
     """
-        InstallTestCase is kind of special b/c it provides
-        a method which simulates a FREE plan install and is also
-        used in inherited classes.
+    InstallTestCase is kind of special b/c it provides
+    a method which simulates a FREE plan install and is also
+    used in inherited classes.
 
-        This class OTOH contains the rest of the test scenarios for
-        the installation view.
+    This class OTOH contains the rest of the test scenarios for
+    the installation view.
     """
+
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.install_url = reverse('github_marketplace_install')
-        cls.purchase_hook_url = reverse('github_marketplace_purchase_hook')
+        cls.install_url = reverse("github_marketplace_install")
+        cls.purchase_hook_url = reverse("github_marketplace_purchase_hook")
 
     def test_visit_without_purchase(self):
         """
-            For when users manage to visit the installation URL
-            without having purchased plans from Marketplace first.
-            See KIWI-TCMS-7D:
-            https://sentry.io/organizations/open-technologies-bulgaria-ltd/issues/1011970996/
+        For when users manage to visit the installation URL
+        without having purchased plans from Marketplace first.
+        See KIWI-TCMS-7D:
+        https://sentry.io/organizations/open-technologies-bulgaria-ltd/issues/1011970996/
         """
         # visit Installation URL
         response = self.client.get(self.install_url)
 
         # redirect to / on public tenant
-        self.assertRedirects(response, '/')
+        self.assertRedirects(response, "/")
 
     def test_purchased_paid_plan(self):
         payload = """
@@ -443,24 +463,30 @@ class OtherInstallTestCase(tcms_tenants.tests.LoggedInTestCase):
       }
    }
 }
-""".strip() % (self.tester.username, self.tester.email, self.tester.username)
+""".strip() % (
+            self.tester.username,
+            self.tester.email,
+            self.tester.username,
+        )
         signature = github.calculate_signature(
             settings.KIWI_GITHUB_MARKETPLACE_SECRET,
-            json.dumps(json.loads(payload)).encode())
+            json.dumps(json.loads(payload)).encode(),
+        )
 
         # first simulate marketplace_purchase hook
-        response = self.client.post(self.purchase_hook_url,
-                                    json.loads(payload),
-                                    content_type='application/json',
-                                    HTTP_X_HUB_SIGNATURE=signature)
-        self.assertContains(response, 'ok')
+        response = self.client.post(
+            self.purchase_hook_url,
+            json.loads(payload),
+            content_type="application/json",
+            HTTP_X_HUB_SIGNATURE=signature,
+        )
+        self.assertContains(response, "ok")
 
         # then simulate redirection to Installation URL
         response = self.client.get(self.install_url)
 
         # purchases for paid plans redirect to Create Tenant page
-        self.assertRedirects(response, reverse(
-            'github_marketplace_create_tenant'))
+        self.assertRedirects(response, reverse("github_marketplace_create_tenant"))
 
 
 class CancelPlanTestCase(InstallTestCase):
@@ -470,16 +496,19 @@ class CancelPlanTestCase(InstallTestCase):
         # simulate existing GitHub login
         UserSocialAuth.objects.create(
             user=cls.tester,
-            provider='github',
-            uid='12345',
-            extra_data={"access_token": "TEST-ME", "token_type": "bearer"})
-        cls.gh_revoke_url = f'/applications/{settings.SOCIAL_AUTH_GITHUB_KEY}/tokens/TEST-ME'
+            provider="github",
+            uid="12345",
+            extra_data={"access_token": "TEST-ME", "token_type": "bearer"},
+        )
+        cls.gh_revoke_url = (
+            f"/applications/{settings.SOCIAL_AUTH_GITHUB_KEY}/tokens/TEST-ME"
+        )
 
     def test_purchased_free_plan(self):
         # override so we don't execute it twice inside this class
         pass
 
-    @unittest.skip('Skipt this scenario temporarily')
+    @unittest.skip("Skipt this scenario temporarily")
     def test_cancelled_plan(self):
         # the user must have purchased a plan before
         super().test_purchased_free_plan()
@@ -541,21 +570,29 @@ class CancelPlanTestCase(InstallTestCase):
     }
   }
 }
-""".strip() % (self.tester.username, self.tester.email, self.tester.username)
+""".strip() % (
+            self.tester.username,
+            self.tester.email,
+            self.tester.username,
+        )
         signature = github.calculate_signature(
             settings.KIWI_GITHUB_MARKETPLACE_SECRET,
-            json.dumps(json.loads(payload)).encode())
+            json.dumps(json.loads(payload)).encode(),
+        )
 
-        with patch.object(utils.Requester,
-                          'requestJsonAndCheck',
-                          return_value=({}, None)) as gh_api:
-            response = self.client.post(self.purchase_hook_url,
-                                        json.loads(payload),
-                                        content_type='application/json',
-                                        HTTP_X_HUB_SIGNATURE=signature)
-            self.assertContains(response, 'cancelled')
-            gh_api.assert_called_with('DELETE', self.gh_revoke_url)
+        with patch.object(
+            utils.Requester, "requestJsonAndCheck", return_value=({}, None)
+        ) as gh_api:
+            response = self.client.post(
+                self.purchase_hook_url,
+                json.loads(payload),
+                content_type="application/json",
+                HTTP_X_HUB_SIGNATURE=signature,
+            )
+            self.assertContains(response, "cancelled")
+            gh_api.assert_called_with("DELETE", self.gh_revoke_url)
 
         # verify user is not present anymore
-        self.assertFalse(get_user_model().objects.filter(
-            username=self.tester.username).exists())
+        self.assertFalse(
+            get_user_model().objects.filter(username=self.tester.username).exists()
+        )
