@@ -1,5 +1,6 @@
 -r requirements.txt
 
+black
 factory_boy
 flake8
 coveralls
