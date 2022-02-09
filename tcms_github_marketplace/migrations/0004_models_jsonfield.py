@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('tcms_github_marketplace', '0003_sender_email_field'),
+        ("tcms_github_marketplace", "0003_sender_email_field"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='purchase',
-            name='payload',
+            model_name="purchase",
+            name="payload",
             field=models.JSONField(),
         ),
     ]

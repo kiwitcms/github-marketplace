@@ -7,11 +7,21 @@ from tcms_github_marketplace import views
 
 
 urlpatterns = [
-    re_path(r'^purchase_hook/$', views.PurchaseHook.as_view(),
-            name='github_marketplace_purchase_hook'),
-    re_path(r'^install/$', views.Install.as_view(), name='github_marketplace_install'),
-    re_path(r'^create/tenant/$', views.CreateTenant.as_view(),
-            name='github_marketplace_create_tenant'),
-    re_path(r'^plans/$', views.ViewSubscriptionPlan.as_view(), name='github_marketplace_plans'),
-    re_path(r'^fastspring/$', views.FastSpringHook.as_view(), name='fastspring'),
+    re_path(
+        r"^purchase_hook/$",
+        views.PurchaseHook.as_view(),
+        name="github_marketplace_purchase_hook",
+    ),
+    re_path(r"^install/$", views.Install.as_view(), name="github_marketplace_install"),
+    re_path(
+        r"^create/tenant/$",
+        views.CreateTenant.as_view(),
+        name="github_marketplace_create_tenant",
+    ),
+    re_path(
+        r"^plans/$",
+        views.ViewSubscriptionPlan.as_view(),
+        name="github_marketplace_plans",
+    ),
+    re_path(r"^fastspring/$", views.FastSpringHook.as_view(), name="fastspring"),
 ]

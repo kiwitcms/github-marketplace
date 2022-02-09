@@ -1,6 +1,6 @@
 # pylint: disable=wildcard-import, unused-wildcard-import
 #
-# Copyright (c) 2019-2021 Alexander Todorov <atodorov@MrSenko.com>
+# Copyright (c) 2019-2022 Alexander Todorov <atodorov@MrSenko.com>
 #
 # Licensed under the GPL 3.0: https://www.gnu.org/licenses/gpl-3.0.txt
 # pylint: disable=invalid-name, protected-access, wrong-import-position
@@ -15,7 +15,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 home_dir = os.path.expanduser("~")
 removed_paths = []
 for path in sys.path:
-    if path.startswith(home_dir) and path.find('site-packages') == -1:
+    if path.startswith(home_dir) and path.find("site-packages") == -1:
         removed_paths.append(path)
 
 for path in removed_paths:
@@ -30,9 +30,10 @@ import pkg_resources
 # IT NEEDS TO BE BEFORE the wildcard import below !!!
 # .egg-info/ directory will mess up with this
 dist = pkg_resources.Distribution(__file__)
-entry_point = pkg_resources.EntryPoint.parse('github/marketplace = tcms_github_marketplace',
-                                             dist=dist)
-dist._ep_map = {'kiwitcms.plugins': {'kiwitcms_tenants_devel': entry_point}}
+entry_point = pkg_resources.EntryPoint.parse(
+    "github/marketplace = tcms_github_marketplace", dist=dist
+)
+dist._ep_map = {"kiwitcms.plugins": {"kiwitcms_tenants_devel": entry_point}}
 pkg_resources.working_set.add(dist)
 
 from tcms.settings.product import *
@@ -46,26 +47,30 @@ if os.path.exists(os.path.join(BASE_DIR, "kiwitcms_github_marketplace.egg-info")
 # these are enabled only for testing purposes
 DEBUG = True
 TEMPLATE_DEBUG = True
-LOCALE_PATHS = [os.path.join(BASE_DIR, 'tcms_github_marketplace', 'locale')]
+LOCALE_PATHS = [os.path.join(BASE_DIR, "tcms_github_marketplace", "locale")]
 
-DATABASES['default'].update({  # pylint: disable=objects-update-used
-    'NAME': 'test_project',
-    'USER': 'kiwi',
-    'PASSWORD': 'kiwi',
-    'HOST': 'localhost',
-    'OPTIONS': {},
-})
-
-
-INSTALLED_APPS.extend([
-    'social_django',
-])
+DATABASES["default"].update(  # pylint: disable=objects-update-used
+    {
+        "NAME": "test_project",
+        "USER": "kiwi",
+        "PASSWORD": "kiwi",
+        "HOST": "localhost",
+        "OPTIONS": {},
+    }
+)
 
 
-SOCIAL_AUTH_URL_NAMESPACE = 'social'
-SOCIAL_AUTH_GITHUB_KEY = 'oauth_client_id'
-SOCIAL_AUTH_GITHUB_SECRET = 'oauth_client_secret'
+INSTALLED_APPS.extend(
+    [
+        "social_django",
+    ]
+)
+
+
+SOCIAL_AUTH_URL_NAMESPACE = "social"
+SOCIAL_AUTH_GITHUB_KEY = "oauth_client_id"
+SOCIAL_AUTH_GITHUB_SECRET = "oauth_client_secret"
 
 # application specific configuration
 # NOTE: must be bytes, not string
-KIWI_GITHUB_MARKETPLACE_SECRET = b'S3cr3t'
+KIWI_GITHUB_MARKETPLACE_SECRET = b"S3cr3t"
