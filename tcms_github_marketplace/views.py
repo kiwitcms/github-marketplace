@@ -71,10 +71,7 @@ class PurchaseHook(View):
 
         # plan cancellations must be handled here
         if purchase.action == "cancelled":
-            return HttpResponse(
-                "Don't delete user on GitHub cancellation", content_type="text/plain"
-            )
-            # return utils.cancel_plan(purchase)
+            return utils.cancel_plan(purchase)
 
         if purchase.action == "purchased":
             # recurring billing events don't redirect to Install URL
