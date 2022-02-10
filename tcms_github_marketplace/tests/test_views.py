@@ -1,9 +1,8 @@
-# Copyright (c) 2019-2021 Alexander Todorov <atodorov@MrSenko.com>
+# Copyright (c) 2019-2022 Alexander Todorov <atodorov@MrSenko.com>
 
 # Licensed under the GPL 3.0: https://www.gnu.org/licenses/gpl-3.0.txt
 # pylint: disable=too-many-ancestors
 import json
-import unittest
 from http import HTTPStatus
 from unittest.mock import patch
 from datetime import datetime
@@ -508,7 +507,6 @@ class CancelPlanTestCase(InstallTestCase):
         # override so we don't execute it twice inside this class
         pass
 
-    @unittest.skip("Skipt this scenario temporarily")
     def test_cancelled_plan(self):
         # the user must have purchased a plan before
         super().test_purchased_free_plan()
