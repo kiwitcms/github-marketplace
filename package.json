@@ -9,11 +9,7 @@
   "eslintConfig": {
     "overrides": [
       {
-        "files": ["*.js"],
-        "rules": {
-          "no-undef": "off",
-          "node/no-callback-literal": "off"
-        }
+        "files": ["*.js"]
       }
     ]
   }

@@ -16,9 +16,9 @@ $(document).ready(function () {
 
   // toggle docker password
   $('#show-docker-password').click(function() {
-    const type = $('#docker_password').attr('type')
+    var input_type = $('#docker_password').attr('type')
 
-    if (type === 'password') {
+    if (input_type === 'password') {
         $('#docker_password').attr('type', 'text')
     } else {
         $('#docker_password').attr('type', 'password')

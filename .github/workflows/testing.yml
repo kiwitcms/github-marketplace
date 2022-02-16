@@ -25,7 +25,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Run eslint
         run: |
-          npm install --dev
+          npm install --include=dev
 
           ./node_modules/.bin/eslint . -c package.json
 
