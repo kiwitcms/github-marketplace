@@ -29,6 +29,8 @@ class ViewSubscriptionTestCase(tcms_tenants.tests.LoggedInTestCase):
             "You own the following tenants",
             "Transaction history",
             "Docker credentials",
+            "Username",
+            "Password",
         ):
             self.assertContains(response, _(text))
 
