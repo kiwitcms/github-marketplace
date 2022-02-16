@@ -1,4 +1,20 @@
 $(document).ready(function () {
+    // collapse all child rows
+    $('.tree-list-view-pf').find(".list-group-item-container").addClass('hidden');
+
+    // click the list-view heading then expand a row
+    $('.list-group-item-header').click(function (event) {
+      if(!$(event.target).is('button, a, input, .fa-ellipsis-v')) {
+        var $this = $(this);
+        $this.find('.fa-angle-right').toggleClass('fa-angle-down');
+        var $itemContainer = $this.siblings('.list-group-item-container');
+        if ($itemContainer.children().length) {
+          $itemContainer.toggleClass('hidden');
+        }
+      }
+    });
+
+  // toggle docker password
   $('#show-docker-password').click(function() {
     const type = $('#docker_password').attr('type')
 
