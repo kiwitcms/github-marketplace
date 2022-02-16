@@ -2,11 +2,15 @@
 
 # Licensed under the GPL 3.0: https://www.gnu.org/licenses/gpl-3.0.txt
 # pylint: disable=too-many-ancestors
+import os
+import unittest
+
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 import tcms_tenants
+from tcms_github_marketplace import docker
 from tcms_github_marketplace.models import Purchase
 
 
@@ -24,6 +28,7 @@ class ViewSubscriptionTestCase(tcms_tenants.tests.LoggedInTestCase):
             "You can access the following tenants",
             "You own the following tenants",
             "Transaction history",
+            "Docker credentials",
         ):
             self.assertContains(response, _(text))
 
@@ -36,7 +41,27 @@ class ViewSubscriptionTestCase(tcms_tenants.tests.LoggedInTestCase):
         ):
             self.assertContains(response, _(text))
 
-    def test_page_loads_with_subscription(self):
+    @unittest.skipUnless(
+        os.getenv("QUAY_IO_TOKEN"),
+        "QUAY_IO_TOKEN is not defined",
+    )
+    def test_page_loads_with_subscription_and_quay_account(self):
+        with docker.QuayIOAccount(self.tester.email) as account:
+            try:
+                account.create()
+                self.test_page_loads_with_subscription_without_quay_account()
+
+                # fetch the page again, to verify the quay.io account creds are shown
+                response = self.client.get(self.url)
+                self.assertContains(response, account.username)
+                self.assertContains(response, account.token)
+            finally:
+                account.delete()
+
+    def test_page_loads_with_subscription_without_quay_account(self):
+        """
+        Page should not crash if for some reason the account on Quay.io was not created!
+        """
         # simulate ownership
         self.tenant.owner = self.tester
         self.tenant.save()

@@ -23,6 +23,7 @@ from tcms_tenants.models import Tenant
 from tcms_tenants.views import NewTenantView
 from tcms_tenants import utils as tcms_tenants_utils
 
+from tcms_github_marketplace import docker
 from tcms_github_marketplace import utils
 from tcms_github_marketplace.models import Purchase
 
@@ -347,7 +348,11 @@ class ViewSubscriptionPlan(TemplateView):
         mp_purchase = purchases.first()
 
         cancel_url = None
+        quay_io_account = None
+
         if mp_purchase is not None:
+            quay_io_account = docker.QuayIOAccount(mp_purchase.sender)
+
             if mp_purchase.vendor.lower() == "github":
                 cancel_url = "https://github.com/settings/billing"
 
@@ -376,6 +381,7 @@ class ViewSubscriptionPlan(TemplateView):
             "subscription_price": subscription_price,
             "subscription_period": subscription_period,
             "cancel_url": cancel_url,
+            "quay_io_account": quay_io_account,
         }
 
         return context
