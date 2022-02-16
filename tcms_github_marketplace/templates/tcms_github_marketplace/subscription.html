@@ -55,9 +55,8 @@
                     </div>
 
                     <div class="input-group">
-                        <span class="input-group-addon">{% trans 'Password' %}</span>
+                        <span class="input-group-addon" style="cursor: pointer" id="show-docker-password">{% trans 'Password' %}</span>
                         <input type="password" id="docker_password" value="{{ quay_io_account.token }}" class="form-control" disabled>
-                        <span class="input-group-addon" id="show-docker-password">{% trans 'Show' %}</span>
                     </div>
                 </div>
             </div>
