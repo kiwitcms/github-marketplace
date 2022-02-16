@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-02-18 10:43+0000\n"
+"POT-Creation-Date: 2022-02-16 15:06+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -35,76 +35,88 @@ msgid "Tenant"
 msgstr ""
 
 #: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:29
-#: tcms_github_marketplace/templates/tcms_tenants/override_new.html:17
+#: tcms_github_marketplace/templates/tcms_tenants/override_new.html:15
 msgid "Owner"
 msgstr ""
 
 #: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:35
-#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:66
-#: tcms_github_marketplace/templates/tcms_tenants/override_new.html:30
+#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:87
+#: tcms_github_marketplace/templates/tcms_tenants/override_new.html:28
 msgid "Organization"
 msgstr ""
 
-#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:51
+#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:48
+msgid "Docker credentials"
+msgstr ""
+
+#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:53
+msgid "Username"
+msgstr ""
+
+#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:58
+msgid "Password"
+msgstr ""
+
+#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:72
 msgid "You own the following tenants"
 msgstr ""
 
-#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:73
-#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:74
+#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:94
+#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:95
 msgid "Price"
 msgstr ""
 
-#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:78
-#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:79
+#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:99
+#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:100
 msgid "Subscription type"
 msgstr ""
 
-#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:83
-#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:84
+#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:104
+#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:105
 #: tcms_github_marketplace/templates/tcms_tenants/override_new.html:6
 msgid "Paid until"
 msgstr ""
 
-#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:90
+#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:111
 msgid "Cancel subscription"
 msgstr ""
 
-#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:92
+#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:113
 msgid "Cancel"
 msgstr ""
 
-#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:103
+#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:124
 msgid "You don't own any tenants"
 msgstr ""
 
-#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:107
+#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:128
 msgid "Subscribe via FastSpring"
 msgstr ""
 
-#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:123
+#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:144
 msgid "Transaction history"
 msgstr ""
 
-#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:145
-#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:146
+#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:166
+#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:167
 msgid "Sender"
 msgstr ""
 
-#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:150
-#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:151
+#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:171
+#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:172
 msgid "Vendor"
 msgstr ""
 
-#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:155
-#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:156
+#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:176
+#: tcms_github_marketplace/templates/tcms_github_marketplace/subscription.html:177
 msgid "Received on"
 msgstr ""
 
-#: tcms_github_marketplace/templates/tcms_tenants/override_new.html:44
+#: tcms_github_marketplace/templates/tcms_tenants/override_new.html:42
 msgid "Private Tenant Warning"
 msgstr ""
 
-#: tcms_github_marketplace/templates/tcms_tenants/override_new.html:49
+#: tcms_github_marketplace/templates/tcms_tenants/override_new.html:47
 msgid ""
 "You are about to create a Private Tenant for Kiwi TCMS.\n"
 "It will take a few minutes until your DB schema is ready!\n"
@@ -116,10 +128,10 @@ msgid ""
 "<a href=\"mailto:kiwitcms@mrsenko.com\">kiwitcms@mrsenko.com</a> immediately!"
 msgstr ""
 
-#: tcms_github_marketplace/views.py:330
+#: tcms_github_marketplace/views.py:367
 msgid "mo"
 msgstr ""
 
-#: tcms_github_marketplace/views.py:333
+#: tcms_github_marketplace/views.py:370
 msgid "yr"
 msgstr ""
