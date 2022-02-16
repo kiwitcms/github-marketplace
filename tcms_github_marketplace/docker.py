@@ -42,6 +42,7 @@ class QuayIOAccount:
             .replace(".", "_")
             .replace("+", "_")
             .replace("-", "_")
+            .lower()
         )
 
     @property
