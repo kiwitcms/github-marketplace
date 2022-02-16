@@ -57,7 +57,7 @@
                     <div class="input-group">
                         <span class="input-group-addon">{% trans 'Password' %}</span>
                         <input type="password" id="docker_password" value="{{ quay_io_account.token }}" class="form-control" disabled>
-                        <span class="input-group-addon">{% trans 'Show' %}</span>
+                        <span class="input-group-addon" id="show-docker-password">{% trans 'Show' %}</span>
                     </div>
                 </div>
             </div>
@@ -224,6 +224,8 @@ $(document).ready(function() {
     });
 });
 </script>
+
+<script src="{% static 'tcms_github_marketplace/js/subscription.js' %}"></script>
 
 <script src="{% static 'prismjs/prism.js' %}"></script>
 <script src="{% static 'prismjs/components/prism-json.min.js' %}"></script>
