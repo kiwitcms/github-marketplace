@@ -63,8 +63,9 @@ class QuayIOAccount:
                 self.name, self.organization
             )
 
-        self._token = response["token"]
-        self._username = response["name"]
+        if response:
+            self._token = response["token"]
+            self._username = response["name"]
 
     def create(self):
         """
