@@ -18,6 +18,7 @@ from tcms.utils import github
 
 import tcms_tenants
 
+from tcms_github_marketplace import docker
 from tcms_github_marketplace import utils
 from tcms_github_marketplace.models import Purchase
 
@@ -580,7 +581,9 @@ class CancelPlanTestCase(InstallTestCase):
 
         with patch.object(
             utils.Requester, "requestJsonAndCheck", return_value=({}, None)
-        ) as gh_api:
+        ) as gh_api, patch.object(
+            docker.QuayIOAccount, "delete", return_value=""
+        ) as quay_io_api:
             response = self.client.post(
                 self.purchase_hook_url,
                 json.loads(payload),
@@ -589,6 +592,7 @@ class CancelPlanTestCase(InstallTestCase):
             )
             self.assertContains(response, "cancelled")
             gh_api.assert_called_with("DELETE", self.gh_revoke_url)
+            quay_io_api.assert_called_once()
 
         # verify user is not present anymore
         self.assertFalse(
