@@ -17,6 +17,7 @@ from django.contrib.auth import get_user_model
 from django.http import HttpResponse, HttpResponseForbidden
 
 from tcms.utils.user import delete_user
+from tcms_github_marketplace import docker
 
 
 def verify_hmac(request):
@@ -76,6 +77,15 @@ def cancel_plan(purchase):
     Cancells the current plan from Marketplace:
     https://developer.github.com/marketplace/integrating-with-the-github-marketplace-api/cancelling-plans/
     """
+    try:
+        # Warning: this may have the side effect of disabling a robot account which
+        # uses the same email address for multiple subscriptions. We'll deal with it
+        # when it happens.
+        with docker.QuayIOAccount(purchase.sender) as account:
+            account.delete()
+    except:  # noqa:E722, pylint: disable=bare-except
+        pass
+
     customer = get_user_model().objects.filter(email=purchase.sender).first()
 
     # this can happen for users who have installed the FREE subscription
