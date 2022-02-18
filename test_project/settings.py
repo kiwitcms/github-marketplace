@@ -74,5 +74,6 @@ SOCIAL_AUTH_GITHUB_SECRET = "oauth_client_secret"
 # application specific configuration
 # NOTE: must be bytes, not string
 KIWI_GITHUB_MARKETPLACE_SECRET = b"S3cr3t"
+KIWI_FASTSPRING_SECRET = b"s3cr3t"
 
 QUAY_IO_TOKEN = os.getenv("QUAY_IO_TOKEN")
