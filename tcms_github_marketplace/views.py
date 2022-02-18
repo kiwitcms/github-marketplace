@@ -170,7 +170,9 @@ class FastSpringHook(View):
             # can't redirect the user, they will receive an email
             # telling them to go to Create Tenant page
             if event["type"] == "subscription.activated":
-                pass
+                # however we can create their Robot account for Quay.io
+                with docker.QuayIOAccount(purchase.sender) as account:
+                    account.create()
 
             # recurring billing
             if event["type"] == "subscription.charge.completed":
