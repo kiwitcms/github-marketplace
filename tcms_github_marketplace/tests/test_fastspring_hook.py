@@ -294,7 +294,7 @@ class FastSpringHookTestCase(tcms_tenants.tests.LoggedInTestCase):
           "data": {
             "id": "_fmtng11QUyLno5-5aVB-w",
             "end": null,
-            "sku": null,
+            "sku": "version",
             "live": true,
             "next": 1646179200000,
             "adhoc": false,
@@ -334,6 +334,7 @@ class FastSpringHookTestCase(tcms_tenants.tests.LoggedInTestCase):
             "display": "Kiwi TCMS Private Tenant",
             "periods": null,
             "product": {
+              "sku": "version",
               "image": "https://d8y8nchqlnmka.cloudfront.net/XAeq54smTQ8/gahPnpQiREI/square-with-name.png",
               "format": "digital",
               "parent": null,
@@ -537,7 +538,11 @@ class FastSpringHookTestCase(tcms_tenants.tests.LoggedInTestCase):
                 docker.QuayIOAccount,
                 "create",
                 return_value={"name": tmp_account.name, "token": "secret"},
-            ) as quay_io_create:
+            ) as quay_io_create, patch.object(
+                docker.QuayIOAccount,
+                "allow_read_access",
+                return_value="success",
+            ) as quay_io_allow_read_access:
                 response = self.client.post(
                     self.purchase_hook_url,
                     json.loads(payload),
@@ -546,8 +551,8 @@ class FastSpringHookTestCase(tcms_tenants.tests.LoggedInTestCase):
                 )
                 self.assertContains(response, "ok")
                 quay_io_create.assert_called_once()
+                quay_io_allow_read_access.assert_called_once_with("version")
 
-        # the hook handler does nothing but save to DB
         self.assertEqual(initial_purchase_count + 1, Purchase.objects.count())
         self.assertTrue(
             Purchase.objects.filter(
