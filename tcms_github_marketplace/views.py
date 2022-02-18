@@ -130,7 +130,7 @@ class FastSpringHook(View):
             if event["type"] == "subscription.charge.completed":
                 action = "purchased"
 
-            if event["type"] == "subscription.cancelled":
+            if event["type"] == "subscription.deactivated":
                 action = "cancelled"
 
             sub_total_in_payout_currency = 0
@@ -190,7 +190,7 @@ class FastSpringHook(View):
                     )
                     tenant.save()
 
-            if event["type"] == "subscription.cancelled":
+            if event["type"] == "subscription.deactivated":
                 return utils.cancel_plan(purchase)
 
         return HttpResponse("ok", content_type="text/plain")
