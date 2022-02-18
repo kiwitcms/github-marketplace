@@ -145,3 +145,9 @@ def organization_from_purchase(purchase):
         return purchase.payload["marketplace_purchase"]["account"]["login"]
 
     return ""
+
+
+def configure_product_access(quay_account, sku):
+    for repo_name in sku.split("+"):
+        if repo_name:
+            quay_account.allow_read_access(repo_name)

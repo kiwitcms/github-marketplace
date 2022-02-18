@@ -173,6 +173,9 @@ class FastSpringHook(View):
                 # however we can create their Robot account for Quay.io
                 with docker.QuayIOAccount(purchase.sender) as account:
                     account.create()
+                    utils.configure_product_access(
+                        account, event["data"]["product"]["sku"]
+                    )
 
             # recurring billing
             if event["type"] == "subscription.charge.completed":
