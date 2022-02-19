@@ -533,6 +533,7 @@ class FastSpringHookTestCase(tcms_tenants.tests.LoggedInTestCase):
             ).exists()
         )
 
+        # tmp_account calculates the actual robot name for mocking - currently not in use
         with docker.QuayIOAccount(self.tester.email) as tmp_account:
             with patch.object(
                 docker.QuayIOAccount,

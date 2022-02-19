@@ -4,6 +4,7 @@
 # pylint: disable=too-many-ancestors
 import json
 from http import HTTPStatus
+from unittest.mock import call
 from unittest.mock import patch
 from datetime import datetime
 
@@ -139,7 +140,8 @@ class PurchaseHookTestCase(tcms_tenants.tests.LoggedInTestCase):
          "unit_name":"seat",
          "bullets":[
             "Is Basic",
-            "Because Basic "
+            "Because Basic ",
+            "Docker repositories: quay.io/kiwitcms/version, https://quay.io/kiwitcms/enterprise"
          ]
       }
    }
@@ -152,13 +154,28 @@ class PurchaseHookTestCase(tcms_tenants.tests.LoggedInTestCase):
 
         initial_purchase_count = Purchase.objects.count()
 
-        response = self.client.post(
-            self.url,
-            json.loads(payload),
-            content_type="application/json",
-            HTTP_X_HUB_SIGNATURE=signature,
-        )
-        self.assertContains(response, "ok")
+        # tmp_account calculates the actual robot name for mocking - currently not in use
+        with docker.QuayIOAccount("username@email.com") as tmp_account:
+            with patch.object(
+                docker.QuayIOAccount,
+                "create",
+                return_value={"name": tmp_account.name, "token": "secret"},
+            ) as quay_io_create, patch.object(
+                docker.QuayIOAccount,
+                "allow_read_access",
+                return_value="success",
+            ) as quay_io_allow_read_access:
+                response = self.client.post(
+                    self.url,
+                    json.loads(payload),
+                    content_type="application/json",
+                    HTTP_X_HUB_SIGNATURE=signature,
+                )
+                self.assertContains(response, "ok")
+                quay_io_create.assert_called_once()
+                quay_io_allow_read_access.assert_has_calls(
+                    [call("version"), call("enterprise")], any_order=True
+                )
 
         # the hook handler does nothing but save to DB
         self.assertEqual(initial_purchase_count + 1, Purchase.objects.count())

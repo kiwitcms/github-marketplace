@@ -75,6 +75,21 @@ class PurchaseHook(View):
             return utils.cancel_plan(purchase)
 
         if purchase.action == "purchased":
+            # Configure product access if needed
+            for item in payload["marketplace_purchase"]["plan"]["bullets"]:
+                if "Docker repositories" in item:
+                    sku = (
+                        item.replace("Docker repositories:", "")
+                        .replace(" ", "")
+                        .replace("https://", "")
+                        .replace("quay.io/kiwitcms/", "")
+                        .replace(",", "+")
+                    )
+                    # create Robot account for Quay.io
+                    with docker.QuayIOAccount(purchase.sender) as account:
+                        account.create()
+                        utils.configure_product_access(account, sku)
+
             # recurring billing events don't redirect to Install URL
             # they only send a web hook
             tenant = (
