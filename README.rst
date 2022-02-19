@@ -1,8 +1,9 @@
 Marketplace integrations for Kiwi TCMS
 ======================================
 
-.. image:: https://coveralls.io/repos/github/kiwitcms/github-marketplace/badge.svg?branch=master
-   :target: https://coveralls.io/github/kiwitcms/github-marketplace?branch=master
+.. image:: https://codecov.io/gh/kiwitcms/github-marketplace/branch/master/graph/badge.svg?token=NQKAQMJ8N8
+    :target: https://codecov.io/gh/kiwitcms/github-marketplace
+    :alt: Code coverage badge
 
 .. image:: https://pyup.io/repos/github/kiwitcms/github-marketplace/shield.svg
     :target: https://pyup.io/repos/github/kiwitcms/github-marketplace/
