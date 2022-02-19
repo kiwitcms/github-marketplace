@@ -29,14 +29,31 @@ Everyting that we do is open and that's why this piece of code is
 open source as well. You don't need this add-on in order to run Kiwi TCMS!
 
 
-Installation and configuration
-------------------------------
+Installation
+------------
 
     pip install kiwitcms-github-marketplace
 
-Then make sure ``KIWI_GITHUB_MARKETPLACE_SECRET`` and
-``KIWI_FASTSPRING_SECRET`` settings are configured as binary strings,
-e.g. ``b'secret'``.
+
+Configuration
+-------------
+
+Required settings:
+
+- ``KIWI_GITHUB_MARKETPLACE_SECRET`` - binary string
+- ``KIWI_FASTSPRING_SECRET`` - binary string
+- ``QUAY_IO_TOKEN`` - string
+
+
+Product configuration
+---------------------
+
+- Subscriptions on FastSpring use the SKU field to define access to private
+  docker repositories. The format is ``repo_name1+repo_name2``, where
+  ``https://quay.io/kiwitcms/<repo_name>`` exists
+- Plans on GitHub Marketplace use one of their bullet items to define access
+  to private docker repositories. Format is
+  ``Docker repositories: quay.io/kiwitcms/<repo1>, quay.io/kiwitcms/<repo2>``
 
 
 Changelog
