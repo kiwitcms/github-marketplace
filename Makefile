@@ -14,6 +14,10 @@ test:
 	    --omit "tcms_github_marketplace/tests/*.py" \
 	    ./manage.py test -v2 tcms_github_marketplace.tests
 
+	PYTHONPATH=.:$(KIWI_INCLUDE_PATH) EXECUTOR=standard PYTHONWARNINGS=d AUTO_CREATE_SCHEMA='' \
+	KIWI_TENANTS_DOMAIN="example.com" QUAY_IO_TOKEN="" \
+	    ./manage.py check 2>&1 | grep "settings.QUAY_IO_TOKEN is not defined!"
+
 
 FLAKE8_EXCLUDE=.git
 .PHONY: flake8
