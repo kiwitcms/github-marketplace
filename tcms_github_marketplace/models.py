@@ -1,4 +1,4 @@
-# Copyright (c) 2019-2021 Alexander Todorov <atodorov@MrSenko.com>
+# Copyright (c) 2019-2022 Alexander Todorov <atodorov@MrSenko.com>
 
 # Licensed under the GPL 3.0: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -16,6 +16,8 @@ class Purchase(models.Model):
     action = models.CharField(max_length=64, db_index=True)
     sender = models.EmailField(db_index=True)
     effective_date = models.DateTimeField(db_index=True)
+    should_have_tenant = models.BooleanField(default=False, db_index=True)
+    should_have_support = models.BooleanField(default=False, db_index=True)
 
     # this is for internal purposes
     received_on = models.DateTimeField(db_index=True, auto_now_add=True)
