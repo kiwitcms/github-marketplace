@@ -52,6 +52,8 @@ Product configuration
 - Subscriptions on FastSpring use the SKU field to define access to private
   docker repositories. The format is ``repo_name1+repo_name2``, where
   ``https://quay.io/kiwitcms/<repo_name>`` exists
+- FastSpring SKUs starting with "x-" are considered special and we don't
+  treat them as docker repository names
 - Plans on GitHub Marketplace use one of their bullet items to define access
   to private docker repositories. Format is
   ``Docker repositories: quay.io/kiwitcms/<repo1>, quay.io/kiwitcms/<repo2>``

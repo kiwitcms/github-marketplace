@@ -149,5 +149,5 @@ def organization_from_purchase(purchase):
 
 def configure_product_access(quay_account, sku):
     for repo_name in sku.split("+"):
-        if repo_name:
+        if repo_name and not repo_name.startswith("x-"):
             quay_account.allow_read_access(repo_name)
