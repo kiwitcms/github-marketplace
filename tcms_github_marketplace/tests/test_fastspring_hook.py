@@ -294,7 +294,7 @@ class FastSpringHookTestCase(tcms_tenants.tests.LoggedInTestCase):
           "data": {
             "id": "_fmtng11QUyLno5-5aVB-w",
             "end": null,
-            "sku": "version",
+            "sku": "x-tenant+version",
             "live": true,
             "next": 1646179200000,
             "adhoc": false,
@@ -557,6 +557,9 @@ class FastSpringHookTestCase(tcms_tenants.tests.LoggedInTestCase):
         self.assertEqual(initial_purchase_count + 1, Purchase.objects.count())
         self.assertTrue(
             Purchase.objects.filter(
-                vendor="fastspring", action="purchased", sender=self.tester.email
+                vendor="fastspring",
+                action="purchased",
+                sender=self.tester.email,
+                should_have_tenant=True,
             ).exists()
         )
