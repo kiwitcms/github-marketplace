@@ -61,12 +61,16 @@ class PurchaseHook(View):
             payload["effective_date"][:19], "%Y-%m-%dT%H:%M:%S"
         )
         # save payload for future use
+        should_have_tenant = (
+            payload["marketplace_purchase"]["plan"]["name"].lower() == "private tenant"
+        )
         purchase = Purchase.objects.create(
             vendor="github",
             action=payload["action"],
             sender=payload["sender"]["email"],
             effective_date=effective_date,
             payload=payload,
+            should_have_tenant=should_have_tenant,
         )
         organization = utils.organization_from_purchase(purchase)
 
@@ -174,12 +178,16 @@ class FastSpringHook(View):
             # end of transcoding the data format to that of GitHub
 
             # save payload for future use
+            should_have_tenant = event["data"]["product"]["sku"] and (
+                "x-tenant" in event["data"]["product"]["sku"]
+            )
             purchase = Purchase.objects.create(
                 vendor="fastspring",
                 action=action,
                 sender=event_data["account"]["contact"]["email"],
                 effective_date=effective_date,
                 payload=event,
+                should_have_tenant=should_have_tenant,
             )
 
             # can't redirect the user, they will receive an email
