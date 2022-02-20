@@ -80,7 +80,7 @@ class CreateTenantTestCase(tcms_tenants.tests.LoggedInTestCase):
       "next_billing_date":null,
       "plan":{
          "id":435,
-         "name":"Public Tenant",
+         "name":"Private Tenant",
          "description":"Basic Plan",
          "monthly_price_in_cents":3200,
          "yearly_price_in_cents":32000,
@@ -195,7 +195,7 @@ class CreateTenantTestCase(tcms_tenants.tests.LoggedInTestCase):
       "next_billing_date":"2017-11-05T00:00:00+00:00",
       "plan":{
          "id":435,
-         "name":"Public Tenant",
+         "name":"Private Tenant",
          "description":"Basic Plan",
          "monthly_price_in_cents":3200,
          "yearly_price_in_cents":32000,
@@ -380,7 +380,7 @@ class CreateTenantTestCase(tcms_tenants.tests.LoggedInTestCase):
       "next_billing_date":null,
       "plan":{
          "id":435,
-         "name":"Public Tenant",
+         "name":"Private Tenant",
          "description":"Basic Plan",
          "monthly_price_in_cents":3200,
          "yearly_price_in_cents":32000,
@@ -522,7 +522,7 @@ class CreateTenantTestCase(tcms_tenants.tests.LoggedInTestCase):
         # redirects to / on public tenant
         self.assertRedirects(response, "/")
 
-    def test_creating_tenant_after_purchase_should_work(self):
+    def test_creating_private_tenant_after_purchase_should_work(self):
         payload = """
 {
    "action":"purchased",
@@ -561,7 +561,7 @@ class CreateTenantTestCase(tcms_tenants.tests.LoggedInTestCase):
       "next_billing_date":null,
       "plan":{
          "id":435,
-         "name":"Public Tenant",
+         "name":"Private Tenant",
          "description":"Basic Plan",
          "monthly_price_in_cents":3200,
          "yearly_price_in_cents":32000,

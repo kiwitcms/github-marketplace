@@ -427,7 +427,7 @@ class OtherInstallTestCase(tcms_tenants.tests.LoggedInTestCase):
         # redirect to / on public tenant
         self.assertRedirects(response, "/")
 
-    def test_purchased_paid_plan(self):
+    def test_purchased_private_tenant_plan(self):
         payload = """
 {
    "action":"purchased",
@@ -466,7 +466,7 @@ class OtherInstallTestCase(tcms_tenants.tests.LoggedInTestCase):
       "next_billing_date":"2017-11-05T00:00:00+00:00",
       "plan":{
          "id":435,
-         "name":"Public Tenant",
+         "name":"Private Tenant",
          "description":"Basic Plan",
          "monthly_price_in_cents":3200,
          "yearly_price_in_cents":32000,

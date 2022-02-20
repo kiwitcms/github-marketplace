@@ -115,28 +115,26 @@ class PurchaseHook(View):
         return HttpResponse("ok", content_type="text/plain")
 
 
-def replace_none(val):
-    """
-    Return empty string b/c later we are using the `in` operator.
-    """
-    if val is None:
-        return ""
-
-    return val
-
-
 def find_sku_for_fastspring(event):
     """
     SKU can be found in several different places
     """
-    if "sku" in event["data"]:
-        return replace_none(event["data"]["sku"])
+    if "sku" in event["data"] and event["data"]["sku"]:
+        return event["data"]["sku"]
 
-    if "product" in event["data"] and "sku" in event["data"]["product"]:
-        return replace_none(event["data"]["product"]["sku"])
+    if (
+        "product" in event["data"]
+        and "sku" in event["data"]["product"]
+        and event["data"]["product"]["sku"]
+    ):
+        return event["data"]["product"]["sku"]
 
-    if "subscription" in event["data"] and "sku" in event["data"]["subscription"]:
-        return replace_none(event["data"]["subscription"]["sku"])
+    if (
+        "subscription" in event["data"]
+        and "sku" in event["data"]["subscription"]
+        and event["data"]["subscription"]["sku"]
+    ):
+        return event["data"]["subscription"]["sku"]
 
     return ""
 
@@ -277,7 +275,7 @@ class Install(View):
         """
         # we take the most recent purchase event for this user
         purchase = (
-            Purchase.objects.filter(sender=request.user.email)
+            Purchase.objects.filter(sender=request.user.email, should_have_tenant=True)
             .order_by("-received_on")
             .first()
         )
@@ -322,6 +320,7 @@ class CreateTenant(NewTenantView):
                 Purchase.objects.filter(
                     sender=request.user.email,
                     action="purchased",
+                    should_have_tenant=True,
                     payload__marketplace_purchase__plan__monthly_price_in_cents__gt=0,
                 )
                 .order_by("-received_on")
