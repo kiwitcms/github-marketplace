@@ -18,6 +18,7 @@ from social_django.models import UserSocialAuth
 import tcms_tenants
 
 from tcms_github_marketplace import docker
+from tcms_github_marketplace import mailchimp
 from tcms_github_marketplace import utils
 from tcms_github_marketplace.models import Purchase
 
@@ -543,7 +544,11 @@ class FastSpringHookTestCase(tcms_tenants.tests.LoggedInTestCase):
                 docker.QuayIOAccount,
                 "allow_read_access",
                 return_value="success",
-            ) as quay_io_allow_read_access:
+            ) as quay_io_allow_read_access, patch.object(
+                mailchimp,
+                "subscribe",
+                return_value="success",
+            ) as mailchimp_subscribe:
                 response = self.client.post(
                     self.purchase_hook_url,
                     json.loads(payload),
@@ -553,6 +558,7 @@ class FastSpringHookTestCase(tcms_tenants.tests.LoggedInTestCase):
                 self.assertContains(response, "ok")
                 quay_io_create.assert_called_once()
                 quay_io_allow_read_access.assert_called_once_with("version")
+                mailchimp_subscribe.assert_called_once_with(self.tester.email)
 
         self.assertEqual(initial_purchase_count + 1, Purchase.objects.count())
         self.assertTrue(
