@@ -24,6 +24,7 @@ from tcms_tenants.views import NewTenantView
 from tcms_tenants import utils as tcms_tenants_utils
 
 from tcms_github_marketplace import docker
+from tcms_github_marketplace import mailchimp
 from tcms_github_marketplace import utils
 from tcms_github_marketplace.models import Purchase
 
@@ -162,7 +163,6 @@ class FastSpringHook(View):
         for event in payload["events"]:
             # timestamp is in milliseconds
             effective_date = datetime.fromtimestamp(event["created"] / 1000)
-            event_data = event["data"]
             action = event["type"]
 
             # we add additional information to the payload because the rest of
@@ -177,14 +177,14 @@ class FastSpringHook(View):
                 action = "cancelled"
 
             sub_total_in_payout_currency = 0
-            if "subtotalInPayoutCurrency" in event_data:
-                sub_total_in_payout_currency = event_data["subtotalInPayoutCurrency"]
-            elif "subtotalInPayoutCurrency" in event_data["subscription"]:
-                sub_total_in_payout_currency = event_data["subscription"][
+            if "subtotalInPayoutCurrency" in event["data"]:
+                sub_total_in_payout_currency = event["data"]["subtotalInPayoutCurrency"]
+            elif "subtotalInPayoutCurrency" in event["data"]["subscription"]:
+                sub_total_in_payout_currency = event["data"]["subscription"][
                     "subtotalInPayoutCurrency"
                 ]
-            elif "subtotalInPayoutCurrency" in event_data["order"]:
-                sub_total_in_payout_currency = event_data["order"][
+            elif "subtotalInPayoutCurrency" in event["data"]["order"]:
+                sub_total_in_payout_currency = event["data"]["order"][
                     "subtotalInPayoutCurrency"
                 ]
             else:
@@ -206,7 +206,7 @@ class FastSpringHook(View):
             purchase = Purchase.objects.create(
                 vendor="fastspring",
                 action=action,
-                sender=event_data["account"]["contact"]["email"],
+                sender=event["data"]["account"]["contact"]["email"],
                 effective_date=effective_date,
                 payload=event,
                 should_have_tenant="x-tenant" in sku,
