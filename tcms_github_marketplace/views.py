@@ -115,6 +115,32 @@ class PurchaseHook(View):
         return HttpResponse("ok", content_type="text/plain")
 
 
+def replace_none(val):
+    """
+    Return empty string b/c later we are using the `in` operator.
+    """
+    if val is None:
+        return ""
+
+    return val
+
+
+def find_sku_for_fastspring(event):
+    """
+    SKU can be found in several different places
+    """
+    if "sku" in event["data"]:
+        return replace_none(event["data"]["sku"])
+
+    if "product" in event["data"] and "sku" in event["data"]["product"]:
+        return replace_none(event["data"]["product"]["sku"])
+
+    if "subscription" in event["data"] and "sku" in event["data"]["subscription"]:
+        return replace_none(event["data"]["subscription"]["sku"])
+
+    return ""
+
+
 @method_decorator(csrf_exempt, name="dispatch")
 class FastSpringHook(View):
     """
@@ -178,16 +204,14 @@ class FastSpringHook(View):
             # end of transcoding the data format to that of GitHub
 
             # save payload for future use
-            should_have_tenant = event["data"]["product"]["sku"] and (
-                "x-tenant" in event["data"]["product"]["sku"]
-            )
+            sku = find_sku_for_fastspring(event)
             purchase = Purchase.objects.create(
                 vendor="fastspring",
                 action=action,
                 sender=event_data["account"]["contact"]["email"],
                 effective_date=effective_date,
                 payload=event,
-                should_have_tenant=should_have_tenant,
+                should_have_tenant="x-tenant" in sku,
             )
 
             # can't redirect the user, they will receive an email
@@ -196,9 +220,7 @@ class FastSpringHook(View):
                 # however we can create their Robot account for Quay.io
                 with docker.QuayIOAccount(purchase.sender) as account:
                     account.create()
-                    utils.configure_product_access(
-                        account, event["data"]["product"]["sku"]
-                    )
+                    utils.configure_product_access(account, sku)
 
             # recurring billing
             if event["type"] == "subscription.charge.completed":
