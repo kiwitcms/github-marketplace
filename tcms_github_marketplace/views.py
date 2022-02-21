@@ -95,6 +95,9 @@ class PurchaseHook(View):
                         account.create()
                         utils.configure_product_access(account, sku)
 
+                    # ask them to subscribe to newsletter
+                    mailchimp.subscribe(purchase.sender)
+
             # recurring billing events don't redirect to Install URL
             # they only send a web hook
             tenant = (
@@ -219,6 +222,10 @@ class FastSpringHook(View):
                 with docker.QuayIOAccount(purchase.sender) as account:
                     account.create()
                     utils.configure_product_access(account, sku)
+
+                # ask them to subscribe to newsletter
+                if event["data"]["account"]["contact"]["subscribed"]:
+                    mailchimp.subscribe(purchase.sender)
 
             # recurring billing
             if event["type"] == "subscription.charge.completed":

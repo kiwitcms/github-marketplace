@@ -44,7 +44,8 @@ Required settings:
 - ``KIWI_GITHUB_MARKETPLACE_SECRET`` - binary string
 - ``KIWI_FASTSPRING_SECRET`` - binary string
 - ``QUAY_IO_TOKEN`` - string
-
+- ``MAILCHIMP_USERNAME`` - string
+- ``MAILCHIMP_SECRET`` - string
 
 Product configuration
 ---------------------

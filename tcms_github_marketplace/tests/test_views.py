@@ -20,6 +20,7 @@ from tcms.utils import github
 import tcms_tenants
 
 from tcms_github_marketplace import docker
+from tcms_github_marketplace import mailchimp
 from tcms_github_marketplace import utils
 from tcms_github_marketplace.models import Purchase
 
@@ -164,7 +165,11 @@ class PurchaseHookTestCase(tcms_tenants.tests.LoggedInTestCase):
                 docker.QuayIOAccount,
                 "allow_read_access",
                 return_value="success",
-            ) as quay_io_allow_read_access:
+            ) as quay_io_allow_read_access, patch.object(
+                mailchimp,
+                "subscribe",
+                return_value="success",
+            ) as mailchimp_subscribe:
                 response = self.client.post(
                     self.url,
                     json.loads(payload),
@@ -176,6 +181,7 @@ class PurchaseHookTestCase(tcms_tenants.tests.LoggedInTestCase):
                 quay_io_allow_read_access.assert_has_calls(
                     [call("version"), call("enterprise")], any_order=True
                 )
+                mailchimp_subscribe.assert_called_once_with("username@email.com")
 
         # the hook handler does nothing but save to DB
         self.assertEqual(initial_purchase_count + 1, Purchase.objects.count())
