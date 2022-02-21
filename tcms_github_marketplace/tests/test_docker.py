@@ -86,7 +86,9 @@ class TestQuayIOAccount(unittest.TestCase):
             # try a second time
             response = account.delete()
             response = json.loads(response)
-            self.assertIn("Could not find robot with username", response["message"])
+            self.assertIn(
+                "Could not find robot with specified username", response["message"]
+            )
 
     @unittest.skipUnless(
         os.getenv("QUAY_IO_TOKEN"),
