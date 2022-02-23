@@ -63,7 +63,7 @@ Product configuration
 Changelog
 ---------
 
-v2.0.0 (23 Feb 2022)
+v2.0.1 (23 Feb 2022)
 ~~~~~~~~~~~~~~~~~~~~
 
 - Add 2 new fields to ``Purchase`` model in database to hold information
@@ -74,6 +74,7 @@ v2.0.0 (23 Feb 2022)
   accounts when needed
 - Automatically handle docker accounts on Quay.io when a subscriotion is made
   and display them on the subscription page
+- Display the 2 new fields in Purchase admin
 - Ask subscribers to opt-in for newsletter
 - Add more automated tests & CI tools
 
