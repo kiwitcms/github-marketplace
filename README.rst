@@ -63,6 +63,13 @@ Product configuration
 Changelog
 ---------
 
+v2.0.2 (24 Feb 2022)
+~~~~~~~~~~~~~~~~~~~~
+
+- Add help block pointing to instructions for private containers
+  at the bottom of the Docker credentials card
+
+
 v2.0.1 (23 Feb 2022)
 ~~~~~~~~~~~~~~~~~~~~
 
