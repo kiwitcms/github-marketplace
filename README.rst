@@ -63,6 +63,21 @@ Product configuration
 Changelog
 ---------
 
+v2.0.0 (23 Feb 2022)
+~~~~~~~~~~~~~~~~~~~~
+
+- Add 2 new fields to ``Purchase`` model in database to hold information
+  about enabled product features
+- Automatically configure product access via FastSpring SKUs or GitHub
+  Marketplace bullet items
+- Properly handle cancelled and deactivated subscriptions, removing user
+  accounts when needed
+- Automatically handle docker accounts on Quay.io when a subscriotion is made
+  and display them on the subscription page
+- Ask subscribers to opt-in for newsletter
+- Add more automated tests & CI tools
+
+
 v1.7.0 (30 Sep 2021)
 ~~~~~~~~~~~~~~~~~~~~
 
