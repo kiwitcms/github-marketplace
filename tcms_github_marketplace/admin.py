@@ -18,6 +18,8 @@ class PurchaseAdmin(admin.ModelAdmin):
         "sender",
         "effective_date",
         "received_on",
+        "should_have_tenant",
+        "should_have_support",
     )
     ordering = ["-pk"]
 
