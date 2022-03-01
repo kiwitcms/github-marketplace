@@ -140,7 +140,14 @@ def find_sku_for_fastspring(event):
     ):
         return event["data"]["subscription"]["sku"]
 
-    return ""
+    sku = ""
+    if "kiwitcms-private-tenant" in json.dumps(event):
+        sku += "x-tenant+version"
+
+    if "kiwitcms-enterprise-subscription" in json.dumps(event):
+        sku += "x-tenant+version+enterprise"
+
+    return sku
 
 
 @method_decorator(csrf_exempt, name="dispatch")
