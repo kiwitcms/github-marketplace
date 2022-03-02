@@ -63,6 +63,13 @@ Product configuration
 Changelog
 ---------
 
+v2.0.3 (02 Mar 2022)
+~~~~~~~~~~~~~~~~~~~~
+
+- Fallback to searching by name instead of SKU for FastSpring because
+  the SKU field isn't reliably sent for existing subscribers.
+
+
 v2.0.2 (24 Feb 2022)
 ~~~~~~~~~~~~~~~~~~~~
 
