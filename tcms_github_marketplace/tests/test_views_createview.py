@@ -1,4 +1,4 @@
-# Copyright (c) 2019-2021 Alexander Todorov <atodorov@MrSenko.com>
+# Copyright (c) 2019-2022 Alexander Todorov <atodorov@otb.bg>
 
 # Licensed under the GPL 3.0: https://www.gnu.org/licenses/gpl-3.0.txt
 # pylint: disable=too-many-ancestors
@@ -9,13 +9,14 @@ from django.urls import reverse
 from django.utils import timezone
 from django.conf import settings
 from django.test import RequestFactory
+from django_tenants.utils import tenant_context
 
 from tcms.utils import github
 
 import tcms_tenants
 
 
-class CreateTenantTestCase(tcms_tenants.tests.LoggedInTestCase):
+class CreateTenantTestCase(tcms_tenants.tests.TenantGroupsTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
@@ -615,6 +616,11 @@ class CreateTenantTestCase(tcms_tenants.tests.LoggedInTestCase):
 
         tenant = tcms_tenants.models.Tenant.objects.get(schema_name="tinc")
         self.assertEqual(tenant.owner, self.tester)
+        with tenant_context(tenant):
+            self.assertTrue(
+                tenant.owner.tenant_groups.filter(name="Administrator").exists()
+            )
+            self.assertTrue(tenant.owner.tenant_groups.filter(name="Tester").exists())
 
         # Simulate POST refresh after a 504 with a possible change in values
         response = self.client.post(
