@@ -63,6 +63,14 @@ Product configuration
 Changelog
 ---------
 
+v2.0.4 (19 Apr 2022)
+~~~~~~~~~~~~~~~~~~~~
+
+- Add more tests related to tenant groups
+- Require kiwitcms-tenants>=2.0
+- Update GitHub actions & pre-commit hook versions
+
+
 v2.0.3 (02 Mar 2022)
 ~~~~~~~~~~~~~~~~~~~~
 
