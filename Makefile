@@ -34,8 +34,13 @@ pylint:
 	fi
 
 	PYTHONPATH=.:$(KIWI_INCLUDE_PATH) DJANGO_SETTINGS_MODULE="test_project.settings" \
-	pylint --load-plugins=pylint_django --load-plugins=kiwi_lint -d similar-string \
-	    -d missing-docstring -d duplicate-code -d module-in-directory-without-init \
+	pylint \
+	    --load-plugins=pylint.extensions.no_self_use \
+	    --load-plugins=pylint_django \
+	    --load-plugins=kiwi_lint \
+	        --module-naming-style=any \
+	        -d similar-string -d missing-docstring \
+	        -d duplicate-code -d module-in-directory-without-init \
 	    *.py tcms_github_marketplace/ test_project/ tcms_settings_dir/
 
 
