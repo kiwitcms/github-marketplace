@@ -1,4 +1,4 @@
-# pylint: disable=missing-permission-required
+# pylint: disable=missing-permission-required, no-self-use
 #
 # Copyright (c) 2019-2022 Alexander Todorov <atodorov@MrSenko.com>
 #
