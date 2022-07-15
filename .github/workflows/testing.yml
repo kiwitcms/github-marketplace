@@ -34,6 +34,7 @@ jobs:
     strategy:
       matrix:
         python-version: [3.8]
+        kiwitcms-url: [tcms.kiwitcms.org, public.tenant.kiwitcms.org]
 
     steps:
       - uses: actions/checkout@v3
@@ -47,6 +48,13 @@ jobs:
           docker-compose pull db
           docker-compose run -d -p 5432:5432 --name postgresql_database db
 
+      - name: Configure ~/.tcms.conf for ${{ matrix.kiwitcms-url }}
+        run: |
+          echo "[tcms]" > ~/.tcms.conf
+          echo "url = https://${{ matrix.kiwitcms-url }}/xml-rpc/" >> ~/.tcms.conf
+          echo "username = kiwitcms-bot" >> ~/.tcms.conf
+          echo "password = ${{ secrets.TCMS_PASSWORD }}" >> ~/.tcms.conf
+
       - name: Execute tests
         env:
           QUAY_IO_TOKEN: ${{ secrets.QUAY_IO_TOKEN }}
@@ -57,6 +65,14 @@ jobs:
 
           docker exec -i postgresql_database psql -c "CREATE EXTENSION IF NOT EXISTS btree_gin;"
           docker exec -i postgresql_database psql -c "ALTER USER kiwi CREATEDB;"
+
+          # report to Kiwi TCMS only if we have access to secrets
+          if [ -n "${{ secrets.TCMS_PASSWORD }}" ]; then
+              export DJANGO_TEST_RUNNER="tcms_django_plugin.TestRunner"
+              export TCMS_PRODUCT=$GITHUB_REPOSITORY
+              export TCMS_PRODUCT_VERSION=$(echo $GITHUB_REF | sed "s|refs/heads/||" | sed "s|refs/||" | sed "s|/merge||")
+              export TCMS_BUILD=$(echo $GITHUB_SHA | cut -c1-7)
+          fi
 
           make check
 

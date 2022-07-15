@@ -77,3 +77,6 @@ KIWI_GITHUB_MARKETPLACE_SECRET = b"S3cr3t"
 KIWI_FASTSPRING_SECRET = b"s3cr3t"
 
 QUAY_IO_TOKEN = os.getenv("QUAY_IO_TOKEN")
+
+# Allows us to hook-up kiwitcms-django-plugin at will
+TEST_RUNNER = os.environ.get("DJANGO_TEST_RUNNER", "django.test.runner.DiscoverRunner")
