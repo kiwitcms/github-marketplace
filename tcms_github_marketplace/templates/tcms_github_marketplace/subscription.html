@@ -3,14 +3,10 @@
 {% load static %}
 {% load tcms_tenants %}
 {% load github_marketplace %}
-
-{% block head %}
-<link href="{% static 'prismjs/themes/prism.css' %}" rel="stylesheet" >
-{% endblock %}
-
 {% block title %}{% trans "Tenant subscriptions" %}{% endblock %}
 
 {% block contents %}
+
 <div class="container-fluid container-cards-pf">
     <div class="row row-cards-pf">
         <div class="col-xs-12 col-sm-12 col-md-6">
@@ -194,7 +190,7 @@
                                             <div class="list-view-pf-body">
                                                 <div class="list-view-pf-description">
                                                     <div class="list-group-item-text">
-                                                        <pre><code class="language-json">{{ purchase.payload|pretty_json }}</code></pre>
+                                                        <pre><code>{{ purchase.payload|pretty_json }}</code></pre>
                                                     </div>
                                                 </div>
                                             </div>
@@ -213,7 +209,4 @@
 </div>
 
 <script src="{% static 'tcms_github_marketplace/js/subscription.js' %}"></script>
-
-<script src="{% static 'prismjs/prism.js' %}"></script>
-<script src="{% static 'prismjs/components/prism-json.min.js' %}"></script>
 {% endblock %}
