@@ -63,6 +63,16 @@ Product configuration
 Changelog
 ---------
 
+v2.0.5 (04 Aug 2022)
+~~~~~~~~~~~~~~~~~~~~
+
+- Fix a 500 error because of missing prism.js
+- Update requests from 2.27.1 to 2.28.1
+- Bump versions for the rest of eslint plugins
+- Adjust pylint options b/c of newer version
+- Report test results to Kiwi TCMS
+
+
 v2.0.4 (19 Apr 2022)
 ~~~~~~~~~~~~~~~~~~~~
 
