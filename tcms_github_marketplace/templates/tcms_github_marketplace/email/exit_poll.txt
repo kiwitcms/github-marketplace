@@ -1,0 +1,6 @@
+{% load i18n %}{% blocktrans %}Thank you for using Kiwi TCMS via a paid subscription.
+We're sorry to see you go but we'd like to know why so we can improve in the future!
+
+You can share your feedback at https://forms.gle/RJhFengbjN9C6wtUA
+
+Thank you!{% endblocktrans %}
