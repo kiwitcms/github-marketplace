@@ -1,4 +1,4 @@
-# Copyright (c) 2019 Alexander Todorov <atodorov@MrSenko.com>
+# Copyright (c) 2019-2022 Alexander Todorov <atodorov@MrSenko.com>
 
 # Licensed under the GPL 3.0: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -15,7 +15,9 @@ from social_django.models import UserSocialAuth
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.http import HttpResponse, HttpResponseForbidden
+from django.utils.translation import gettext_lazy as _
 
+from tcms.core.utils.mailto import mailto
 from tcms.utils.user import delete_user
 from tcms_github_marketplace import docker
 
@@ -85,6 +87,13 @@ def cancel_plan(purchase):
             account.delete()
     except:  # noqa:E722, pylint: disable=bare-except
         pass
+
+    # send exit poll email
+    mailto(
+        template_name="tcms_github_marketplace/email/exit_poll.txt",
+        recipients=[purchase.sender],
+        subject=str(_("Kiwi TCMS Subscription Exit Poll")),
+    )
 
     customer = get_user_model().objects.filter(email=purchase.sender).first()
 
