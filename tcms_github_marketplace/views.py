@@ -163,6 +163,12 @@ def find_subscription_for_fastspring(event):
     return subscription
 
 
+def find_senders_for_fastspring_subscription(subscription_id):
+    return Purchase.objects.filter(
+        action="purchased", vendor="fastspring", subscription=subscription_id
+    ).values_list("sender", flat=True)
+
+
 @method_decorator(csrf_exempt, name="dispatch")
 class FastSpringHook(View):
     """
@@ -174,7 +180,7 @@ class FastSpringHook(View):
 
     def post(
         self, request, *args, **kwargs
-    ):  # pylint: disable=too-many-branches,unused-argument
+    ):  # pylint: disable=too-many-branches,too-many-locals,unused-argument
         result = utils.verify_hmac(request)
         if result is not True:
             return result  # must be an HttpResponse then
@@ -251,10 +257,10 @@ class FastSpringHook(View):
 
             # recurring billing
             if event["type"] == "subscription.charge.completed":
+                senders = find_senders_for_fastspring_subscription(subscription)
                 tenant = (
                     Tenant.objects.filter(
-                        Q(owner__email=purchase.sender)
-                        | Q(owner__username=purchase.sender),
+                        Q(owner__email__in=senders) | Q(owner__username__in=senders),
                         paid_until__isnull=False,
                     )
                     .exclude(schema_name="public")
