@@ -102,7 +102,8 @@ class PurchaseHook(View):
             # they only send a web hook
             tenant = (
                 Tenant.objects.filter(
-                    owner__email=purchase.sender,
+                    Q(owner__email=purchase.sender)
+                    | Q(owner__username=purchase.sender),
                     organization=organization,
                     paid_until__isnull=False,
                 )
