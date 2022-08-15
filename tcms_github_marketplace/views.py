@@ -151,6 +151,18 @@ def find_sku_for_fastspring(event):
     return sku
 
 
+def find_subscription_for_fastspring(event):
+    subscription = None
+
+    data = event["data"]
+    if "subscription" in data:
+        subscription = data["subscription"]
+        if isinstance(subscription, dict):
+            subscription = subscription["id"]
+
+    return subscription
+
+
 @method_decorator(csrf_exempt, name="dispatch")
 class FastSpringHook(View):
     """
@@ -214,6 +226,7 @@ class FastSpringHook(View):
 
             # save payload for future use
             sku = find_sku_for_fastspring(event)
+            subscription = find_subscription_for_fastspring(event)
             purchase = Purchase.objects.create(
                 vendor="fastspring",
                 action=action,
@@ -221,6 +234,7 @@ class FastSpringHook(View):
                 effective_date=effective_date,
                 payload=event,
                 should_have_tenant="x-tenant" in sku,
+                subscription=subscription,
             )
 
             # can't redirect the user, they will receive an email
