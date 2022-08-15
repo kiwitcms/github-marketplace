@@ -15,6 +15,7 @@ class Purchase(models.Model):
     vendor = models.CharField(max_length=16, db_index=True, blank=True, null=True)
     action = models.CharField(max_length=64, db_index=True)
     sender = models.EmailField(db_index=True)
+    subscription = models.CharField(max_length=32, db_index=True, blank=True, null=True)
     effective_date = models.DateTimeField(db_index=True)
     should_have_tenant = models.BooleanField(default=False, db_index=True)
     should_have_support = models.BooleanField(default=False, db_index=True)
