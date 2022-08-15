@@ -63,6 +63,17 @@ Product configuration
 Changelog
 ---------
 
+v2.1.0 154 Aug 2022)
+~~~~~~~~~~~~~~~~~~~~
+
+- Send an exit poll after a subscription has been cancelled
+- Add filters to Purchase admin page
+- Match username with email address for GitHub hooks too
+- Add Purchase.subscription field
+- Record subscription ID and search FastSpring tenants across
+  all possible billing emails
+
+
 v2.0.5 (04 Aug 2022)
 ~~~~~~~~~~~~~~~~~~~~
 
