@@ -16,13 +16,14 @@ class PurchaseAdmin(admin.ModelAdmin):
         "price_column",
         "action",
         "sender",
+        "subscription",
         "effective_date",
         "received_on",
         "should_have_tenant",
         "should_have_support",
     )
     list_filter = ("action", "vendor", "sender")
-    search_fields = ("action", "vendor", "sender")
+    search_fields = ("action", "vendor", "sender", "subscription")
     ordering = ["-pk"]
 
     def price_column(self, purchase):  # pylint: disable=no-self-use
