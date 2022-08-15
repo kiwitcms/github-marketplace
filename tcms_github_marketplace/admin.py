@@ -21,6 +21,8 @@ class PurchaseAdmin(admin.ModelAdmin):
         "should_have_tenant",
         "should_have_support",
     )
+    list_filter = ("action", "vendor", "sender")
+    search_fields = ("action", "vendor", "sender")
     ordering = ["-pk"]
 
     def price_column(self, purchase):  # pylint: disable=no-self-use
