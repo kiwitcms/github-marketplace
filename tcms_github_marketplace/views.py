@@ -343,9 +343,10 @@ class CreateTenant(NewTenantView):
 
     def dispatch(self, request, *args, **kwargs):
         """
-        Jump over NewTenantView class b/c it requires the tcms_tenants.add_tenant
+        NewTenantView class requires the ``tcms_tenants.add_tenant``
         permission while on Marketplace we allow everyone who had paid their subscription
-        to create tenants!
+        to create tenants! Because of this simulate that they have permission to
+        create a tenant!
         """
         # we take the most recent purchase event for this user
         # where they purchase a paid plan
@@ -364,9 +365,7 @@ class CreateTenant(NewTenantView):
         if not self.organization:
             self.organization = utils.organization_from_purchase(self.purchase)
 
-        return super(NewTenantView, self).dispatch(  # pylint: disable=bad-super-call
-            request, *args, **kwargs
-        )
+        return super().dispatch(request, *args, **kwargs)
 
     def check(self, request):
         """
