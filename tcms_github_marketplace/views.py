@@ -1,6 +1,6 @@
 # pylint: disable=missing-permission-required, no-self-use
 #
-# Copyright (c) 2019-2022 Alexander Todorov <atodorov@MrSenko.com>
+# Copyright (c) 2019-2023 Alexander Todorov <atodorov@MrSenko.com>
 #
 # Licensed under the GPL 3.0: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -143,10 +143,10 @@ def find_sku_for_fastspring(event):
 
     sku = ""
     if "kiwitcms-private-tenant" in json.dumps(event):
-        sku += "x-tenant+version"
+        sku = "x-tenant+version"
 
     if "kiwitcms-enterprise-subscription" in json.dumps(event):
-        sku += "x-tenant+version+enterprise"
+        sku = "x-tenant+version+enterprise"
 
     return sku
 
