@@ -17,7 +17,6 @@ def forwards(apps, schema_editor):  # pylint: disable=unused-argument
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("tcms_github_marketplace", "0005_add_support_and_tenant_flags"),
     ]
