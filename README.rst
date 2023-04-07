@@ -63,7 +63,18 @@ Product configuration
 Changelog
 ---------
 
-v2.1.0 154 Aug 2022)
+v2.2.0 (07 Apr 2023)
+~~~~~~~~~~~~~~~~~~~~
+
+- Fix fallback typo for FastSpring SKUs
+- Adjust the fallback match string for Kiwi TCMS Enterprise on FastSpring
+- Update requests from 2.28.1 to 2.28.2
+- Adjust callbacks for newer PyGithub
+- Reformat files with Black
+- Don't raise general exceptions
+
+
+v2.1.0 (15 Aug 2022)
 ~~~~~~~~~~~~~~~~~~~~
 
 - Send an exit poll after a subscription has been cancelled
