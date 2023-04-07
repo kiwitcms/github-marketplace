@@ -217,7 +217,9 @@ class FastSpringHook(View):
                     "subtotalInPayoutCurrency"
                 ]
             else:
-                raise Exception("subtotalInPayoutCurrency not found in FastSpring data")
+                raise RuntimeError(
+                    "subtotalInPayoutCurrency not found in FastSpring data"
+                )
 
             event["marketplace_purchase"] = {
                 "billing_cycle": "monthly",
