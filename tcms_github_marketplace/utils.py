@@ -1,4 +1,4 @@
-# Copyright (c) 2019-2022 Alexander Todorov <atodorov@MrSenko.com>
+# Copyright (c) 2019-2023 Alexander Todorov <atodorov@MrSenko.com>
 
 # Licensed under the GPL 3.0: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -7,9 +7,8 @@ import hashlib
 from base64 import b64encode
 from datetime import timedelta
 
-from github import MainClass
+import github
 from github.Requester import Requester
-
 from social_django.models import UserSocialAuth
 
 from django.conf import settings
@@ -61,10 +60,11 @@ def revoke_oauth_token(token):
         settings.SOCIAL_AUTH_GITHUB_KEY,
         settings.SOCIAL_AUTH_GITHUB_SECRET,
         None,
-        MainClass.DEFAULT_BASE_URL,
-        MainClass.DEFAULT_TIMEOUT,
+        None,
+        github.Consts.DEFAULT_BASE_URL,
+        github.Consts.DEFAULT_TIMEOUT,
         "KiwiTCMS/Python",
-        MainClass.DEFAULT_PER_PAGE,
+        github.Consts.DEFAULT_PER_PAGE,
         True,
         None,
         None,

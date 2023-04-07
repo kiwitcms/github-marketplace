@@ -6,7 +6,7 @@ flake8
 coveralls
 kiwitcms-django-plugin
 parameterized
-PyGithub>=1.45
+PyGithub>=1.58.1
 pylint
 pylint-django
 psycopg2
