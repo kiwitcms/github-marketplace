@@ -19,6 +19,7 @@ from django.contrib.auth.decorators import login_required
 
 from tcms.utils import github
 
+from django_tenants.utils import get_public_schema_name
 from tcms_tenants.models import Tenant
 from tcms_tenants.views import NewTenantView
 from tcms_tenants import utils as tcms_tenants_utils
@@ -29,85 +30,107 @@ from tcms_github_marketplace import utils
 from tcms_github_marketplace.models import Purchase
 
 
-@method_decorator(csrf_exempt, name="dispatch")
-class PurchaseHook(View):
+class GenericPurchaseNotificationView(View):
     """
-    Handles `marketplace_purchase` web hook as described at:
-    https://developer.github.com/marketplace/listing-on-github-marketplace/configuring-the-github-marketplace-webhook/
+    Base handler of notification purchases defining common methods and workflow structure.
+    Specific vendor views will inherit from this and override methods where necessary!
     """
 
     http_method_names = ["post", "head", "options"]
+    purchase_vendor = None
+
+    def action_is_activated(self, purchase):
+        raise NotImplementedError
+
+    def action_is_cancelled(self, purchase):
+        raise NotImplementedError
+
+    def action_is_recurring_billing(self, purchase):
+        raise NotImplementedError
+
+    def find_sku(self, purchase):
+        raise NotImplementedError
+
+    def purchase_action(self, event):
+        raise NotImplementedError
+
+    def purchase_effective_date(self, event):
+        raise NotImplementedError
+
+    def purchase_sender(self, event):
+        raise NotImplementedError
+
+    def purchase_should_have_tenant(self, event):
+        raise NotImplementedError
+
+    def purchase_subscription(self, event):  # pylint: disable=unused-argument
+        return None
+
+    def record_purchase(self, **kwargs):
+        return Purchase.objects.create(**kwargs)
+
+    def request_verify_signature(self, request):
+        raise NotImplementedError
+
+    def tenant_organization(self, purchase):
+        raise NotImplementedError
+
+    def vendor_pre_process(self, request, payload):  # pylint: disable=unused-argument
+        """
+        Perform any vendor specific pre-processing of request & payload
+        before beginning the actual purchase flow.
+
+        Return HttpResponse if the flow should return back to the client!
+        """
+        return
 
     def post(self, request, *args, **kwargs):  # pylint: disable=unused-argument
-        """
-        Hook must be configured to receive JSON payload!
-
-        Save the 'purchased' event in the database, see:
-        https://developer.github.com/marketplace/integrating-with-the-github-marketplace-api/github-marketplace-webhook-events/
-        """
-        result = github.verify_signature(
-            request, settings.KIWI_GITHUB_MARKETPLACE_SECRET
-        )
+        result = self.request_verify_signature(request)
         if result is not True:
             return result  # must be an HttpResponse then
 
-        payload = json.loads(request.body.decode("utf-8"))
+        json_payload = json.loads(request.body.decode("utf-8"))
 
-        # ping hook https://developer.github.com/webhooks/#ping-event
-        if "zen" in payload:
-            return HttpResponse("pong", content_type="text/plain")
+        response = self.vendor_pre_process(  # pylint: disable=assignment-from-none
+            request, json_payload
+        )
+        if response:
+            return response
 
-        # format is 2017-10-25T00:00:00+00:00
-        effective_date = datetime.strptime(
-            payload["effective_date"][:19], "%Y-%m-%dT%H:%M:%S"
+        purchase = self.record_purchase(
+            action=self.purchase_action(json_payload),
+            effective_date=self.purchase_effective_date(json_payload),
+            payload=json_payload,
+            sender=self.purchase_sender(json_payload),
+            should_have_tenant=self.purchase_should_have_tenant(json_payload),
+            subscription=self.purchase_subscription(json_payload),
+            vendor=self.purchase_vendor,
         )
-        # save payload for future use
-        should_have_tenant = (
-            payload["marketplace_purchase"]["plan"]["name"].lower() == "private tenant"
-        )
-        purchase = Purchase.objects.create(
-            vendor="github",
-            action=payload["action"],
-            sender=payload["sender"]["email"],
-            effective_date=effective_date,
-            payload=payload,
-            should_have_tenant=should_have_tenant,
-        )
-        organization = utils.organization_from_purchase(purchase)
 
-        # plan cancellations must be handled here
-        if purchase.action == "cancelled":
+        if self.action_is_cancelled(purchase):
             return utils.cancel_plan(purchase)
 
-        if purchase.action == "purchased":
-            # Configure product access if needed
-            for item in payload["marketplace_purchase"]["plan"]["bullets"]:
-                if "Docker repositories" in item:
-                    sku = (
-                        item.replace("Docker repositories:", "")
-                        .replace(" ", "")
-                        .replace("https://", "")
-                        .replace("quay.io/kiwitcms/", "")
-                        .replace(",", "+")
-                    )
-                    # create Robot account for Quay.io
-                    with docker.QuayIOAccount(purchase.sender) as account:
-                        account.create()
-                        utils.configure_product_access(account, sku)
+        if self.action_is_activated(purchase):
+            sku = self.find_sku(purchase)
+            # create Robot account for Quay.io
+            with docker.QuayIOAccount(purchase.sender) as account:
+                account.create()
+                utils.configure_product_access(account, sku)
 
-                    # ask them to subscribe to newsletter
-                    mailchimp.subscribe(purchase.sender)
+            # ask them to subscribe to newsletter
+            mailchimp.subscribe(purchase.sender)
 
+        if self.action_is_recurring_billing(purchase):
             # recurring billing events don't redirect to Install URL
             # they only send a web hook
             tenant = (
                 Tenant.objects.filter(
                     Q(owner__email=purchase.sender)
                     | Q(owner__username=purchase.sender),
-                    organization=organization,
+                    organization=self.tenant_organization(purchase),
                     paid_until__isnull=False,
                 )
-                .exclude(schema_name="public")
+                .exclude(schema_name=get_public_schema_name())
                 .first()
             )
             if tenant:
@@ -118,6 +141,84 @@ class PurchaseHook(View):
                 tenant.save()
 
         return HttpResponse("ok", content_type="text/plain")
+
+
+@method_decorator(csrf_exempt, name="dispatch")
+class PurchaseHook(GenericPurchaseNotificationView):
+    """
+    Handles `marketplace_purchase` web hook as described at:
+    https://developer.github.com/marketplace/listing-on-github-marketplace/configuring-the-github-marketplace-webhook/
+
+    Hook must be configured to receive JSON payload! See:
+    https://developer.github.com/marketplace/integrating-with-the-github-marketplace-api/github-marketplace-webhook-events/
+    """
+
+    purchase_vendor = "github"
+
+    def action_is_activated(self, purchase):
+        return purchase.action == "purchased"
+
+    def action_is_recurring_billing(self, purchase):
+        """
+        GitHub doesn't recognize between an initial payment for a subscription and
+        a subsequent payment for the same subscription!
+        """
+        return purchase.action == "purchased"
+
+    def action_is_cancelled(self, purchase):
+        return purchase.action == "cancelled"
+
+    def find_sku(self, purchase):
+        """
+        GitHub Marketplace doesn't support specifying product SKUs. We could rely on the
+        marketplace listing ID but we've chosen to specify the list of private Docker
+        repositories inside one of the description items!
+        """
+        sku = ""
+        for item in purchase.payload["marketplace_purchase"]["plan"]["bullets"]:
+            if "Docker repositories" in item:
+                sku = (
+                    item.replace("Docker repositories:", "")
+                    .replace(" ", "")
+                    .replace("https://", "")
+                    .replace("quay.io/kiwitcms/", "")
+                    .replace(",", "+")
+                )
+
+        return sku
+
+    def purchase_action(self, event):
+        return event["action"]
+
+    def purchase_effective_date(self, event):
+        # format is 2017-10-25T00:00:00+00:00
+        return datetime.strptime(event["effective_date"][:19], "%Y-%m-%dT%H:%M:%S")
+
+    def purchase_sender(self, event):
+        return event["sender"]["email"]
+
+    def purchase_should_have_tenant(self, event):
+        """
+        https://github.com/marketplace/kiwi-tcms/ doesn't list the full range of products.
+        The products currently available are:
+        - FREE Demo
+        - Self Support
+        - Private Tenant
+        """
+        return event["marketplace_purchase"]["plan"]["name"].lower() == "private tenant"
+
+    def request_verify_signature(self, request):
+        return github.verify_signature(request, settings.KIWI_GITHUB_MARKETPLACE_SECRET)
+
+    def tenant_organization(self, purchase):
+        return utils.organization_from_purchase(purchase)
+
+    def vendor_pre_process(self, request, payload):  # pylint: disable=unused-argument
+        # ping hook https://developer.github.com/webhooks/#ping-event
+        if "zen" in payload:
+            return HttpResponse("pong", content_type="text/plain")
+
+        return None
 
 
 def find_sku_for_fastspring(event):
