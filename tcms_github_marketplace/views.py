@@ -48,6 +48,23 @@ class GenericPurchaseNotificationView(View):
     def action_is_recurring_billing(self, purchase):
         raise NotImplementedError
 
+    def find_paid_tenant(self, purchase):  # pylint: disable=unused-argument
+        """
+        Return a QuerySet which is possible to contain a pre-existing tenant
+        which has been paid for by this Customer.
+
+        Usually for the purpose of updating the `paid_util` field in case of
+        recurring billing.
+
+        WARNING: Calling environment will call `.first()` on this!
+
+        WARNING: Vendor specific classes will inherit/override the result!
+        """
+        # the minimum implementation just returns all tenants that have been paid for
+        return Tenant.objects.filter(
+            paid_until__isnull=False,
+        ).exclude(schema_name=get_public_schema_name())
+
     def find_sku(self, purchase):
         raise NotImplementedError
 
@@ -72,13 +89,20 @@ class GenericPurchaseNotificationView(View):
     def request_verify_signature(self, request):
         raise NotImplementedError
 
-    def tenant_organization(self, purchase):
-        raise NotImplementedError
-
-    def vendor_pre_process(self, request, payload):  # pylint: disable=unused-argument
+    def vendor_pre_process_payload(self, payload):  # pylint: disable=unused-argument
         """
-        Perform any vendor specific pre-processing of request & payload
-        before beginning the actual purchase flow.
+        Perform any vendor specific pre-processing of payload before beginning
+        the actual purchase flow. This is usually used to transform payload fields
+        so they can match the existing implementation.
+        """
+        return payload
+
+    def vendor_pre_process_request(
+        self, request, payload
+    ):  # pylint: disable=unused-argument
+        """
+        Perform any vendor specific pre-processing of request before beginning
+        the actual purchase flow.
 
         Return HttpResponse if the flow should return back to the client!
         """
@@ -91,54 +115,50 @@ class GenericPurchaseNotificationView(View):
 
         json_payload = json.loads(request.body.decode("utf-8"))
 
-        response = self.vendor_pre_process(  # pylint: disable=assignment-from-none
-            request, json_payload
+        response = (  # pylint: disable=assignment-from-none
+            self.vendor_pre_process_request(request, json_payload)
         )
         if response:
             return response
 
-        purchase = self.record_purchase(
-            action=self.purchase_action(json_payload),
-            effective_date=self.purchase_effective_date(json_payload),
-            payload=json_payload,
-            sender=self.purchase_sender(json_payload),
-            should_have_tenant=self.purchase_should_have_tenant(json_payload),
-            subscription=self.purchase_subscription(json_payload),
-            vendor=self.purchase_vendor,
-        )
-
-        if self.action_is_cancelled(purchase):
-            return utils.cancel_plan(purchase)
-
-        if self.action_is_activated(purchase):
-            sku = self.find_sku(purchase)
-            # create Robot account for Quay.io
-            with docker.QuayIOAccount(purchase.sender) as account:
-                account.create()
-                utils.configure_product_access(account, sku)
-
-            # ask them to subscribe to newsletter
-            mailchimp.subscribe(purchase.sender)
-
-        if self.action_is_recurring_billing(purchase):
-            # recurring billing events don't redirect to Install URL
-            # they only send a web hook
-            tenant = (
-                Tenant.objects.filter(
-                    Q(owner__email=purchase.sender)
-                    | Q(owner__username=purchase.sender),
-                    organization=self.tenant_organization(purchase),
-                    paid_until__isnull=False,
-                )
-                .exclude(schema_name=get_public_schema_name())
-                .first()
+        # NOTE: for vendors which don't support event batching the RAW data
+        # should be transformed into a list!
+        for event in self.vendor_pre_process_payload(json_payload):
+            # first order of business is to record this into the database
+            purchase = self.record_purchase(
+                action=self.purchase_action(event),
+                effective_date=self.purchase_effective_date(event),
+                payload=event,
+                sender=self.purchase_sender(event),
+                should_have_tenant=self.purchase_should_have_tenant(event),
+                subscription=self.purchase_subscription(event),
+                vendor=self.purchase_vendor,
             )
-            if tenant:
-                tenant.paid_until = utils.calculate_paid_until(
-                    purchase.payload["marketplace_purchase"],
-                    purchase.effective_date,
-                )
-                tenant.save()
+
+            if self.action_is_cancelled(purchase):
+                return utils.cancel_plan(purchase)
+
+            if self.action_is_activated(purchase):
+                sku = self.find_sku(purchase)
+                # create Robot account for Quay.io
+                with docker.QuayIOAccount(purchase.sender) as account:
+                    account.create()
+                    utils.configure_product_access(account, sku)
+
+                # ask them to subscribe to newsletter
+                mailchimp.subscribe(purchase.sender)
+
+            if self.action_is_recurring_billing(purchase):
+                # WARNING: this relies on the fact that vendor specific
+                # classes will override this method in order to find the exact
+                # tenant for each customer
+                tenant = self.find_paid_tenant(purchase).first()
+                if tenant:
+                    tenant.paid_until = utils.calculate_paid_until(
+                        purchase.payload["marketplace_purchase"],
+                        purchase.effective_date,
+                    )
+                    tenant.save()
 
         return HttpResponse("ok", content_type="text/plain")
 
@@ -167,6 +187,20 @@ class PurchaseHook(GenericPurchaseNotificationView):
 
     def action_is_cancelled(self, purchase):
         return purchase.action == "cancelled"
+
+    def find_paid_tenant(self, purchase):
+        """
+        On GitHub Marketplace you can't change the buyer and a single
+        account may be purchasing on behalf of several organizations.
+        We support 1 tenant per buyer/org combo!
+        """
+        tenant_organization = utils.organization_from_purchase(purchase)
+
+        query = super().find_paid_tenant(purchase)
+        return query.filter(
+            Q(owner__email=purchase.sender) | Q(owner__username=purchase.sender),
+            organization=tenant_organization,
+        )
 
     def find_sku(self, purchase):
         """
@@ -210,110 +244,148 @@ class PurchaseHook(GenericPurchaseNotificationView):
     def request_verify_signature(self, request):
         return github.verify_signature(request, settings.KIWI_GITHUB_MARKETPLACE_SECRET)
 
-    def tenant_organization(self, purchase):
-        return utils.organization_from_purchase(purchase)
-
-    def vendor_pre_process(self, request, payload):  # pylint: disable=unused-argument
+    def vendor_pre_process_request(
+        self, request, payload
+    ):  # pylint: disable=unused-argument
         # ping hook https://developer.github.com/webhooks/#ping-event
         if "zen" in payload:
             return HttpResponse("pong", content_type="text/plain")
 
         return None
 
-
-def find_sku_for_fastspring(event):
-    """
-    SKU can be found in several different places
-    """
-    if "sku" in event["data"] and event["data"]["sku"]:
-        return event["data"]["sku"]
-
-    if (
-        "product" in event["data"]
-        and "sku" in event["data"]["product"]
-        and event["data"]["product"]["sku"]
-    ):
-        return event["data"]["product"]["sku"]
-
-    if (
-        "subscription" in event["data"]
-        and "sku" in event["data"]["subscription"]
-        and event["data"]["subscription"]["sku"]
-    ):
-        return event["data"]["subscription"]["sku"]
-
-    sku = ""
-    if "items" in event["data"]:
-        for item in event["data"]["items"]:
-            if "sku" in item:
-                sku += item["sku"]
-
-        if sku:
-            return sku
-
-    if "kiwitcms-private-tenant" in json.dumps(event):
-        sku = "x-tenant+version"
-
-    if "kiwitcms-enterprise" in json.dumps(event):
-        sku = "x-tenant+version+enterprise"
-
-    return sku
-
-
-def find_subscription_for_fastspring(event):
-    subscription = None
-
-    data = event["data"]
-    if "subscription" in data:
-        subscription = data["subscription"]
-        if isinstance(subscription, dict):
-            subscription = subscription["id"]
-
-    return subscription
-
-
-def find_senders_for_fastspring_subscription(subscription_id):
-    return Purchase.objects.filter(
-        action="purchased", vendor="fastspring", subscription=subscription_id
-    ).values_list("sender", flat=True)
+    def vendor_pre_process_payload(self, payload):  # pylint: disable=unused-argument
+        """
+        GitHub doesn't batch events into its hooks however the workflow code
+        needs to be able to iterate over the data structure!
+        """
+        return [payload]
 
 
 @method_decorator(csrf_exempt, name="dispatch")
-class FastSpringHook(View):
+class FastSpringHook(GenericPurchaseNotificationView):
     """
     Handles web hook events as described at:
     https://docs.fastspring.com/integrating-with-fastspring/webhooks
     """
 
-    http_method_names = ["post", "head", "options"]
+    purchase_vendor = "fastspring"
 
-    def post(
-        self, request, *args, **kwargs
-    ):  # pylint: disable=too-many-branches,too-many-locals,unused-argument
-        result = utils.verify_hmac(request)
-        if result is not True:
-            return result  # must be an HttpResponse then
+    def action_is_activated(self, purchase):
+        return purchase.payload["type"] == "subscription.activated"
 
-        payload = json.loads(request.body.decode("utf-8"))
+    def action_is_cancelled(self, purchase):
+        return purchase.payload["type"] == "subscription.deactivated"
 
-        # Your webhooks endpoint should be able to receive 1 or more event.
-        # Multiple webhooks might be combined in a single payload.
+    def action_is_recurring_billing(self, purchase):
+        return purchase.payload["type"] == "subscription.charge.completed"
+
+    def find_paid_tenant(self, purchase):
+        """
+        On FastSpring buyers can change their email addresses over time and
+        we may end-up in a situation where the email address on a Purchase does
+        not match an existing tenant owner. That's why we look into historical
+        records and try to find all unique addresses associated with a Customer.
+
+        WARNING: Tenant.organization doesn't matter for FastSpring purchases!
+        """
+        all_senders = Purchase.objects.filter(
+            action="purchased",
+            vendor=self.purchase_vendor,
+            subscription=purchase.subscription,
+        ).values_list("sender", flat=True)
+
+        query = super().find_paid_tenant(purchase)
+        return query.filter(
+            Q(owner__email__in=all_senders) | Q(owner__username__in=all_senders),
+        )
+
+    def find_sku(self, purchase):
+        """
+        SKU can be found in several different places
+        """
+        # this method is also called from purchase_should_have_tenant() which
+        # only passes event JSON b/c the Purchase object hasn't been created yet
+        event = purchase
+        if isinstance(purchase, Purchase):
+            event = purchase.payload
+        assert isinstance(event, dict)
+
+        # begin looking for SKU
+        if "sku" in event["data"] and event["data"]["sku"]:
+            return event["data"]["sku"]
+
+        if (
+            "product" in event["data"]
+            and "sku" in event["data"]["product"]
+            and event["data"]["product"]["sku"]
+        ):
+            return event["data"]["product"]["sku"]
+
+        if (
+            "subscription" in event["data"]
+            and "sku" in event["data"]["subscription"]
+            and event["data"]["subscription"]["sku"]
+        ):
+            return event["data"]["subscription"]["sku"]
+
+        sku = ""
+        if "items" in event["data"]:
+            for item in event["data"]["items"]:
+                if "sku" in item:
+                    sku += item["sku"]
+
+            if sku:
+                return sku
+
+        if "kiwitcms-private-tenant" in json.dumps(event):
+            sku = "x-tenant+version"
+
+        if "kiwitcms-enterprise" in json.dumps(event):
+            sku = "x-tenant+version+enterprise"
+
+        return sku
+
+    def purchase_action(self, event):
+        # Adjust to GitHub's format b/c we have legacy records in the DB
+        if event["type"] in ["subscription.activated", "subscription.charge.completed"]:
+            return "purchased"
+
+        if event["type"] == "subscription.deactivated":
+            return "cancelled"
+
+        return event["type"]
+
+    def purchase_effective_date(self, event):
+        # timestamp is in milliseconds
+        return datetime.fromtimestamp(event["created"] / 1000)
+
+    def purchase_sender(self, event):
+        return event["data"]["account"]["contact"]["email"]
+
+    def purchase_should_have_tenant(self, event):
+        return "x-tenant" in self.find_sku(event)
+
+    def purchase_subscription(self, event):
+        subscription = None
+
+        data = event["data"]
+        if "subscription" in data:
+            subscription = data["subscription"]
+            if isinstance(subscription, dict):
+                subscription = subscription["id"]
+
+        return subscription
+
+    def request_verify_signature(self, request):
+        return utils.verify_hmac(request)
+
+    def vendor_pre_process_payload(self, payload):  # pylint: disable=unused-argument
+        """
+        Multiple webhooks might be combined in a single payload. We need to adjust
+        the internal data to match the calculations for subscription renewals which are
+        based on the GitHub Marketplace data structure!
+        """
         for event in payload["events"]:
-            # timestamp is in milliseconds
-            effective_date = datetime.fromtimestamp(event["created"] / 1000)
-            action = event["type"]
-
-            # we add additional information to the payload because the rest of
-            # the code has been designed to work only with GitHub's format
-            if event["type"] == "subscription.activated":
-                action = "purchased"
-
-            if event["type"] == "subscription.charge.completed":
-                action = "purchased"
-
-            if event["type"] == "subscription.deactivated":
-                action = "cancelled"
-
             sub_total_in_payout_currency = 0
             if "subtotalInPayoutCurrency" in event["data"]:
                 sub_total_in_payout_currency = event["data"]["subtotalInPayoutCurrency"]
@@ -336,58 +408,11 @@ class FastSpringHook(View):
                     "monthly_price_in_cents": sub_total_in_payout_currency * 100,
                 },
                 "account": {
-                    "type": "User",  # no organization support here
+                    "type": "User",  # no organization support for FastSpring
                 },
             }
-            # end of transcoding the data format to that of GitHub
 
-            # save payload for future use
-            sku = find_sku_for_fastspring(event)
-            subscription = find_subscription_for_fastspring(event)
-            purchase = Purchase.objects.create(
-                vendor="fastspring",
-                action=action,
-                sender=event["data"]["account"]["contact"]["email"],
-                effective_date=effective_date,
-                payload=event,
-                should_have_tenant="x-tenant" in sku,
-                subscription=subscription,
-            )
-
-            # can't redirect the user, they will receive an email
-            # telling them to go to Create Tenant page
-            if event["type"] == "subscription.activated":
-                # however we can create their Robot account for Quay.io
-                with docker.QuayIOAccount(purchase.sender) as account:
-                    account.create()
-                    utils.configure_product_access(account, sku)
-
-                # ask them to subscribe to newsletter
-                if event["data"]["account"]["contact"]["subscribed"]:
-                    mailchimp.subscribe(purchase.sender)
-
-            # recurring billing
-            if event["type"] == "subscription.charge.completed":
-                senders = find_senders_for_fastspring_subscription(subscription)
-                tenant = (
-                    Tenant.objects.filter(
-                        Q(owner__email__in=senders) | Q(owner__username__in=senders),
-                        paid_until__isnull=False,
-                    )
-                    .exclude(schema_name="public")
-                    .first()
-                )
-                if tenant:
-                    tenant.paid_until = utils.calculate_paid_until(
-                        purchase.payload["marketplace_purchase"],
-                        purchase.effective_date,
-                    )
-                    tenant.save()
-
-            if event["type"] == "subscription.deactivated":
-                return utils.cancel_plan(purchase)
-
-        return HttpResponse("ok", content_type="text/plain")
+        return payload["events"]
 
 
 @method_decorator(login_required, name="dispatch")
