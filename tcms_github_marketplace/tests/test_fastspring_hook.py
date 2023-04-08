@@ -1453,3 +1453,302 @@ class FastSpringHookTestCase(tcms_tenants.tests.LoggedInTestCase):
             HTTP_X_FS_SIGNATURE="this-is-wrong",
         )
         self.assertIsInstance(response, HttpResponseForbidden)
+
+    def test_unrecognized_events_are_still_recoded_in_database(self):
+        payload = """
+{
+    "events": [
+        {
+          "id": "EVWBKHFPRVUMPBAUBDQU37YHCUDLBM",
+          "data": {
+            "id": "HIs3EiPQTneBdTDBi9NKpA",
+            "end": null,
+            "sku": null,
+            "live": true,
+            "next": 1680998400000,
+            "adhoc": false,
+            "begin": 1636490868504,
+            "price": 300.0,
+            "quote": null,
+            "state": "active",
+            "active": true,
+            "account": {
+              "id": "zzzzzzzzzzzXXXXXXXXXX",
+              "url": "https://mrsenko.onfastspring.com/account",
+              "lookup": {
+                "global": "L3Y"
+              },
+              "account": "RRRRRRRR",
+              "address": {
+                "city": "Austin",
+                "region": "US-TX",
+                "company": "Kiwi TCMS",
+                "country": "US",
+                "postal code": "00000",
+                "region custom": null,
+                "address line 1": null,
+                "address line 2": null
+              },
+              "contact": {
+                "first": "%s",
+                "last": "%s",
+                "email": "%s",
+                "phone": "6666666",
+                "company": "Kiwi TCMS",
+                "subscribed": true
+              },
+              "country": "US",
+              "language": "en"
+            },
+            "changed": 1678350419174,
+            "display": "Kiwi TCMS Enterprise Subscription",
+            "periods": null,
+            "product": {
+              "sku": "x-tenant+version+enterprise",
+              "image": "https://d8y8nchqlnmka.cloudfront.net/XAeq54smTQ8/TfAnCSq5RaY/square-with-name.png",
+              "format": "digital",
+              "parent": null,
+              "display": {
+                "en": "Kiwi TCMS Enterprise Subscription"
+              },
+              "pricing": {
+                "price": {
+                  "USD": 400.0
+                },
+                "renew": "auto",
+                "interval": "month",
+                "cancellation": {
+                  "interval": "month",
+                  "intervalLength": 1
+                },
+                "intervalCount": null,
+                "intervalLength": 1,
+                "quantityDefault": 1,
+                "quantityBehavior": "allow",
+                "dateLimitsEnabled": false,
+                "overdueNotification": {
+                  "amount": 7,
+                  "enabled": true,
+                  "interval": "day",
+                  "intervalLength": 3
+                },
+                "reminderNotification": {
+                  "enabled": true,
+                  "interval": "week",
+                  "intervalLength": 1
+                }
+              },
+              "product": "kiwitcms-enterprise-subscription",
+              "taxcode": "SC130201",
+              "description": {
+                "summary": {
+                  "en": "-----"
+                }
+              },
+              "fulfillments": {
+                "kiwitcms-enterprise-subscription_email_0": {
+                  "name": "Email (#{orderItem.display} Delivery ...)",
+                  "fulfillment": "kiwitcms-enterprise-subscription_email_0",
+                  "applicability": "NON_REBILL_ONLY"
+                }
+              },
+              "taxcodeDescription": "Computer software tech services (prewritten software) - mandatory (electronically downloaded) - services only (remote support)",
+              "productAppReference": "uuuuuuuuuuuuu"
+            },
+            "currency": "USD",
+            "discount": 0.0,
+            "endValue": null,
+            "quantity": 1,
+            "sequence": 17,
+            "subtotal": 300.0,
+            "autoRenew": true,
+            "nextValue": 1680998400000,
+            "beginValue": 1636490868504,
+            "endDisplay": null,
+            "nextDisplay": "4/9/23",
+            "beginDisplay": "11/9/21",
+            "canceledDate": null,
+            "changedValue": 1678350419174,
+            "endInSeconds": null,
+            "fulfillments": {},
+            "instructions": [
+              {
+                "type": "regular",
+                "price": 300.0,
+                "total": 300.0,
+                "product": "kiwitcms-enterprise-subscription",
+                "unitPrice": 300.0,
+                "priceTotal": 300.0,
+                "intervalUnit": "month",
+                "priceDisplay": "$300.00",
+                "totalDisplay": "$300.00",
+                "unitDiscount": 0.0,
+                "discountTotal": 0.0,
+                "periodEndDate": null,
+                "intervalLength": 1,
+                "discountPercent": 0,
+                "periodStartDate": 1636416000000,
+                "unitPriceDisplay": "$300.00",
+                "priceTotalDisplay": "$300.00",
+                "periodEndDateValue": null,
+                "unitDiscountDisplay": "$0.00",
+                "discountPercentValue": 0,
+                "discountTotalDisplay": "$0.00",
+                "periodEndDateDisplay": null,
+                "periodStartDateValue": 1636416000000,
+                "priceInPayoutCurrency": 300.0,
+                "totalInPayoutCurrency": 300.0,
+                "periodEndDateInSeconds": null,
+                "periodStartDateDisplay": "11/9/21",
+                "periodStartDateInSeconds": 1636416000,
+                "unitPriceInPayoutCurrency": 300.0,
+                "priceTotalInPayoutCurrency": 300.0,
+                "periodEndDateDisplayISO8601": null,
+                "priceInPayoutCurrencyDisplay": "$300.00",
+                "totalInPayoutCurrencyDisplay": "$300.00",
+                "unitDiscountInPayoutCurrency": 0.0,
+                "discountTotalInPayoutCurrency": 0.0,
+                "periodStartDateDisplayISO8601": "2021-11-09",
+                "unitPriceInPayoutCurrencyDisplay": "$300.00",
+                "priceTotalInPayoutCurrencyDisplay": "$300.00",
+                "unitDiscountInPayoutCurrencyDisplay": "$0.00",
+                "discountTotalInPayoutCurrencyDisplay": "$0.00"
+              }
+            ],
+            "intervalUnit": "month",
+            "priceDisplay": "$300.00",
+            "subscription": "HHHHHHHHH",
+            "nextInSeconds": 1680998400,
+            "beginInSeconds": 1636490868,
+            "changedDisplay": "3/9/23",
+            "initialOrderId": "y78xxxxxxxx",
+            "intervalLength": 1,
+            "nextChargeDate": 1680998400000,
+            "paymentOverdue": {
+              "sent": 0,
+              "total": 7,
+              "intervalUnit": "day",
+              "intervalLength": 3
+            },
+            "discountDisplay": "$0.00",
+            "nextChargeTotal": 300.0,
+            "paymentReminder": {
+              "intervalUnit": "week",
+              "intervalLength": 1
+            },
+            "subtotalDisplay": "$300.00",
+            "changedInSeconds": 1678350419,
+            "deactivationDate": null,
+            "isPauseScheduled": false,
+            "nextChargePreTax": 300.0,
+            "remainingPeriods": null,
+            "canceledDateValue": null,
+            "endDisplayISO8601": null,
+            "nextChargeCurrency": "USD",
+            "nextDisplayISO8601": "2023-04-09",
+            "beginDisplayISO8601": "2021-11-09",
+            "canceledDateDisplay": null,
+            "cancellationSetting": {
+              "cancellation": "AFTER_LAST_NOTIFICATION",
+              "intervalUnit": "month",
+              "intervalLength": 1
+            },
+            "nextChargeDateValue": 1680998400000,
+            "nextNotificationDate": 1680393600000,
+            "nextNotificationType": "PAYMENT_REMINDER",
+            "canceledDateInSeconds": null,
+            "changedDisplayISO8601": "2023-03-09",
+            "deactivationDateValue": null,
+            "initialOrderReference": "KIWITCMS-1234567",
+            "nextChargeDateDisplay": "4/9/23",
+            "priceInPayoutCurrency": 300.0,
+            "nextChargeTotalDisplay": "$300.00",
+            "deactivationDateDisplay": null,
+            "nextChargeDateInSeconds": 1680998400,
+            "nextChargePreTaxDisplay": "$300.00",
+            "discountInPayoutCurrency": 0.0,
+            "subtotalInPayoutCurrency": 300.0,
+            "deactivationDateInSeconds": null,
+            "nextNotificationDateValue": 1680393600000,
+            "canceledDateDisplayISO8601": null,
+            "nextNotificationDateDisplay": "4/2/23",
+            "nextChargeDateDisplayISO8601": "2023-04-09",
+            "priceInPayoutCurrencyDisplay": "$300.00",
+            "nextNotificationDateInSeconds": 1680393600,
+            "deactivationDateDisplayISO8601": null,
+            "discountInPayoutCurrencyDisplay": "$0.00",
+            "nextChargeTotalInPayoutCurrency": 300.0,
+            "subtotalInPayoutCurrencyDisplay": "$300.00",
+            "nextChargePreTaxInPayoutCurrency": 300.0,
+            "nextNotificationDateDisplayISO8601": "2023-04-02",
+            "isSubscriptionEligibleForPauseByBuyer": false,
+            "nextChargeTotalInPayoutCurrencyDisplay": "$300.00",
+            "nextChargePreTaxInPayoutCurrencyDisplay": "$300.00"
+          },
+          "live": true,
+          "type": "subscription.payment.reminder",
+          "created": 1680415082064,
+          "processed": false,
+          "marketplace_purchase": {
+            "plan": {
+              "monthly_price_in_cents": 30000.0
+            },
+            "account": {
+              "type": "User"
+            },
+            "billing_cycle": "monthly"
+          }
+        }
+    ]
+}
+""".strip() % (
+            self.tester.first_name,
+            self.tester.last_name,
+            self.tester.email,
+        )
+
+        signature = self.calculate_signature(payload)
+
+        initial_purchase_count = Purchase.objects.count()
+        self.assertFalse(
+            Purchase.objects.filter(
+                vendor="fastspring", sender=self.tester.email
+            ).exists()
+        )
+
+        # tmp_account calculates the actual robot name for mocking - currently not in use
+        with docker.QuayIOAccount(self.tester.email) as tmp_account:
+            with patch.object(
+                docker.QuayIOAccount,
+                "create",
+                return_value={"name": tmp_account.name, "token": "secret"},
+            ) as quay_io_create, patch.object(
+                docker.QuayIOAccount,
+                "allow_read_access",
+                return_value="success",
+            ) as quay_io_allow_read_access, patch.object(
+                mailchimp,
+                "subscribe",
+                return_value="success",
+            ) as mailchimp_subscribe:
+                response = self.client.post(
+                    self.purchase_hook_url,
+                    json.loads(payload),
+                    content_type="application/json",
+                    HTTP_X_FS_SIGNATURE=signature,
+                )
+                self.assertContains(response, "ok")
+
+                quay_io_create.assert_not_called()
+                quay_io_allow_read_access.assert_not_called()
+                mailchimp_subscribe.assert_not_called()
+
+        self.assertEqual(initial_purchase_count + 1, Purchase.objects.count())
+        self.assertTrue(
+            Purchase.objects.filter(
+                vendor="fastspring",
+                action="subscription.payment.reminder",
+                sender=self.tester.email,
+                should_have_tenant=True,
+            ).exists()
+        )
