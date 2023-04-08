@@ -142,6 +142,14 @@ def find_sku_for_fastspring(event):
         return event["data"]["subscription"]["sku"]
 
     sku = ""
+    if "items" in event["data"]:
+        for item in event["data"]["items"]:
+            if "sku" in item:
+                sku += item["sku"]
+
+        if sku:
+            return sku
+
     if "kiwitcms-private-tenant" in json.dumps(event):
         sku = "x-tenant+version"
 
