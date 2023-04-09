@@ -1,0 +1,44 @@
+Thank you for purchasing a Kiwi TCMS subscription!
+
+Technical instructions:
+
+1) Create an account at https://public.tenant.kiwitcms.org/
+
+   **IMPORTANT:** make sure to create an account with the same email address
+   used during purchase! This is the same address which has received this
+   message!
+
+2) To create a private tenant SaaS instance visit
+   https://public.tenant.kiwitcms.org/github/marketplace/create/tenant/
+   while logged in
+
+3) To explore your credentials for private Docker repositories visit
+   https://public.tenant.kiwitcms.org/github/marketplace/plans/
+   while logged in and click the *Password* field.
+
+   Follow the instructions on the page above in order to access private
+   containers
+
+4) In case you've ordered a "Managed Hosting" subscription then we need more
+   information:
+
+   - Domain name or preferred sub-domain under *.kiwitcms.org
+   - A username/email for the super-user account on your Kiwi TCMS instance.
+     This is the technical contact used during purchase.
+   - Will SSL certificate be provided or not
+   - Do you need any additional settings
+
+    Afterwards we are going to provision your instance and let you know as soon
+    as it is ready!
+
+
+**IMPORTANT:** for support inquiries please see https://kiwitcms.org/support/ !
+
+
+Billing Instructions:
+
+Kiwi TCMS will reach out when your subscription is due for renewal.
+Nothing required from your side at the moment.
+
+Happy Testing,
+the Kiwi TCMS team
