@@ -379,6 +379,34 @@ class FastSpringHook(GenericPurchaseNotificationView):
     def request_verify_signature(self, request):
         return utils.verify_hmac(request)
 
+    def find_billing_cycle_interval(self, event):
+        interval = ""
+
+        if (
+            "product" in event["data"]
+            and "pricing" in event["data"]["product"]
+            and "interval" in event["data"]["product"]["pricing"]
+        ):
+            interval = event["data"]["product"]["pricing"]["interval"]
+        elif "intervalUnit" in event["data"]:
+            interval = event["data"]["intervalUnit"]
+        elif (
+            "instructions" in event["data"]
+            and event["data"]["instructions"]
+            and "intervalUnit" in event["data"]["instructions"][0]
+        ):
+            interval = event["data"]["instructions"][0]["intervalUnit"]
+        else:
+            raise RuntimeError("Cannot find billing cycle information")
+
+        if interval == "month":
+            return "monthly"
+
+        if interval == "year":
+            return "yearly"
+
+        raise RuntimeError(f"Unsupported billing cycle: '{interval}'")
+
     def vendor_pre_process_payload(self, payload):  # pylint: disable=unused-argument
         """
         Multiple webhooks might be combined in a single payload. We need to adjust
@@ -403,7 +431,7 @@ class FastSpringHook(GenericPurchaseNotificationView):
                 )
 
             event["marketplace_purchase"] = {
-                "billing_cycle": "monthly",
+                "billing_cycle": self.find_billing_cycle_interval(event),
                 "plan": {
                     "monthly_price_in_cents": sub_total_in_payout_currency * 100,
                 },

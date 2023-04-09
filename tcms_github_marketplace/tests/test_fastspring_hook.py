@@ -545,13 +545,16 @@ class FastSpringHookTestCase(tcms_tenants.tests.LoggedInTestCase):
                 mailchimp_subscribe.assert_called_once_with(self.tester.email)
 
         self.assertEqual(initial_purchase_count + 1, Purchase.objects.count())
-        self.assertTrue(
-            Purchase.objects.filter(
-                vendor="fastspring",
-                action="purchased",
-                sender=self.tester.email,
-                should_have_tenant=True,
-            ).exists()
+        purchase = Purchase.objects.filter(
+            vendor="fastspring",
+            action="purchased",
+            sender=self.tester.email,
+            should_have_tenant=True,
+        ).first()
+
+        self.assertIsNotNone(purchase)
+        self.assertEqual(
+            purchase.payload["marketplace_purchase"]["billing_cycle"], "monthly"
         )
         # this is an initial subscription so Tenant hasn't been created yet The used needs
         # to do this by visiting the Create Tenant page
