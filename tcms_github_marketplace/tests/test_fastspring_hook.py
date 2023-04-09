@@ -247,16 +247,7 @@ class FastSpringHookTestCase(tcms_tenants.tests.LoggedInTestCase):
           "live": true,
           "type": "subscription.deactivated",
           "created": 1644135296331,
-          "processed": false,
-          "marketplace_purchase": {
-            "plan": {
-              "monthly_price_in_cents": 3200
-            },
-            "account": {
-              "type": "User"
-            },
-            "billing_cycle": "monthly"
-          }
+          "processed": false
         }
     ]
 }
@@ -508,16 +499,7 @@ class FastSpringHookTestCase(tcms_tenants.tests.LoggedInTestCase):
           "live": true,
           "type": "subscription.activated",
           "created": 1643836213792,
-          "processed": false,
-          "marketplace_purchase": {
-            "plan": {
-              "monthly_price_in_cents": 5068
-            },
-            "account": {
-              "type": "User"
-            },
-            "billing_cycle": "monthly"
-          }
+          "processed": false
         }
     ]
 }
@@ -806,16 +788,7 @@ class FastSpringHookTestCase(tcms_tenants.tests.LoggedInTestCase):
           "live": true,
           "type": "subscription.charge.completed",
           "created": %d,
-          "processed": false,
-          "marketplace_purchase": {
-            "plan": {
-              "monthly_price_in_cents": 5068
-            },
-            "account": {
-              "type": "User"
-            },
-            "billing_cycle": "monthly"
-          }
+          "processed": false
         }
     ]
 }
@@ -1097,16 +1070,7 @@ class FastSpringHookTestCase(tcms_tenants.tests.LoggedInTestCase):
           "live": true,
           "type": "subscription.activated",
           "created": 1643836213792,
-          "processed": false,
-          "marketplace_purchase": {
-            "plan": {
-              "monthly_price_in_cents": 5068
-            },
-            "account": {
-              "type": "User"
-            },
-            "billing_cycle": "monthly"
-          }
+          "processed": false
         }
     ]
 }
@@ -1372,16 +1336,7 @@ class FastSpringHookTestCase(tcms_tenants.tests.LoggedInTestCase):
           "live": true,
           "type": "subscription.activated",
           "created": 1643836213792,
-          "processed": false,
-          "marketplace_purchase": {
-            "plan": {
-              "monthly_price_in_cents": 5068
-            },
-            "account": {
-              "type": "User"
-            },
-            "billing_cycle": "monthly"
-          }
+          "processed": false
         }
     ]
 }
@@ -1688,16 +1643,7 @@ class FastSpringHookTestCase(tcms_tenants.tests.LoggedInTestCase):
           "live": true,
           "type": "subscription.payment.reminder",
           "created": 1680415082064,
-          "processed": false,
-          "marketplace_purchase": {
-            "plan": {
-              "monthly_price_in_cents": 30000.0
-            },
-            "account": {
-              "type": "User"
-            },
-            "billing_cycle": "monthly"
-          }
+          "processed": false
         }
     ]
 }
