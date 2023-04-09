@@ -18,6 +18,7 @@ from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.decorators import login_required
 
+from tcms.core.utils.mailto import mailto
 from tcms.utils import github
 
 from django_tenants.utils import get_public_schema_name
@@ -109,6 +110,12 @@ class GenericPurchaseNotificationView(View):
         """
         return
 
+    def vendor_response(self, purchase):  # pylint: disable=unused-argument
+        """
+        Returns the response from handling the payload!
+        """
+        return HttpResponse("ok", content_type="text/plain")
+
     def post(self, request, *args, **kwargs):  # pylint: disable=unused-argument
         result = self.request_verify_signature(request)
         if result is not True:
@@ -163,7 +170,7 @@ class GenericPurchaseNotificationView(View):
                     )
                     tenant.save()
 
-        return HttpResponse("ok", content_type="text/plain")
+        return self.vendor_response(purchase)
 
 
 @method_decorator(csrf_exempt, name="dispatch")
@@ -444,6 +451,109 @@ class FastSpringHook(GenericPurchaseNotificationView):
             }
 
         return payload["events"]
+
+
+@method_decorator(csrf_exempt, name="dispatch")
+class ProcessManualPurchase(GenericPurchaseNotificationView):
+    """
+    Handles manual purchases confirmed via the Admin panel.
+    """
+
+    purchase_vendor = "manual_purchase"
+
+    def action_is_activated(self, purchase):
+        return purchase.payload["action"] == "purchased"
+
+    def action_is_cancelled(self, purchase):
+        return purchase.payload["action"] == "cancelled"
+
+    def action_is_recurring_billing(self, purchase):
+        """
+        For now we don't have a different action value that differentiates
+        rebilling of manually confirmed purchases, see ManualPurchaseAdmin.save_model().
+        """
+        return purchase.payload["action"] == "purchased"
+
+    def find_paid_tenant(self, purchase):
+        """
+        Warning: b/c we don't have a good notion of recurring payments here
+        I'm not sure how to search for existing tenants from a previous purchase!
+
+        FIX THIS ONCE WE GET THERE!
+        """
+        all_senders = [
+            purchase.payload["data"]["billing_email"],
+            purchase.payload["data"]["technical_email"],
+        ]
+
+        query = super().find_paid_tenant(purchase)
+        return query.filter(
+            Q(owner__email__in=all_senders) | Q(owner__username__in=all_senders),
+        )
+
+    def find_sku(self, purchase):
+        # this method is also called from purchase_should_have_tenant() which
+        # only passes event JSON b/c the Purchase object hasn't been created yet
+        event = purchase
+        if isinstance(purchase, Purchase):
+            event = purchase.payload
+        assert isinstance(event, dict)
+
+        return event["data"]["sku"]
+
+    def purchase_action(self, event):
+        return event["action"]
+
+    def purchase_effective_date(self, event):
+        # format is .isoformat() which Django is able to understand natively
+        return event["effective_date"]
+
+    def purchase_sender(self, event):
+        return event["data"]["technical_email"]
+
+    def purchase_should_have_tenant(self, event):
+        return "x-tenant" in self.find_sku(event)
+
+    def purchase_subscription(self, event):
+        return event["data"]["invoice"]
+
+    def request_verify_signature(self, request):
+        """
+        The `.purchase_payload` attribute is set in ManualPurchaseAdmin.response_add().
+
+        WARNING: don't rely on headers which could be set from the outside.
+        """
+        payload_from_request = json.loads(request.body.decode("utf-8"))
+        return request.purchase_payload == payload_from_request
+
+    def vendor_response(self, purchase):
+        """
+        Send a fulfillment email to the billing & technical accounts informing
+        them about their new subscription and then redirect to the Admin page!
+        """
+        if self.action_is_activated(purchase):
+            # converts via a set to filter out duplicate addresses
+            recipients = list(
+                set(
+                    [
+                        purchase.payload["data"]["billing_email"],
+                        purchase.payload["data"]["technical_email"],
+                    ]
+                )
+            )
+            # sort the list so the order is the same within tests
+            recipients.sort()
+
+            mailto(
+                template_name="email/manual_subscription_notification.txt",
+                recipients=recipients,
+                subject=str(_("Kiwi TCMS subscription notification")),
+                context={},
+            )
+
+        return HttpResponseRedirect(
+            reverse("admin:tcms_github_marketplace_purchase_changelist")
+        )
 
 
 @method_decorator(login_required, name="dispatch")

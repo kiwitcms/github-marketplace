@@ -1,9 +1,18 @@
-# Copyright (c) 2019-2022 Alexander Todorov <atodorov@MrSenko.com>
+# Copyright (c) 2019-2023 Alexander Todorov <atodorov@MrSenko.com>
 
 # Licensed under the GPL 3.0: https://www.gnu.org/licenses/gpl-3.0.txt
 
 from django.db import models
 from django.contrib.postgres.indexes import GinIndex
+
+
+class ManualPurchase(models.Model):  # pylint: disable=remove-empty-class
+    """
+    A model class without any fields which is needed in order to
+    generate an admin page. The admin page will be used to record
+    manual purchases which will be processed on the fly and recorded
+    inside the standard Purchase model.
+    """
 
 
 class Purchase(models.Model):
