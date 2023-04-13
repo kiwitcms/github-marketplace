@@ -13,7 +13,8 @@ class PurchaseAdmin(admin.ModelAdmin):
     list_display = (
         "pk",
         "vendor",
-        "price_column",
+        "monthly_price",
+        "yearly_price",
         "action",
         "sender",
         "subscription",
@@ -26,13 +27,25 @@ class PurchaseAdmin(admin.ModelAdmin):
     search_fields = ("action", "vendor", "sender", "subscription")
     ordering = ["-pk"]
 
-    def price_column(self, purchase):  # pylint: disable=no-self-use
+    def monthly_price(self, purchase):  # pylint: disable=no-self-use
         return int(
-            purchase.payload["marketplace_purchase"]["plan"]["monthly_price_in_cents"]
+            purchase.payload["marketplace_purchase"]["plan"].get(
+                "monthly_price_in_cents", 0
+            )
             / 100
         )
 
-    price_column.short_description = "Price $/mo"
+    monthly_price.short_description = "$/mo"
+
+    def yearly_price(self, purchase):  # pylint: disable=no-self-use
+        return int(
+            purchase.payload["marketplace_purchase"]["plan"].get(
+                "yearly_price_in_cents", 0
+            )
+            / 100
+        )
+
+    yearly_price.short_description = "$/yr"
 
     def add_view(self, request, form_url="", extra_context=None):
         return HttpResponseRedirect(

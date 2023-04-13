@@ -54,8 +54,9 @@ class PurchaseAdminTestCase(LoggedInTestCase):
         self.assertContains(response, purchase.pk)
         self.assertContains(response, purchase.vendor)
         # shows price column
-        self.assertContains(response, "Price $/mo")
+        self.assertContains(response, "$/mo")
         self.assertContains(response, "25")
+        self.assertContains(response, "$/yr")
         self.assertContains(response, purchase.action)
         self.assertContains(response, purchase.sender)
         # timestamps are formatted according to localization
