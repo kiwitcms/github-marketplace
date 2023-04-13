@@ -5,6 +5,7 @@
 # Licensed under the GPL 3.0: https://www.gnu.org/licenses/gpl-3.0.txt
 
 import json
+import os
 from datetime import datetime
 
 from django.db.models import Q
@@ -138,7 +139,9 @@ class GenericPurchaseNotificationView(View):
             if self.action_is_cancelled(purchase):
                 return utils.cancel_plan(purchase)
 
-            if self.action_is_activated(purchase):
+            if self.action_is_activated(purchase) and not os.environ.get(
+                "SKIP_QUAY_IO", False
+            ):
                 sku = self.find_sku(purchase)
                 # create Robot account for Quay.io
                 with docker.QuayIOAccount(purchase.sender) as account:
