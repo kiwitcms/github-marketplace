@@ -63,6 +63,17 @@ Product configuration
 Changelog
 ---------
 
+v2.3.0 (14 Apr 2023)
+~~~~~~~~~~~~~~~~~~~~
+
+- Add Admin interface so we can 'Approve' manual purchases
+- Display both monthly & yearly price columns in admin panel
+- Refactor by using a generic purchase notification handling workflow class
+- Add preliminary support for yearly subscriptions on FastSpring by removing
+  hard-coded values
+- Add more tests
+
+
 v2.2.0 (07 Apr 2023)
 ~~~~~~~~~~~~~~~~~~~~
 
