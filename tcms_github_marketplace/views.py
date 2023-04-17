@@ -398,6 +398,11 @@ class FastSpringHook(GenericPurchaseNotificationView):
             and "interval" in event["data"]["product"]["pricing"]
         ):
             interval = event["data"]["product"]["pricing"]["interval"]
+        elif (
+            "subscription" in event["data"]
+            and "intervalUnit" in event["data"]["subscription"]
+        ):
+            interval = event["data"]["subscription"]["intervalUnit"]
         elif "intervalUnit" in event["data"]:
             interval = event["data"]["intervalUnit"]
         elif (
@@ -406,6 +411,13 @@ class FastSpringHook(GenericPurchaseNotificationView):
             and "intervalUnit" in event["data"]["instructions"][0]
         ):
             interval = event["data"]["instructions"][0]["intervalUnit"]
+        elif (
+            "items" in event["data"]
+            and event["data"]["items"]
+            and "subscription" in event["data"]["items"][0]
+            and "intervalUnit" in event["data"]["items"][0]["subscription"]
+        ):
+            interval = event["data"]["items"][0]["subscription"]["intervalUnit"]
         else:
             raise RuntimeError("Cannot find billing cycle information")
 
