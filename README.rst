@@ -63,6 +63,13 @@ Product configuration
 Changelog
 ---------
 
+v2.3.1 (17 Apr 2023)
+~~~~~~~~~~~~~~~~~~~~
+
+- Discover billing cycle info from FastSpring subscription data
+- Update mailchimp3 from 3.0.17 to 3.0.18
+
+
 v2.3.0 (14 Apr 2023)
 ~~~~~~~~~~~~~~~~~~~~
 
