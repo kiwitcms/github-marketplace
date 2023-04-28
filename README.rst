@@ -63,6 +63,13 @@ Product configuration
 Changelog
 ---------
 
+v2.3.2 (28 Apr 2023)
+~~~~~~~~~~~~~~~~~~~~
+
+- Update requests from 2.28.2 to 2.29.0
+- Don't fail when trying to delete user after subscription has been cancelled
+
+
 v2.3.1 (17 Apr 2023)
 ~~~~~~~~~~~~~~~~~~~~
 
