@@ -117,7 +117,10 @@ def cancel_plan(purchase):
 
     # Remove user and all of their data across all tenants
     # before attempting to revoke GitHub token
-    delete_user(customer)
+    try:
+        delete_user(customer)
+    except:  # noqa:E722, pylint: disable=bare-except
+        pass
 
     # Revoke the OAuth token your app received for the customer.
     if customer_token:
