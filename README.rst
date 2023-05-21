@@ -63,6 +63,14 @@ Product configuration
 Changelog
 ---------
 
+v2.3.3 (21 May 2023)
+~~~~~~~~~~~~~~~~~~~~
+
+- Handle expiration of unpaid requests for add-on services
+- Unpin version for requests library to avoid potential conflicts
+  with other add-ons
+
+
 v2.3.2 (28 Apr 2023)
 ~~~~~~~~~~~~~~~~~~~~
 
