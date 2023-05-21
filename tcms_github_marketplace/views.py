@@ -418,6 +418,8 @@ class FastSpringHook(GenericPurchaseNotificationView):
             and "intervalUnit" in event["data"]["items"][0]["subscription"]
         ):
             interval = event["data"]["items"][0]["subscription"]["intervalUnit"]
+        elif "additional-services-for-kiwi-tcms" in json.dumps(event):
+            return "one-time"
         else:
             raise RuntimeError("Cannot find billing cycle information")
 
