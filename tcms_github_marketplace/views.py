@@ -391,6 +391,7 @@ class FastSpringHook(GenericPurchaseNotificationView):
 
     def find_billing_cycle_interval(self, event):
         interval = ""
+        event_as_string = json.dumps(event)
 
         if (
             "product" in event["data"]
@@ -418,7 +419,9 @@ class FastSpringHook(GenericPurchaseNotificationView):
             and "intervalUnit" in event["data"]["items"][0]["subscription"]
         ):
             interval = event["data"]["items"][0]["subscription"]["intervalUnit"]
-        elif "additional-services-for-kiwi-tcms" in json.dumps(event):
+        elif "additional-services-for-kiwi-tcms" in event_as_string:
+            return "one-time"
+        elif "subscription" not in event_as_string:
             return "one-time"
         else:
             raise RuntimeError("Cannot find billing cycle information")
