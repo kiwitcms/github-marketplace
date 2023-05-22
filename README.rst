@@ -63,10 +63,11 @@ Product configuration
 Changelog
 ---------
 
-v2.3.4 (22 May 2023)
+v2.3.5 (22 May 2023)
 ~~~~~~~~~~~~~~~~~~~~
 
 - Try harder not to crash when handling non-recurring events from FastSpring
+- Force ``None`` value for SKU to be evaluated as empty string
 
 
 v2.3.3 (21 May 2023)
