@@ -342,7 +342,7 @@ class FastSpringHook(GenericPurchaseNotificationView):
         if "items" in event["data"]:
             for item in event["data"]["items"]:
                 if "sku" in item:
-                    sku += item.get("sku", "")
+                    sku += item["sku"] or ""
 
             if sku:
                 return sku
