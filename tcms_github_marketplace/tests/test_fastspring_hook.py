@@ -1701,3 +1701,154 @@ class FastSpringHookTestCase(tcms_tenants.tests.LoggedInTestCase):
                 should_have_tenant=True,
             ).exists()
         )
+
+    def test_that_order_cancel_for_non_recurring_billing_doesnt_crash(self):
+        payload = """
+{
+  "events": [
+    {
+      "id": "xxxxx",
+      "processed": false,
+      "created": 1684687600369,
+      "type": "order.canceled",
+      "live": true,
+      "data": {
+        "order": "T-xxxxx",
+        "id": "T-xxxxx",
+        "reference": null,
+        "buyerReference": null,
+        "ipAddress": "1.8.2.4",
+        "completed": false,
+        "changed": 1684687597735,
+        "changedValue": 1684687597735,
+        "changedInSeconds": 1684687597,
+        "changedDisplay": "5/21/23",
+        "changedDisplayISO8601": "2023-05-21",
+        "language": "en",
+        "live": true,
+        "currency": "EUR",
+        "payoutCurrency": "USD",
+        "quote": null,
+        "invoiceUrl": "https://mrsenko.onfastspring.com/account/order/null/invoice/XXXXX",
+        "account": {
+          "id": "xxx",
+          "account": "xxxxx",
+          "contact": {
+            "first": "%s",
+            "last": "%s",
+            "email": "%s"
+          }
+        },
+        "total": 15.0,
+        "totalDisplay": "€15.00",
+        "totalInPayoutCurrency": 15.79,
+        "totalInPayoutCurrencyDisplay": "$15.79",
+        "tax": 0.0,
+        "taxDisplay": "€0.00",
+        "taxInPayoutCurrency": 0.0,
+        "taxInPayoutCurrencyDisplay": "$0.00",
+        "taxExemptionData": "",
+        "subtotal": 15.0,
+        "subtotalDisplay": "€15.00",
+        "subtotalInPayoutCurrency": 15.79,
+        "subtotalInPayoutCurrencyDisplay": "$15.79",
+        "discount": 0.0,
+        "discountDisplay": "€0.00",
+        "discountInPayoutCurrency": 0.0,
+        "discountInPayoutCurrencyDisplay": "$0.00",
+        "discountWithTax": 0.0,
+        "discountWithTaxDisplay": "€0.00",
+        "discountWithTaxInPayoutCurrency": 0.0,
+        "discountWithTaxInPayoutCurrencyDisplay": "$0.00",
+        "billDescriptor": "N/A",
+        "payment": {},
+        "reason": "EXPIRE",
+        "customer": {
+          "first": "xxxxx",
+          "last": "xxxxx",
+          "email": "kiwitcms@example.com",
+          "company": "Kiwi TCMS",
+          "phone": "+359123456789",
+          "subscribed": false
+        },
+        "address": {
+          "country": "BG",
+          "display": "BG"
+        },
+        "recipients": [],
+        "notes": [],
+        "items": [
+          {
+            "product": "kiwi-tcms-experimental-subscription-with-manual-renewal",
+            "quantity": 1,
+            "display": "Kiwi TCMS Experimental Subscription with Manual Renewal",
+            "sku": "version",
+            "imageUrl": null,
+            "subtotal": 15.0,
+            "subtotalDisplay": "€15.00",
+            "subtotalInPayoutCurrency": 15.79,
+            "subtotalInPayoutCurrencyDisplay": "$15.79",
+            "discount": 0.0,
+            "discountDisplay": "€0.00",
+            "discountInPayoutCurrency": 0.0,
+            "discountInPayoutCurrencyDisplay": "$0.00",
+            "withholdings": {
+              "taxWithholdings": false
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
+""".strip() % (
+            self.tester.first_name,
+            self.tester.last_name,
+            self.tester.email,
+        )
+
+        signature = self.calculate_signature(payload)
+
+        initial_purchase_count = Purchase.objects.count()
+        self.assertFalse(
+            Purchase.objects.filter(
+                vendor="fastspring", sender=self.tester.email
+            ).exists()
+        )
+
+        # tmp_account calculates the actual robot name for mocking - currently not in use
+        with docker.QuayIOAccount(self.tester.email) as tmp_account:
+            with patch.object(
+                docker.QuayIOAccount,
+                "create",
+                return_value={"name": tmp_account.name, "token": "secret"},
+            ) as quay_io_create, patch.object(
+                docker.QuayIOAccount,
+                "allow_read_access",
+                return_value="success",
+            ) as quay_io_allow_read_access, patch.object(
+                mailchimp,
+                "subscribe",
+                return_value="success",
+            ) as mailchimp_subscribe:
+                response = self.client.post(
+                    self.purchase_hook_url,
+                    json.loads(payload),
+                    content_type="application/json",
+                    HTTP_X_FS_SIGNATURE=signature,
+                )
+                self.assertContains(response, "ok")
+
+                quay_io_create.assert_not_called()
+                quay_io_allow_read_access.assert_not_called()
+                mailchimp_subscribe.assert_not_called()
+
+        self.assertEqual(initial_purchase_count + 1, Purchase.objects.count())
+        self.assertTrue(
+            Purchase.objects.filter(
+                vendor="fastspring",
+                action="order.canceled",
+                sender=self.tester.email,
+                should_have_tenant=False,
+            ).exists()
+        )
