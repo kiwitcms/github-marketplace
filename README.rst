@@ -63,7 +63,7 @@ Product configuration
 Changelog
 ---------
 
-v2.3.5 (22 May 2023)
+v2.3.6 (23 May 2023)
 ~~~~~~~~~~~~~~~~~~~~
 
 - Try harder not to crash when handling non-recurring events from FastSpring
