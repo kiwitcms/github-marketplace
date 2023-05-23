@@ -422,9 +422,9 @@ class FastSpringHook(GenericPurchaseNotificationView):
         elif "additional-services-for-kiwi-tcms" in event_as_string:
             return "one-time"
         elif "subscription" not in event_as_string:
-            return "one-time"
+            return "not-a-subscription"
         else:
-            raise RuntimeError("Cannot find billing cycle information")
+            return "unrecognized"
 
         if interval == "month":
             return "monthly"
