@@ -63,6 +63,12 @@ Product configuration
 Changelog
 ---------
 
+v2.3.7 (23 Jun 2023)
+~~~~~~~~~~~~~~~~~~~~
+
+- Update mailchimp3 from 3.0.18 to 3.0.21
+
+
 v2.3.6 (23 May 2023)
 ~~~~~~~~~~~~~~~~~~~~
 
