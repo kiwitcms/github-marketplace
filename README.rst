@@ -63,6 +63,12 @@ Product configuration
 Changelog
 ---------
 
+v2.3.8 (24 Aug 2023)
+~~~~~~~~~~~~~~~~~~~~
+
+- Fix a potential crash inside the Subscriptions page
+
+
 v2.3.7 (23 Jun 2023)
 ~~~~~~~~~~~~~~~~~~~~
 
