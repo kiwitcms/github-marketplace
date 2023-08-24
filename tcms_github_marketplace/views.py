@@ -728,7 +728,11 @@ class ViewSubscriptionPlan(TemplateView):
         cancel_url = None
         quay_io_account = None
 
+        subscription_price = "-"
+        subscription_period = "-"
+
         if mp_purchase is not None:
+            subscription_price = "0"
             quay_io_account = docker.QuayIOAccount(mp_purchase.sender)
 
             if mp_purchase.vendor.lower() == "github":
@@ -748,9 +752,6 @@ class ViewSubscriptionPlan(TemplateView):
                 subscription_period = _("yr")
 
             subscription_price = int(subscription_price)
-        else:
-            subscription_price = "-"
-            subscription_period = "-"
 
         context = {
             "access_tenants": self.request.user.tenant_set.all(),
