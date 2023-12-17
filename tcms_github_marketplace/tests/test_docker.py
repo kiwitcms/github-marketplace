@@ -86,6 +86,9 @@ class TestQuayIOAccount(unittest.TestCase):
             # try a second time
             response = account.delete()
             response = json.loads(response)
+
+            print(f"*** DEBUG, response={response}")
+
             self.assertIn(
                 "Could not find robot with specified username", response["message"]
             )
