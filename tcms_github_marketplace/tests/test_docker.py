@@ -1,4 +1,4 @@
-# Copyright (c) 2022 Alexander Todorov <atodorov@MrSenko.com>
+# Copyright (c) 2022-2023 Alexander Todorov <atodorov@otb.bg>
 
 # Licensed under the GPL 3.0: https://www.gnu.org/licenses/gpl-3.0.txt
 import os
@@ -66,7 +66,7 @@ class TestQuayIOAccount(unittest.TestCase):
 
                 # try a second time
                 response = account.create()
-                self.assertIn("Existing robot with name", response["message"])
+                self.assertIn("Existing robot with name", response["error_message"])
             finally:
                 account.delete()
 
