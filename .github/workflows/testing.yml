@@ -13,7 +13,7 @@ jobs:
         python-version: [3.9]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
@@ -22,7 +22,7 @@ jobs:
   eslint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Run eslint
         run: |
           npm install --include=dev
@@ -37,7 +37,7 @@ jobs:
         kiwitcms-url: [tcms.kiwitcms.org, public.tenant.kiwitcms.org]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
         with:
