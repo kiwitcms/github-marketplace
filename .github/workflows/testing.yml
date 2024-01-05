@@ -63,9 +63,6 @@ jobs:
           pip install -U pip wheel setuptools
           pip install -r devel.txt
 
-          docker exec -i postgresql_database psql -c "CREATE EXTENSION IF NOT EXISTS btree_gin;"
-          docker exec -i postgresql_database psql -c "ALTER USER kiwi CREATEDB;"
-
           # report to Kiwi TCMS only if we have access to secrets
           if [ -n "${{ secrets.TCMS_PASSWORD }}" ]; then
               export DJANGO_TEST_RUNNER="tcms_django_plugin.TestRunner"
