@@ -1,4 +1,4 @@
-# Copyright (c) 2019-2022 Alexander Todorov <atodorov@otb.bg>
+# Copyright (c) 2019-2024 Alexander Todorov <atodorov@otb.bg>
 
 # Licensed under the GPL 3.0: https://www.gnu.org/licenses/gpl-3.0.txt
 # pylint: disable=too-many-ancestors
@@ -13,7 +13,7 @@ from django_tenants.utils import tenant_context
 
 from tcms.utils import github
 
-import tcms_tenants
+import tcms_tenants.tests
 
 
 class CreateTenantTestCase(tcms_tenants.tests.TenantGroupsTestCase):
