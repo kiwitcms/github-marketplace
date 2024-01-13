@@ -63,6 +63,17 @@ Product configuration
 Changelog
 ---------
 
+v2.4.0 (13 Jan 2024)
+~~~~~~~~~~~~~~~~~~~~
+
+- Build and test with Python 3.11 & fix an import error
+- Update key name for error responses from Quay.io
+- Start testing with upstream Postgres container image, v16 currently.
+  Note that installing ``btree_gin`` extension is commented out inside
+  ``tcms_github_marketplace/migrations/0001_initial.py``
+
+
+
 v2.3.8 (24 Aug 2023)
 ~~~~~~~~~~~~~~~~~~~~
 
