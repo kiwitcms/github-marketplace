@@ -127,6 +127,8 @@ class QuaySession(object):
         Returns:
             str: Full URL of the endpoint.
         """
+        schema = ""
+
         if self.api == "docker":
             schema = "{0}{1}/v2/{2}"
         elif self.api == "quay":
