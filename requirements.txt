@@ -1,4 +1,4 @@
-kiwitcms-tenants>=2.0
+kiwitcms-tenants>=2.8.3
 mailchimp3==3.0.21
 requests
 sqlparse>=0.5.0 # not directly required, pinned by Snyk to avoid a vulnerability
