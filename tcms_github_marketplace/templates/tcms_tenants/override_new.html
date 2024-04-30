@@ -2,6 +2,8 @@
 {% load i18n %}
 
 {% block extra_contents %}
+    {% include 'tcms_tenants/include/tenant_extra_emails.html' %}
+
     <div class="form-group">
         <label class="col-md-1 col-lg-1">{% trans "Paid until" %}</label>
         <div class="col-sm-11 col-md-8 col-lg-5 {% if form.paid_until.errors %}has-error{% endif %}">

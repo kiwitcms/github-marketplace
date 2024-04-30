@@ -1,0 +1,20 @@
+{% load i18n %}
+
+    <div class="form-group">
+        <label class="col-md-1 col-lg-1" for="id_extra_emails">{% trans "Extra emails" %}</label>
+        <div class="col-sm-11 col-md-8 col-lg-5 {% if form.extra_emails.errors %}has-error{% endif %}">
+            <input type="text" id="id_extra_emails" maxlength="{{ form.fields.extra_emails.max_length }}"
+                   placeholder="technical@example.bg; billing@example.bg"
+                   name="extra_emails" value="{{ form.extra_emails.value|default:'' }}"
+                   class="form-control"
+                   {% if form.extra_emails.field.disabled %}disabled{% endif %}>
+            {{ form.extra_emails.errors }}
+
+            <p class="help-block">
+                {% trans "Kiwi TCMS will try to match recurring billing events against tenant.owner.email + tenant.extra_emails" %}
+            </p>
+            <p class="help-block">
+                {% trans "Separate by comma (,), semi-colon (;) or white space ( )" %}
+            </p>
+        </div>
+    </div>

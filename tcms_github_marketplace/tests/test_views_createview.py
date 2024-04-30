@@ -434,6 +434,13 @@ class CreateTenantTestCase(tcms_tenants.tests.TenantGroupsTestCase):
             response,
             'class="bootstrap-switch" name="publicly_readable" type="checkbox"',
         )
+        self.assertContains(
+            response,
+            '<input type="text" id="id_extra_emails" maxlength="256" '
+            'placeholder="technical@example.bg; billing@example.bg" '
+            'name="extra_emails" value="" class="form-control">',
+            html=True,
+        )
         self.assertContains(response, "Owner")
         self.assertContains(response, f"<label>{self.tester.username}</label>")
 
@@ -605,6 +612,7 @@ class CreateTenantTestCase(tcms_tenants.tests.TenantGroupsTestCase):
                 "owner": self.tester.pk,
                 "organization": "",
                 "publicly_readable": False,
+                "extra_emails": "billing@example.org; admin@example.net",
                 "paid_until": timezone.now() + timedelta(days=30),
             },
         )
@@ -616,6 +624,7 @@ class CreateTenantTestCase(tcms_tenants.tests.TenantGroupsTestCase):
 
         tenant = tcms_tenants.models.Tenant.objects.get(schema_name="tinc")
         self.assertEqual(tenant.owner, self.tester)
+        self.assertEqual(tenant.extra_emails, "billing@example.org; admin@example.net")
         with tenant_context(tenant):
             self.assertTrue(
                 tenant.owner.tenant_groups.filter(name="Administrator").exists()
