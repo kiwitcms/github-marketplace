@@ -1,6 +1,6 @@
 # pylint: disable=missing-permission-required, no-self-use
 #
-# Copyright (c) 2019-2023 Alexander Todorov <atodorov@MrSenko.com>
+# Copyright (c) 2019-2024 Alexander Todorov <atodorov@MrSenko.com>
 #
 # Licensed under the GPL 3.0: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -296,6 +296,10 @@ class FastSpringHook(GenericPurchaseNotificationView):
         not match an existing tenant owner. That's why we look into historical
         records and try to find all unique addresses associated with a Customer.
 
+        Also try matching the current ``purchase.sender`` against
+        ``Tenant.extra_emails`` for the situation where ``Tenant.owner`` is no
+        longer the one who pays the subscription.
+
         WARNING: Tenant.organization doesn't matter for FastSpring purchases!
         """
         all_senders = Purchase.objects.filter(
@@ -306,7 +310,9 @@ class FastSpringHook(GenericPurchaseNotificationView):
 
         query = super().find_paid_tenant(purchase)
         return query.filter(
-            Q(owner__email__in=all_senders) | Q(owner__username__in=all_senders),
+            Q(owner__email__in=all_senders)
+            | Q(owner__username__in=all_senders)
+            | Q(extra_emails__icontains=purchase.sender),
         )
 
     def find_sku(self, purchase):
