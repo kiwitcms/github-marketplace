@@ -63,6 +63,22 @@ Product configuration
 Changelog
 ---------
 
+v2.5.0 (03 May 2024)
+~~~~~~~~~~~~~~~~~~~~
+
+- Allow edits to ``Tenant.extra_emails`` field by overriding the HTML templates
+  so we can expose this inside the UI. This new field is shown when creating
+  a new tenant or editing an existing one
+- FastSpring webhooks handler will also try matching the
+  ``Tenant.extra_emails`` field before updating the expiration period.
+  This will handle the situation where ``Tenant.owner`` is no longer the one
+  who pays for the subscription
+- Pin transitive dependencies to reduce the possibility of installing
+  vulnerable packages
+- Fix potentially uninitilized local variable
+- Start using psycopg 3 for testing
+
+
 v2.4.0 (13 Jan 2024)
 ~~~~~~~~~~~~~~~~~~~~
 
@@ -71,7 +87,6 @@ v2.4.0 (13 Jan 2024)
 - Start testing with upstream Postgres container image, v16 currently.
   Note that installing ``btree_gin`` extension is commented out inside
   ``tcms_github_marketplace/migrations/0001_initial.py``
-
 
 
 v2.3.8 (24 Aug 2023)
