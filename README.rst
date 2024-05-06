@@ -63,6 +63,14 @@ Product configuration
 Changelog
 ---------
 
+v2.5.1 (06 May 2024)
+~~~~~~~~~~~~~~~~~~~~
+
+- Adjust name of settings for ``revoke_oauth_token()`` to match production
+  environment
+- Adjust arguments for newer versions of PyGithub
+
+
 v2.5.0 (03 May 2024)
 ~~~~~~~~~~~~~~~~~~~~
 

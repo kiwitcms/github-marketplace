@@ -25,7 +25,7 @@ def get_install_requires(path):
 
 setup(
     name="kiwitcms-github-marketplace",
-    version="2.5.0",
+    version="2.5.1",
     description="GitHub Marketplace integration for Kiwi TCMS",
     long_description=get_long_description(),
     author="Kiwi TCMS",
