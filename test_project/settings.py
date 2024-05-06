@@ -1,6 +1,6 @@
 # pylint: disable=wildcard-import, unused-wildcard-import
 #
-# Copyright (c) 2019-2022 Alexander Todorov <atodorov@MrSenko.com>
+# Copyright (c) 2019-2024 Alexander Todorov <atodorov@MrSenko.com>
 #
 # Licensed under the GPL 3.0: https://www.gnu.org/licenses/gpl-3.0.txt
 # pylint: disable=invalid-name, protected-access, wrong-import-position
@@ -68,8 +68,8 @@ INSTALLED_APPS.extend(
 
 
 SOCIAL_AUTH_URL_NAMESPACE = "social"
-SOCIAL_AUTH_GITHUB_KEY = "oauth_client_id"
-SOCIAL_AUTH_GITHUB_SECRET = "oauth_client_secret"
+SOCIAL_AUTH_GITHUB_APP_KEY = "oauth_client_id"
+SOCIAL_AUTH_GITHUB_APP_SECRET = "oauth_client_secret"
 
 # application specific configuration
 # NOTE: must be bytes, not string
