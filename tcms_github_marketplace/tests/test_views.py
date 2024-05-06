@@ -1,4 +1,4 @@
-# Copyright (c) 2019-2022 Alexander Todorov <atodorov@MrSenko.com>
+# Copyright (c) 2019-2024 Alexander Todorov <atodorov@MrSenko.com>
 
 # Licensed under the GPL 3.0: https://www.gnu.org/licenses/gpl-3.0.txt
 # pylint: disable=too-many-ancestors
@@ -524,7 +524,7 @@ class CancelPlanTestCase(InstallTestCase):
             extra_data={"access_token": "TEST-ME", "token_type": "bearer"},
         )
         cls.gh_revoke_url = (
-            f"/applications/{settings.SOCIAL_AUTH_GITHUB_KEY}/tokens/TEST-ME"
+            f"/applications/{settings.SOCIAL_AUTH_GITHUB_APP_KEY}/tokens/TEST-ME"
         )
 
     def test_purchased_free_plan(self):

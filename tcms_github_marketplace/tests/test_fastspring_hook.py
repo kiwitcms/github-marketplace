@@ -39,7 +39,7 @@ class FastSpringHookTestCase(tcms_tenants.tests.LoggedInTestCase):
         )
 
         cls.gh_revoke_url = (
-            f"/applications/{settings.SOCIAL_AUTH_GITHUB_KEY}/tokens/TEST-ME"
+            f"/applications/{settings.SOCIAL_AUTH_GITHUB_APP_KEY}/tokens/TEST-ME"
         )
 
     @staticmethod

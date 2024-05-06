@@ -1,4 +1,4 @@
-# Copyright (c) 2019-2023 Alexander Todorov <atodorov@MrSenko.com>
+# Copyright (c) 2019-2024 Alexander Todorov <atodorov@MrSenko.com>
 
 # Licensed under the GPL 3.0: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -57,8 +57,8 @@ def revoke_oauth_token(token):
     # use Basic Authentication, where the username is the OAuth application
     # client_id and the password is its client_secret.
     gh_api = Requester(
-        settings.SOCIAL_AUTH_GITHUB_KEY,
-        settings.SOCIAL_AUTH_GITHUB_SECRET,
+        settings.SOCIAL_AUTH_GITHUB_APP_KEY,
+        settings.SOCIAL_AUTH_GITHUB_APP_SECRET,
         None,
         None,
         github.Consts.DEFAULT_BASE_URL,
@@ -70,7 +70,7 @@ def revoke_oauth_token(token):
         None,
     )
 
-    revoke_url = f"/applications/{settings.SOCIAL_AUTH_GITHUB_KEY}/tokens/{token}"
+    revoke_url = f"/applications/{settings.SOCIAL_AUTH_GITHUB_APP_KEY}/tokens/{token}"
     _headers, _data = gh_api.requestJsonAndCheck("DELETE", revoke_url)
 
 
