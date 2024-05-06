@@ -8,6 +8,7 @@ from base64 import b64encode
 from datetime import timedelta
 
 import github
+from github.GithubRetry import GithubRetry
 from github.Requester import Requester
 from social_django.models import UserSocialAuth
 
@@ -57,18 +58,22 @@ def revoke_oauth_token(token):
     # use Basic Authentication, where the username is the OAuth application
     # client_id and the password is its client_secret.
     gh_api = Requester(
-        settings.SOCIAL_AUTH_GITHUB_APP_KEY,
-        settings.SOCIAL_AUTH_GITHUB_APP_SECRET,
-        None,
-        None,
+        github.Auth.Login(
+            settings.SOCIAL_AUTH_GITHUB_APP_KEY,
+            settings.SOCIAL_AUTH_GITHUB_APP_SECRET,
+        ),
         github.Consts.DEFAULT_BASE_URL,
         github.Consts.DEFAULT_TIMEOUT,
         "KiwiTCMS/Python",
         github.Consts.DEFAULT_PER_PAGE,
         True,
+        GithubRetry(),
         None,
-        None,
+        github.Consts.DEFAULT_SECONDS_BETWEEN_REQUESTS,
+        github.Consts.DEFAULT_SECONDS_BETWEEN_WRITES,
     )
+
+    # note3: vvv this API method seems to have been removed already
 
     revoke_url = f"/applications/{settings.SOCIAL_AUTH_GITHUB_APP_KEY}/tokens/{token}"
     _headers, _data = gh_api.requestJsonAndCheck("DELETE", revoke_url)
