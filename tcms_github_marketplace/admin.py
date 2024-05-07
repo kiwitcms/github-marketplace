@@ -1,4 +1,4 @@
-# Copyright (c) 2019-2023 Alexander Todorov <atodorov@MrSenko.com>
+# Copyright (c) 2019-2024 Alexander Todorov <atodorov@MrSenko.com>
 
 # Licensed under the GPL 3.0: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -27,9 +27,10 @@ class PurchaseAdmin(admin.ModelAdmin):
         "received_on",
         "should_have_tenant",
         "should_have_support",
+        "gitops_prefix",
     )
     list_filter = ("action", "vendor", "sender")
-    search_fields = ("action", "vendor", "sender", "subscription")
+    search_fields = ("action", "vendor", "sender", "subscription", "gitops_prefix")
     ordering = ["-pk"]
 
     def monthly_price(self, purchase):  # pylint: disable=no-self-use
