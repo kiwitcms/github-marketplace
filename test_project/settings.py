@@ -33,7 +33,7 @@ dist = pkg_resources.Distribution(__file__)
 entry_point = pkg_resources.EntryPoint.parse(
     "github/marketplace = tcms_github_marketplace", dist=dist
 )
-dist._ep_map = {"kiwitcms.plugins": {"kiwitcms_tenants_devel": entry_point}}
+dist._ep_map = {"kiwitcms.plugins": {"github/marketplace": entry_point}}
 pkg_resources.working_set.add(dist)
 
 from tcms.settings.product import *
@@ -42,6 +42,15 @@ from tcms.settings.product import *
 if os.path.exists(os.path.join(BASE_DIR, "kiwitcms_github_marketplace.egg-info")):
     print("ERORR: .egg-info/ directories mess up plugin loading code in devel mode")
     sys.exit(1)
+
+# import the settings which automatically get distributed with this package
+marketplace_settings = os.path.join(BASE_DIR, "tcms_settings_dir", "marketplace.py")
+
+# Kiwi TCMS loads extra settings in the same way using exec()
+exec(  # pylint: disable=exec-used
+    open(marketplace_settings, "rb").read(),  # pylint: disable=consider-using-with
+    globals(),
+)
 
 
 # these are enabled only for testing purposes
