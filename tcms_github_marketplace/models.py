@@ -60,6 +60,9 @@ class Purchase(models.Model):
     effective_date = models.DateTimeField(db_index=True)
     should_have_tenant = models.BooleanField(default=False, db_index=True)
     should_have_support = models.BooleanField(default=False, db_index=True)
+    gitops_prefix = models.CharField(
+        null=True, blank=True, db_index=True, max_length=256
+    )
 
     # this is for internal purposes
     received_on = models.DateTimeField(db_index=True, auto_now_add=True)
