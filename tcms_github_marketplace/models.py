@@ -1,4 +1,4 @@
-# Copyright (c) 2019-2023 Alexander Todorov <atodorov@MrSenko.com>
+# Copyright (c) 2019-2024 Alexander Todorov <atodorov@MrSenko.com>
 
 # Licensed under the GPL 3.0: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -13,6 +13,38 @@ class ManualPurchase(models.Model):  # pylint: disable=remove-empty-class
     manual purchases which will be processed on the fly and recorded
     inside the standard Purchase model.
     """
+
+
+@models.CharField.register_lookup
+class IPrefixFor(models.lookups.StartsWith):  # pylint: disable=abstract-method
+    """
+    The reverse of ``_startswith``. Selects records where the
+    DB column value acts as a prefix for the supplied lookup argument!
+    https://dba.stackexchange.com/a/149632
+
+    SELECT * FROM my_table WHERE 'value' ILIKE model_field || '%';
+
+
+    .. warning::
+
+        We achieve the results by swapping the left-hand and right-hand side operators
+        for a regular PatternLookup, e.g IStartsWith
+    """
+
+    lookup_name = "iprefix_for"
+    param_pattern = "%s"
+
+    # WARNING: internally process the other side of the expression
+    def process_lhs(self, compiler, connection, lhs=None):
+        return super().process_rhs(compiler, connection)
+
+    # WARNING: internally process the other side of the expression
+    def process_rhs(self, qn, connection):
+        return super().process_lhs(qn, connection)
+
+    def get_rhs_op(self, connection, rhs):
+        # WARNING: Postgresql specific
+        return f"ILIKE {rhs}::text || '%%'"
 
 
 class Purchase(models.Model):
