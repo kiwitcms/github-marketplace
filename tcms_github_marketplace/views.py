@@ -76,6 +76,9 @@ class GenericPurchaseNotificationView(View):
     def purchase_effective_date(self, event):
         raise NotImplementedError
 
+    def purchase_gitops_prefix(self, event):  # pylint: disable=unused-argument
+        return None
+
     def purchase_sender(self, event):
         raise NotImplementedError
 
@@ -141,6 +144,7 @@ class GenericPurchaseNotificationView(View):
                 should_have_tenant=self.purchase_should_have_tenant(event),
                 subscription=self.purchase_subscription(event),
                 vendor=self.purchase_vendor,
+                gitops_prefix=self.purchase_gitops_prefix(event),
             )
 
             if self.action_is_cancelled(purchase):
@@ -237,6 +241,12 @@ class PurchaseHook(GenericPurchaseNotificationView):
     def purchase_effective_date(self, event):
         # format is 2017-10-25T00:00:00+00:00
         return datetime.strptime(event["effective_date"][:19], "%Y-%m-%dT%H:%M:%S")
+
+    def purchase_gitops_prefix(self, event):
+        # Note: works for both organizations and users
+        login = event["marketplace_purchase"]["account"]["login"]
+
+        return f"https://github.com/{login}"
 
     def purchase_sender(self, event):
         return event["sender"]["email"]
