@@ -704,7 +704,7 @@ class ViewSubscriptionPlan(TemplateView):
             sender=self.request.user.email,
         ).order_by("-received_on")
 
-        mp_purchase = purchases.first()
+        latest_purchase = purchases.first()
 
         cancel_url = None
         quay_io_account = None
@@ -712,24 +712,26 @@ class ViewSubscriptionPlan(TemplateView):
         subscription_price = "-"
         subscription_period = "-"
 
-        if mp_purchase is not None:
+        if latest_purchase is not None:
             subscription_price = "0"
-            quay_io_account = docker.QuayIOAccount(mp_purchase.sender)
+            quay_io_account = docker.QuayIOAccount(latest_purchase.sender)
 
-            if mp_purchase.vendor.lower() == "github":
+            if latest_purchase.vendor.lower() == "github":
                 cancel_url = "https://github.com/settings/billing"
 
-            if mp_purchase.vendor.lower() == "fastspring":
-                cancel_url = mp_purchase.payload["data"]["account"]["url"]
+            if latest_purchase.vendor.lower() == "fastspring":
+                cancel_url = latest_purchase.payload["data"]["account"]["url"]
 
-            mp_purchase = mp_purchase.payload["marketplace_purchase"]
-            if mp_purchase["billing_cycle"] == "monthly":
+            latest_purchase = latest_purchase.payload["marketplace_purchase"]
+            if latest_purchase["billing_cycle"] == "monthly":
                 subscription_price = (
-                    mp_purchase["plan"]["monthly_price_in_cents"] // 100
+                    latest_purchase["plan"]["monthly_price_in_cents"] // 100
                 )
                 subscription_period = _("mo")
-            elif mp_purchase["billing_cycle"] == "yearly":
-                subscription_price = mp_purchase["plan"]["yearly_price_in_cents"] // 100
+            elif latest_purchase["billing_cycle"] == "yearly":
+                subscription_price = (
+                    latest_purchase["plan"]["yearly_price_in_cents"] // 100
+                )
                 subscription_period = _("yr")
 
             subscription_price = int(subscription_price)
