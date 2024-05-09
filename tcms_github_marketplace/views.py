@@ -11,10 +11,11 @@ from datetime import datetime
 from django.db.models import Q
 from django.conf import settings
 from django.core.cache import cache
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic.base import View, TemplateView
+from django.views.generic.base import View
+from django.views.generic.edit import UpdateView
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.decorators import login_required
@@ -29,6 +30,7 @@ from tcms_tenants import utils as tcms_tenants_utils
 
 from tcms_github_marketplace import docker
 from tcms_github_marketplace import fastspring
+from tcms_github_marketplace import forms
 from tcms_github_marketplace import mailchimp
 from tcms_github_marketplace import utils
 from tcms_github_marketplace.models import Purchase
@@ -691,20 +693,33 @@ class CreateTenant(NewTenantView):
 
 
 @method_decorator(login_required, name="dispatch")
-class ViewSubscriptionPlan(TemplateView):
+class ViewSubscriptionPlan(UpdateView):
     """
-    This view shows information about current subscription plan.
+    This view shows information about current subscription plan and allows
+    user to edit Purchase.gitops_prefix field if not set!
     """
 
+    model = Purchase
+    form_class = forms.UpdateGitopsPrefixForm
+    success_url = reverse_lazy("github_marketplace_plans")
     template_name = "tcms_github_marketplace/subscription.html"
 
-    def get_context_data(self, **kwargs):
-        own_tenants = Tenant.objects.filter(owner=self.request.user)
-        purchases = Purchase.objects.filter(
+    def get_queryset(self):
+        """
+        All purchases for the currently logged-in user
+        """
+        return Purchase.objects.filter(
             sender=self.request.user.email,
         ).order_by("-received_on")
 
-        latest_purchase = purchases.first()
+    def get_object(self, queryset=None):
+        """
+        Always returns the latest purchase for the current user
+        """
+        return self.get_queryset().first()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
 
         cancel_url = None
         quay_io_account = None
@@ -712,38 +727,40 @@ class ViewSubscriptionPlan(TemplateView):
         subscription_price = "-"
         subscription_period = "-"
 
-        if latest_purchase is not None:
+        if self.object is not None:
             subscription_price = "0"
-            quay_io_account = docker.QuayIOAccount(latest_purchase.sender)
+            quay_io_account = docker.QuayIOAccount(self.object.sender)
 
-            if latest_purchase.vendor.lower() == "github":
+            if self.object.vendor.lower() == "github":
                 cancel_url = "https://github.com/settings/billing"
 
-            if latest_purchase.vendor.lower() == "fastspring":
-                cancel_url = latest_purchase.payload["data"]["account"]["url"]
+            if self.object.vendor.lower() == "fastspring":
+                cancel_url = self.object.payload["data"]["account"]["url"]
 
-            latest_purchase = latest_purchase.payload["marketplace_purchase"]
-            if latest_purchase["billing_cycle"] == "monthly":
+            purchase_data = self.object.payload["marketplace_purchase"]
+            if purchase_data["billing_cycle"] == "monthly":
                 subscription_price = (
-                    latest_purchase["plan"]["monthly_price_in_cents"] // 100
+                    purchase_data["plan"]["monthly_price_in_cents"] // 100
                 )
                 subscription_period = _("mo")
-            elif latest_purchase["billing_cycle"] == "yearly":
+            elif purchase_data["billing_cycle"] == "yearly":
                 subscription_price = (
-                    latest_purchase["plan"]["yearly_price_in_cents"] // 100
+                    purchase_data["plan"]["yearly_price_in_cents"] // 100
                 )
                 subscription_period = _("yr")
 
             subscription_price = int(subscription_price)
 
-        context = {
-            "access_tenants": self.request.user.tenant_set.all(),
-            "own_tenants": own_tenants,
-            "purchases": purchases,
-            "subscription_price": subscription_price,
-            "subscription_period": subscription_period,
-            "cancel_url": cancel_url,
-            "quay_io_account": quay_io_account,
-        }
+        context.update(
+            {
+                "access_tenants": self.request.user.tenant_set.all(),
+                "own_tenants": Tenant.objects.filter(owner=self.request.user),
+                "purchases": self.get_queryset(),
+                "subscription_price": subscription_price,
+                "subscription_period": subscription_period,
+                "cancel_url": cancel_url,
+                "quay_io_account": quay_io_account,
+            }
+        )
 
         return context
