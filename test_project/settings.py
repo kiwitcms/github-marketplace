@@ -85,6 +85,9 @@ SOCIAL_AUTH_GITHUB_APP_SECRET = "oauth_client_secret"
 KIWI_GITHUB_MARKETPLACE_SECRET = b"S3cr3t"
 KIWI_FASTSPRING_SECRET = b"s3cr3t"
 
+# this one is string
+KIWI_GITHUB_PAT_FOR_CHECKING_ORGS_AND_USERNAMES = "check-me"
+
 QUAY_IO_TOKEN = os.getenv("QUAY_IO_TOKEN")
 
 # Allows us to hook-up kiwitcms-django-plugin at will
