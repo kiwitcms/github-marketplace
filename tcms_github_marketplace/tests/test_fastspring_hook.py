@@ -556,6 +556,9 @@ class FastSpringHookTestCase(tcms_tenants.tests.LoggedInTestCase):
         self.assertEqual(
             purchase.payload["marketplace_purchase"]["billing_cycle"], "monthly"
         )
+        # make sure no prefix was recorded
+        self.assertIsNone(purchase.gitops_prefix)
+
         # this is an initial subscription so Tenant hasn't been created yet The used needs
         # to do this by visiting the Create Tenant page
         self.assertFalse(

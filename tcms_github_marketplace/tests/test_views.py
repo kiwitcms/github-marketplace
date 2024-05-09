@@ -122,7 +122,7 @@ class PurchaseHookTestCase(tcms_tenants.tests.LoggedInTestCase):
       "account":{
          "type":"Organization",
          "id":18404719,
-         "login":"username",
+         "login":"example-org",
          "organization_billing_email":"username@email.com"
       },
       "billing_cycle":"monthly",
@@ -185,6 +185,10 @@ class PurchaseHookTestCase(tcms_tenants.tests.LoggedInTestCase):
 
         # the hook handler does nothing but save to DB
         self.assertEqual(initial_purchase_count + 1, Purchase.objects.count())
+
+        # make sure the prefix was recorded
+        purchase = Purchase.objects.order_by("pk").last()
+        self.assertEqual(purchase.gitops_prefix, "https://github.com/example-org")
 
     def test_hook_ping(self):
         payload = """
