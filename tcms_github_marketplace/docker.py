@@ -1,4 +1,4 @@
-# Copyright (c) 2022 Alexander Todorov <atodorov@MrSenko.com>
+# Copyright (c) 2022-2024 Alexander Todorov <atodorov@MrSenko.com>
 
 # Licensed under the GPL 3.0: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -64,8 +64,8 @@ class QuayIOAccount:
             )
 
         if response:
-            self._token = response["token"]
-            self._username = response["name"]
+            self._token = response.get("token")
+            self._username = response.get("name")
 
     def create(self):
         """
