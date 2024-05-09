@@ -11,23 +11,23 @@
     <div class="row row-cards-pf">
         <div class="col-xs-12 col-sm-12 col-md-6">
             <div class="card-pf card-pf-accented card-pf-aggregate-status">
-                <h2 class="card-pf-title" style="text-align: left">
+                <h2 class="card-pf-title kiwi-text-align-left">
                     {% trans "You can access the following tenants" %}
                 </h2>
 
             {% for tenant in access_tenants %}
-                <h2 class="card-pf-title" style="text-align: left">
+                <h2 class="card-pf-title kiwi-text-align-left">
                     <span class="pficon pficon-tenant"></span>{% trans 'Tenant' %}:
                     <a href="{% tenant_url request tenant.schema_name %}">{% tenant_url request tenant.schema_name %}</a>
                 </h2>
 
-                <h2 class="card-pf-title" style="text-align: left">
+                <h2 class="card-pf-title kiwi-text-align-left">
                     <span class="pficon pficon-user"></span>{% trans 'Owner' %}:
                     <a href="{% url "tcms-profile" tenant.owner.username %}">{{ tenant.owner }}</a>
                 </h2>
 
                 {% if tenant.organization %}
-                <h2 class="card-pf-title" style="text-align: left">
+                <h2 class="card-pf-title kiwi-text-align-left">
                     <span class="pficon pficon-users"></span>{% trans 'Organization' %}:
                     {{ tenant.organization }}
                 </h2>
@@ -40,23 +40,23 @@
 
         <div class="col-xs-12 col-sm-12 col-md-6">
             <div class="card-pf card-pf-accented card-pf-aggregate-status">
-                <h2 class="card-pf-title" style="text-align: left">
+                <h2 class="card-pf-title kiwi-text-align-left">
                     {% trans 'Docker credentials' %}
                 </h2>
 
-                <div class="card-pf-body" style="text-align: left">
+                <div class="card-pf-body kiwi-text-align-left">
                     <div class="input-group">
                         <span class="input-group-addon">{% trans 'Username' %} </span>
                         <input type="text" id="docker_username" value="{{ quay_io_account.username }}" class="form-control" disabled>
                     </div>
 
                     <div class="input-group">
-                        <span class="input-group-addon" style="cursor: pointer" id="show-docker-password">{% trans 'Password' %}</span>
+                        <span class="input-group-addon kiwi-cursor-pointer" id="show-docker-password">{% trans 'Password' %}</span>
                         <input type="password" id="docker_password" value="{{ quay_io_account.token }}" class="form-control" disabled>
                     </div>
 
                     <p class="help-block">
-                        <span class="fa fa-exclamation-triangle" style="color: #ec7a08;"></span>
+                        <span class="fa fa-exclamation-triangle kiwi-color-warning"></span>
                         <span class="fa fa-sign-in" aria-hidden="true"></span>
                         {% trans 'Private containers instructions' %}:
                         <a href="https://kiwitcms.org/containers/">https://kiwitcms.org/containers/</a>
