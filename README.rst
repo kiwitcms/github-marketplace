@@ -41,6 +41,7 @@ Configuration
 
 Required settings:
 
+- ``KIWI_GITHUB_PAT_FOR_CHECKING_ORGS_AND_USERNAMES`` - string
 - ``KIWI_GITHUB_MARKETPLACE_SECRET`` - binary string
 - ``KIWI_FASTSPRING_SECRET`` - binary string
 - ``QUAY_IO_TOKEN`` - string
