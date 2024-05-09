@@ -65,6 +65,7 @@
             </div>
         </div>
 
+        {% if object %}
         <div class="col-xs-12 col-sm-12 col-md-6">
             <div class="card-pf card-pf-accented card-pf-aggregate-status">
                 <h2 class="card-pf-title kiwi-text-align-left">
@@ -72,25 +73,26 @@
                 </h2>
 
                 <div class="card-pf-body kiwi-text-align-left">
-                    <form class="form-horizontal" method="post" action="#">
-                        {% csrf_token %}
-
+                    <form class="form-horizontal" method="post" action="{% url 'github_marketplace_plans' %}">
                         <div class="form-group">
                             <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10 {% if form.gitops_prefix.errors %}has-error{% endif %} kiwi-padding-right-0">
                                 <input type="text" name="gitops_prefix"
                                     value="{{ form.gitops_prefix.value|default:'' }}"
                                     class="form-control" required
-                                    {% if form.gitops_prefix.value %}disabled{% endif %}
                                     maxlength="{{ form.fields.gitops_prefix.max_length }}"
                                     placeholder="https://github.com/your-account-or-organization"
+                                    {% if object.gitops_prefix %}disabled{% endif %}
                                 >
 
                                 {{ form.gitops_prefix.errors }}
                             </div>
 
+                        {% if not object.gitops_prefix %}
+                            {% csrf_token %}
                             <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 kiwi-padding-left-0">
                                 <button type="submit" class="btn btn-default btn-md">{% trans "Save" %}</button>
                             </div>
+                        {% endif %}
                         </div>
 
                         <p class="help-block">
@@ -102,6 +104,7 @@
                 </div>
             </div>
         </div>
+        {% endif %}
 
     </div>
 
