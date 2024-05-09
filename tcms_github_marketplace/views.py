@@ -28,6 +28,7 @@ from tcms_tenants.views import NewTenantView
 from tcms_tenants import utils as tcms_tenants_utils
 
 from tcms_github_marketplace import docker
+from tcms_github_marketplace import fastspring
 from tcms_github_marketplace import mailchimp
 from tcms_github_marketplace import utils
 from tcms_github_marketplace.models import Purchase
@@ -333,50 +334,7 @@ class FastSpringHook(GenericPurchaseNotificationView):
         )
 
     def find_sku(self, purchase):
-        """
-        SKU can be found in several different places
-        """
-        # this method is also called from purchase_should_have_tenant() which
-        # only passes event JSON b/c the Purchase object hasn't been created yet
-        event = purchase
-        if isinstance(purchase, Purchase):
-            event = purchase.payload
-        assert isinstance(event, dict)
-
-        # begin looking for SKU
-        if "sku" in event["data"] and event["data"]["sku"]:
-            return event["data"]["sku"]
-
-        if (
-            "product" in event["data"]
-            and "sku" in event["data"]["product"]
-            and event["data"]["product"]["sku"]
-        ):
-            return event["data"]["product"]["sku"]
-
-        if (
-            "subscription" in event["data"]
-            and "sku" in event["data"]["subscription"]
-            and event["data"]["subscription"]["sku"]
-        ):
-            return event["data"]["subscription"]["sku"]
-
-        sku = ""
-        if "items" in event["data"]:
-            for item in event["data"]["items"]:
-                if "sku" in item:
-                    sku += item["sku"] or ""
-
-            if sku:
-                return sku
-
-        if "kiwitcms-private-tenant" in json.dumps(event):
-            sku = "x-tenant+version"
-
-        if "kiwitcms-enterprise" in json.dumps(event):
-            sku = "x-tenant+version+enterprise"
-
-        return sku
+        return fastspring.find_sku(purchase)
 
     def purchase_action(self, event):
         # Adjust to GitHub's format b/c we have legacy records in the DB
