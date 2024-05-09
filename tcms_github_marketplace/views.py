@@ -10,6 +10,7 @@ from datetime import datetime
 
 from django.db.models import Q
 from django.conf import settings
+from django.core.cache import cache
 from django.urls import reverse
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
@@ -89,7 +90,13 @@ class GenericPurchaseNotificationView(View):
         return None
 
     def record_purchase(self, **kwargs):
-        return Purchase.objects.create(**kwargs)
+        purchase = Purchase.objects.create(**kwargs)
+
+        # remove possible stale state
+        if purchase.gitops_prefix:
+            cache.clear()
+
+        return purchase
 
     def request_verify_signature(self, request):
         raise NotImplementedError
