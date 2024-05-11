@@ -23,6 +23,7 @@ class TestGitOpsAllow(test.TestCase):
     def tearDown(self):
         Purchase.objects.all().delete()
         cache.clear()
+        super().tearDown()
 
     def test_when_no_purchase_matching_repo_then_result_is_false(self):
         result = api.gitops_allow("https://github.com/atodorov/testing-with-python")

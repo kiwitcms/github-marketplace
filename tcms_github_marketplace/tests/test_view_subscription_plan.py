@@ -22,6 +22,7 @@ class ViewSubscriptionTestCase(tcms_tenants.tests.LoggedInTestCase):
 
     def tearDown(self):
         Purchase.objects.all().delete()
+        super().tearDown()
 
     def assert_on_page(self, response):
         for text in (

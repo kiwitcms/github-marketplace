@@ -16,6 +16,7 @@ class PurchaseAdminTestCase(LoggedInTestCase):
     def tearDown(self):
         self.tester.is_superuser = False
         self.tester.save()
+        super().tearDown()
 
     def test_changelist_unauthorized_for_regular_user(self):
         response = self.client.get(
