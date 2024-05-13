@@ -52,3 +52,12 @@ messages:
 
 .PHONY: check
 check: flake8 pylint test
+
+
+.PHONY: test-via-docker
+test-via-docker:
+	rm -rf build/ dist/ kiwitcms_github_marketplace.egg-info/
+	python setup.py bdist_wheel
+	docker build -f Dockerfile.testing -t kiwitcms/github-marketplace:latest .
+	docker images
+	test_project/sanity-check.sh
