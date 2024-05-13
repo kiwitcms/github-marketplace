@@ -704,6 +704,12 @@ class ViewSubscriptionPlan(UpdateView):
     success_url = reverse_lazy("github_marketplace_plans")
     template_name = "tcms_github_marketplace/subscription.html"
 
+    def form_valid(self, form):
+        # clear gitops_prefix cache!
+        cache.clear()
+
+        return super().form_valid(form)
+
     def get_queryset(self):
         """
         All purchases for the currently logged-in user
