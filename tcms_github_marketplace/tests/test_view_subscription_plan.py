@@ -1,10 +1,13 @@
-# Copyright (c) 2022 Alexander Todorov <atodorov@MrSenko.com>
+# Copyright (c) 2022-2024 Alexander Todorov <atodorov@MrSenko.com>
 
 # Licensed under the GPL 3.0: https://www.gnu.org/licenses/gpl-3.0.txt
 # pylint: disable=too-many-ancestors
 import os
 import unittest
 
+from datetime import timedelta
+
+from django.core.cache import cache
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -12,6 +15,10 @@ from django.utils.translation import gettext_lazy as _
 import tcms_tenants
 from tcms_github_marketplace import docker
 from tcms_github_marketplace.models import Purchase
+
+
+class MockUser:  # pylint: disable=too-few-public-methods
+    type = None
 
 
 class ViewSubscriptionTestCase(tcms_tenants.tests.LoggedInTestCase):
@@ -108,3 +115,53 @@ class ViewSubscriptionTestCase(tcms_tenants.tests.LoggedInTestCase):
         self.assertContains(response, "https://example.com/cancel")
         self.assertContains(response, "test-purchase")
         self.assertContains(response, "fastspring")
+
+    def test_saving_gitops_prefix_clears_cache(self):
+        # simulate ownership
+        self.tenant.owner = self.tester
+        self.tenant.save()
+
+        # simulate purchasing
+        purchase = Purchase.objects.create(
+            vendor="fastspring",
+            action="purchased",
+            gitops_prefix=None,
+            sender=self.tester.email,
+            should_have_tenant=True,
+            effective_date=timezone.now() - timedelta(days=2),
+            payload={
+                "data": {
+                    "sku": "x-tenant+version",
+                    "account": {"url": "https://example.com/cancel"},
+                },
+                "marketplace_purchase": {
+                    "billing_cycle": "monthly",
+                    "plan": {
+                        "monthly_price_in_cents": 5000,
+                    },
+                },
+            },
+        )
+
+        # simulate a full cache
+        cache.set("testing-key", True)
+
+        with unittest.mock.patch("github.Github.get_user") as github_get_user:
+            mock_user = MockUser()
+            mock_user.type = "Organization"
+            github_get_user.return_value = mock_user
+
+            response = self.client.post(
+                self.url,
+                data={"gitops_prefix": "https://github.com/kiwitcms"},
+                follow=True,
+            )
+
+            self.assert_on_page(response)
+            self.assertContains(response, "https://github.com/kiwitcms")
+
+            purchase.refresh_from_db()
+            self.assertEqual(purchase.gitops_prefix, "https://github.com/kiwitcms")
+
+            # cache has been cleared when the form was saved
+            self.assertIsNone(cache.get("testing-key"))
