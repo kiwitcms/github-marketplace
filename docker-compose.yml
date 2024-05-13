@@ -25,5 +25,21 @@ services:
             PGADMIN_DEFAULT_EMAIL: pgadmin@kiwitcms.org
             PGADMIN_DEFAULT_PASSWORD: kiwi
 
+    web:
+        container_name: web
+        image: kiwitcms/github-marketplace:latest
+        depends_on:
+            - db
+        restart: always
+        ports:
+            - 80:8080
+            - 443:8443
+        volumes:
+            - ./test_project/settings.py:/venv/lib64/python3.11/site-packages/tcms_settings_dir/zzz_test_settings.py:z,ro
+        environment:
+            QUAY_IO_TOKEN: test-me
+            KIWI_TENANTS_DOMAIN: testing.example.bg
+            DATABASE_URL: postgres://kiwi:kiwi@db:5432/test_project
+
 volumes:
     postgresql_database_data:
