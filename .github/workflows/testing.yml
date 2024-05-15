@@ -98,10 +98,14 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+      - name: Install system dependencies
+        run: |
+          sudo apt-get install -y ca-certificates
+
       - name: Install Python dependencies
         run: |
-            pip install -U pip wheel setuptools
-            pip install -r devel.txt
+          pip install -U pip wheel setuptools
+          pip install -r devel.txt
 
       - name: Login to Quay.io
         run: |
