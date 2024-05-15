@@ -35,6 +35,13 @@ if [ "$CI" == "true" ]; then
     sudo mkdir -p /usr/local/share/ca-certificates/
     sudo curl -k -o /usr/local/share/ca-certificates/Kiwi_TCMS_CA.crt https://testing.example.bg:8443/static/ca.crt
     sudo update-ca-certificates --fresh --verbose
+
+    # this isn't actually needed, b/c the CA is in the system trust store
+    # but we keep it here for reference
+    # export CURL_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
+    # export REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
+    # export SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
+    # export SSL_CERT_DIR=/etc/ssl/certs/
 fi
 
 echo "----- Fetch login page ----"
