@@ -10,8 +10,8 @@ import sys
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
-sys_argv = " ".join(sys.argv)
-if "manage.py" in sys_argv or "pylint" in sys_argv:
+# do this only when runnning locally (test, pylint, runserver_plus, etc)
+if not os.environ.get("RUNNING_AS_CONTAINER"):
     # site-packages/tcms_settings_dir/ must be before ./tcms_settings_dir/
     # so we can load multi_tenant.py first!
     home_dir = os.path.expanduser("~")

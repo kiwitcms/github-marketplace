@@ -40,6 +40,7 @@ services:
             QUAY_IO_TOKEN: test-me
             KIWI_TENANTS_DOMAIN: testing.example.bg
             DATABASE_URL: postgres://kiwi:kiwi@db:5432/test_project
+            RUNNING_AS_CONTAINER: "true"
 
 volumes:
     postgresql_database_data:
