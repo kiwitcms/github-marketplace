@@ -64,6 +64,18 @@ Product configuration
 Changelog
 ---------
 
+v2.6.0 (16 May 2024)
+~~~~~~~~~~~~~~~~~~~~
+
+- Require a new setting ``KIWI_GITHUB_PAT_FOR_CHECKING_ORGS_AND_USERNAMES``
+- Add ``Purchase.gitops_prefix`` field with a new DB migration
+- Record ``Purchase.gitops_prefix`` upon receiving incoming billing events
+  from GitHub
+- Allow the Subscription page to edit the new ``gitops_prefix`` field
+- Add the ``GitOps.allow()`` API method for usage in ``kiwitcms/gitops``
+- Replace inline style attributes with CSS classes
+
+
 v2.5.1 (06 May 2024)
 ~~~~~~~~~~~~~~~~~~~~
 
