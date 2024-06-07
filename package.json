@@ -1,4 +1,6 @@
 {
+  "author": "Alexander Todorov",
+  "licence": " AGPL-3.0-or-later",
   "devDependencies": {
     "eslint": "^8.18.0",
     "eslint-config-standard": "^17.0.0",
