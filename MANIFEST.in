@@ -1,5 +1,8 @@
 include README.rst LICENSE requirements.txt
 
+include tcms_github_marketplace/quay/LICENSE
+include tcms_github_marketplace/quay/README.rst
+
 graft tcms_github_marketplace/static
 graft tcms_github_marketplace/templates
 
