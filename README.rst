@@ -64,6 +64,13 @@ Product configuration
 Changelog
 ---------
 
+v3.0.0 (07 Jun 2024)
+~~~~~~~~~~~~~~~~~~~~
+
+- Relicense this package under GNU Affero General Public License v3 or later
+- Prior versions are still licensed under GNU Affero General Public License v3
+
+
 v2.6.0 (16 May 2024)
 ~~~~~~~~~~~~~~~~~~~~
 
