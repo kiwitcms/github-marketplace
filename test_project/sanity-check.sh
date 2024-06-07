@@ -1,5 +1,11 @@
 #!/bin/bash -xe
 
+# Copyright (c) 2024 Alexander Todorov <atodorov@otb.bg>
+#
+# Licensed under GNU Affero General Public License v3 or later (AGPLv3+)
+# https://www.gnu.org/licenses/agpl-3.0.html
+
+
 echo "----- Boot the docker image -----"
 docker-compose up -d
 docker-compose logs -f -t > docker-compose.log &

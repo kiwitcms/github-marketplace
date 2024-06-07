@@ -1,6 +1,8 @@
 # Copyright (c) 2022-2023 Alexander Todorov <atodorov@otb.bg>
+#
+# Licensed under GNU Affero General Public License v3 or later (AGPLv3+)
+# https://www.gnu.org/licenses/agpl-3.0.html
 
-# Licensed under the GPL 3.0: https://www.gnu.org/licenses/gpl-3.0.txt
 import os
 import json
 import time
