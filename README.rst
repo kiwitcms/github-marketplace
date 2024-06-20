@@ -1,3 +1,5 @@
+Ignore: Retest with Django 5
+
 Marketplace integrations for Kiwi TCMS
 ======================================
 
