@@ -201,7 +201,13 @@ class PurchaseHook(GenericPurchaseNotificationView):
     purchase_vendor = "github"
 
     def action_is_activated(self, purchase):
-        return purchase.action == "purchased"
+        return (
+            purchase.action == "purchased"
+            and purchase.payload["marketplace_purchase"]["plan"][
+                "monthly_price_in_cents"
+            ]
+            > 0
+        )
 
     def action_is_recurring_billing(self, purchase):
         """
