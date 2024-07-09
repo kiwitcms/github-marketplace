@@ -1,4 +1,4 @@
-# Copyright (c) 2022-2023 Alexander Todorov <atodorov@otb.bg>
+# Copyright (c) 2022-2024 Alexander Todorov <atodorov@otb.bg>
 #
 # Licensed under GNU Affero General Public License v3 or later (AGPLv3+)
 # https://www.gnu.org/licenses/agpl-3.0.html
@@ -103,7 +103,7 @@ class TestQuayIOAccount(unittest.TestCase):
                 account.create()
 
                 for _ in range(2):
-                    response = account.allow_read_access("kiwi")
+                    response = account.allow_read_access("upstream")
                     self.assertEqual(response["role"], "read")
                     self.assertEqual(response["name"], account.username)
                     self.assertEqual(response["is_robot"], True)
