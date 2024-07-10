@@ -278,6 +278,19 @@ class PurchaseHook(GenericPurchaseNotificationView):
         """
         return event["marketplace_purchase"]["plan"]["name"].lower() == "private tenant"
 
+    def purchase_subscription(self, event):
+        """
+        The result is a string of the format:
+
+        <user-id>-<user|organization ID>
+
+        If left == right then the sender is installing the application for themselves,
+        otherwise they are purchasing on behalf of an organization!
+        """
+        sender_id = event["sender"]["id"]
+        account_id = event["marketplace_purchase"]["account"]["id"]
+        return f"{sender_id}-{account_id}"
+
     def request_verify_signature(self, request):
         return github.verify_signature(request, settings.KIWI_GITHUB_MARKETPLACE_SECRET)
 
