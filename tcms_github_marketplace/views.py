@@ -535,7 +535,8 @@ class ProcessManualPurchase(GenericPurchaseNotificationView):
         return "x-tenant" in self.find_sku(event)
 
     def purchase_subscription(self, event):
-        return event["data"]["invoice"]
+        invoice = event["data"]["invoice"]
+        return f"man-{invoice}"
 
     def request_verify_signature(self, request):
         """
