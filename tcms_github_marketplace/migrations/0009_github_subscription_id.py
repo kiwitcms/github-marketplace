@@ -13,7 +13,7 @@ def forwards(apps, schema_editor):  # pylint: disable=unused-argument
             sender_id = purchase.payload["sender"]["id"]
             account_id = purchase.payload["marketplace_purchase"]["account"]["id"]
 
-            purchase.subscription = f"{sender_id}-{account_id}"
+            purchase.subscription = f"gh-{sender_id}-{account_id}"
             purchase.save()
         except:  # noqa, pylint: disable=bare-except
             pass
