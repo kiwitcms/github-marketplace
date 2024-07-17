@@ -57,6 +57,32 @@ class TestQuayIOAccount(unittest.TestCase):
         os.getenv("QUAY_IO_TOKEN"),
         "QUAY_IO_TOKEN is not defined",
     )
+    def test_with_subscription_id_from_fastspring(self):
+        with docker.QuayIOAccount("fs-FEL1qVcbTyGEjBFRQ9FuAw") as account:
+            try:
+                account.create()
+                self.assertEqual(account.username, "kiwitcms+fs_fel1qvcbtygejbfrq9fuaw")
+                self.assertNotEqual(account.token, "")
+            finally:
+                account.delete()
+
+    @unittest.skipUnless(
+        os.getenv("QUAY_IO_TOKEN"),
+        "QUAY_IO_TOKEN is not defined",
+    )
+    def test_with_subscription_id_from_github(self):
+        with docker.QuayIOAccount("gh-44892260-31894430") as account:
+            try:
+                account.create()
+                self.assertEqual(account.username, "kiwitcms+gh_44892260_31894430")
+                self.assertNotEqual(account.token, "")
+            finally:
+                account.delete()
+
+    @unittest.skipUnless(
+        os.getenv("QUAY_IO_TOKEN"),
+        "QUAY_IO_TOKEN is not defined",
+    )
     def test_create_account(self):
         now = timezone.now().strftime("%Y%m%d%H%M%S")
         with docker.QuayIOAccount(f"testing-{now}@example.com") as account:

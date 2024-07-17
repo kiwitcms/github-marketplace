@@ -166,7 +166,7 @@ class GenericPurchaseNotificationView(View):
             ):
                 sku = self.find_sku(purchase)
                 # create Robot account for Quay.io
-                with docker.QuayIOAccount(purchase.sender) as account:
+                with docker.QuayIOAccount(purchase.subscription) as account:
                     account.create()
                     utils.configure_product_access(account, sku)
 
@@ -756,7 +756,7 @@ class ViewSubscriptionPlan(UpdateView):
 
         if self.object is not None:
             subscription_price = "0"
-            quay_io_account = docker.QuayIOAccount(self.object.sender)
+            quay_io_account = docker.QuayIOAccount(self.object.subscription)
 
             if self.object.vendor.lower() == "github":
                 cancel_url = "https://github.com/settings/billing"

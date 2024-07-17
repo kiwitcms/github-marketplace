@@ -9,9 +9,9 @@ from .quay import QuayApiClient
 class QuayIOAccount:
     organization = "kiwitcms"
 
-    def __init__(self, email):
+    def __init__(self, subscription_id):
         self._api = None
-        self._email = email
+        self._subscription = subscription_id
         self._token = None
         self._username = None
 
@@ -35,10 +35,10 @@ class QuayIOAccount:
     @property
     def name(self):
         """
-        Transform an email address to a valid robot account name for Quay.io
+        Transform a subscription ID or email address to a valid robot account name for Quay.io
         """
         return (
-            self._email.replace("@", "_")
+            self._subscription.replace("@", "_")
             .replace(".", "_")
             .replace("+", "_")
             .replace("-", "_")

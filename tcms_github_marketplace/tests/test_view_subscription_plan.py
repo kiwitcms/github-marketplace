@@ -58,7 +58,7 @@ class ViewSubscriptionTestCase(tcms_tenants.tests.LoggedInTestCase):
         "QUAY_IO_TOKEN is not defined",
     )
     def test_page_loads_with_subscription_and_quay_account(self):
-        with docker.QuayIOAccount(self.tester.email) as account:
+        with docker.QuayIOAccount("abcd-xyz") as account:
             try:
                 account.create()
                 self.test_page_loads_with_subscription_without_quay_account()
@@ -83,9 +83,13 @@ class ViewSubscriptionTestCase(tcms_tenants.tests.LoggedInTestCase):
             vendor="fastspring",
             action="test-purchase",
             sender=self.tester.email,
+            subscription="abcd-xyz",
             effective_date=timezone.now(),
             payload={
-                "data": {"account": {"url": "https://example.com/cancel"}},
+                "data": {
+                    "account": {"url": "https://example.com/cancel"},
+                    "subscription": "abcd-xyz",
+                },
                 "marketplace_purchase": {
                     "billing_cycle": "monthly",
                     "plan": {
@@ -130,10 +134,12 @@ class ViewSubscriptionTestCase(tcms_tenants.tests.LoggedInTestCase):
             gitops_prefix=None,
             sender=self.tester.email,
             should_have_tenant=True,
+            subscription="abcd-xyz",
             effective_date=timezone.now() - timedelta(days=2),
             payload={
                 "data": {
                     "sku": "x-tenant+version",
+                    "subscription": "abcd-xyz",
                     "account": {"url": "https://example.com/cancel"},
                 },
                 "marketplace_purchase": {
