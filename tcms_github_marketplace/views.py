@@ -387,7 +387,7 @@ class FastSpringHook(GenericPurchaseNotificationView):
             if isinstance(subscription, dict):
                 subscription = subscription["id"]
 
-        return subscription
+        return f"fs-{subscription}"
 
     def request_verify_signature(self, request):
         return utils.verify_hmac(request)
