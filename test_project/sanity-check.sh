@@ -7,8 +7,8 @@
 
 
 echo "----- Boot the docker image -----"
-docker-compose up -d
-docker-compose logs -f -t > docker-compose.log &
+docker compose up -d
+docker compose logs -f -t > docker-compose.log &
 sleep 5
 
 IP_ADDRESS=`docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' web`
@@ -35,7 +35,7 @@ if [ "$CI" == "true" ]; then
                             --cert-key-file /Kiwi/ssl/localhost.key
 
     # restart web service so that it uses the new certificate
-    docker-compose restart web
+    docker compose restart web
 
     # tell Ubuntu to install out own CA
     sudo mkdir -p /usr/local/share/ca-certificates/
@@ -57,4 +57,4 @@ echo "----- Execute integration test(s) ----"
 python test_project/integration_tests/test_api.py -v
 
 echo "----- Shutdown the docker image -----"
-docker-compose down
+docker compose down
