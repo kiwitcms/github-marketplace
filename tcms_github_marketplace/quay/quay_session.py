@@ -7,7 +7,7 @@ from urllib3.util import Retry
 class QuaySession(object):
     """Helper class to support Quay requests and authentication."""
 
-    def __init__(  # pylint: disable=too-many-arguments
+    def __init__(  # pylint: disable=too-many-arguments,too-many-positional-arguments
         self, hostname=None, retries=3, backoff_factor=2, verify=False, api="docker"
     ):
         """
