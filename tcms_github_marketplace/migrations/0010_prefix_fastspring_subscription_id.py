@@ -10,8 +10,9 @@ def forwards(apps, schema_editor):  # pylint: disable=unused-argument
     purchase_model = apps.get_model("tcms_github_marketplace", "Purchase")
     for purchase in purchase_model.objects.filter(vendor="fastspring"):
         try:
-            purchase.subscription = f"fs-{purchase.subscription}"
-            purchase.save()
+            if not purchase.subscription.startswith("fs-"):
+                purchase.subscription = f"fs-{purchase.subscription}"
+                purchase.save()
         except:  # noqa, pylint: disable=bare-except
             pass
 
