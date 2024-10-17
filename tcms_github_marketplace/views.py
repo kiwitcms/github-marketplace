@@ -214,7 +214,7 @@ class PurchaseHook(GenericPurchaseNotificationView):
         GitHub doesn't recognize between an initial payment for a subscription and
         a subsequent payment for the same subscription!
         """
-        return purchase.action == "purchased"
+        return self.action_is_activated(purchase)
 
     def action_is_cancelled(self, purchase):
         return purchase.action == "cancelled"
