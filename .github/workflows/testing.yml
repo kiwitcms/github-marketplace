@@ -111,20 +111,6 @@ jobs:
         run: |
           echo "${{ secrets.QUAY_PULL_TOKEN }}" | docker login -u="${{ secrets.QUAY_PULL_USERNAME }}" --password-stdin quay.io
 
-      - name: Build unreleased containers
-        run: |
-          git clone https://github.com/kiwitcms/Kiwi
-          make -C Kiwi/ docker-image
-          docker tag kiwitcms/kiwi:latest quay.io/kiwitcms/version:13.2
-
-          git clone https://github.com/kiwitcms/enterprise
-          make -C enterprise/ docker-image
-          docker tag quay.io/kiwitcms/enterprise:latest quay.io/kiwitcms/enterprise:13.2-mt
-
-          echo "+++++ DEBUG docker-images +++++"
-          docker images
-          echo "+++++ END DEBUG +++++"
-
       - name: Execute tests
         run: |
           make test-via-docker
