@@ -51,8 +51,8 @@ class CreateTenantTestCase(tcms_tenants.tests.TenantGroupsTestCase):
    "effective_date":"2019-04-01T00:00:00+00:00",
    "sender":{
       "login":"%s",
-      "id":3877742,
-      "avatar_url":"https://avatars2.githubusercontent.com/u/3877742?v=4",
+      "id":9990009999,
+      "avatar_url":"https://avatars2.githubusercontent.com/u/9990009999?v=4",
       "gravatar_id":"",
       "url":"https://api.github.com/users/username",
       "html_url":"https://github.com/username",
@@ -72,7 +72,7 @@ class CreateTenantTestCase(tcms_tenants.tests.TenantGroupsTestCase):
    "marketplace_purchase":{
       "account":{
          "type":"Organization",
-         "id":18404719,
+         "id":999999999,
          "login":"%s",
          "organization_billing_email":"username@email.com"
       },
@@ -166,8 +166,8 @@ class CreateTenantTestCase(tcms_tenants.tests.TenantGroupsTestCase):
    "effective_date":"2017-10-25T00:00:00+00:00",
    "sender":{
       "login":"%s",
-      "id":3877742,
-      "avatar_url":"https://avatars2.githubusercontent.com/u/3877742?v=4",
+      "id":9990009999,
+      "avatar_url":"https://avatars2.githubusercontent.com/u/9990009999?v=4",
       "gravatar_id":"",
       "url":"https://api.github.com/users/username",
       "html_url":"https://github.com/username",
@@ -187,7 +187,7 @@ class CreateTenantTestCase(tcms_tenants.tests.TenantGroupsTestCase):
    "marketplace_purchase":{
       "account":{
          "type":"User",
-         "id":18404719,
+         "id":999999999,
          "login":"%s",
          "organization_billing_email":"username@email.com"
       },
@@ -258,8 +258,8 @@ class CreateTenantTestCase(tcms_tenants.tests.TenantGroupsTestCase):
    "effective_date":"2017-10-25T00:00:00+00:00",
    "sender":{
       "login":"%s",
-      "id":3877742,
-      "avatar_url":"https://avatars2.githubusercontent.com/u/3877742?v=4",
+      "id":9990009999,
+      "avatar_url":"https://avatars2.githubusercontent.com/u/9990009999?v=4",
       "gravatar_id":"",
       "url":"https://api.github.com/users/username",
       "html_url":"https://github.com/username",
@@ -279,7 +279,7 @@ class CreateTenantTestCase(tcms_tenants.tests.TenantGroupsTestCase):
    "marketplace_purchase":{
       "account":{
          "type":"Organization",
-         "id":18404719,
+         "id":999999999,
          "login":"%s",
          "organization_billing_email":"username@email.com"
       },
@@ -351,8 +351,8 @@ class CreateTenantTestCase(tcms_tenants.tests.TenantGroupsTestCase):
    "effective_date":"2019-04-01T00:00:00+00:00",
    "sender":{
       "login":"%s",
-      "id":3877742,
-      "avatar_url":"https://avatars2.githubusercontent.com/u/3877742?v=4",
+      "id":9990009999,
+      "avatar_url":"https://avatars2.githubusercontent.com/u/9990009999?v=4",
       "gravatar_id":"",
       "url":"https://api.github.com/users/username",
       "html_url":"https://github.com/username",
@@ -372,7 +372,7 @@ class CreateTenantTestCase(tcms_tenants.tests.TenantGroupsTestCase):
    "marketplace_purchase":{
       "account":{
          "type":"Organization",
-         "id":18404719,
+         "id":999999999,
          "login":"%s",
          "organization_billing_email":"username@email.com"
       },
@@ -461,8 +461,8 @@ class CreateTenantTestCase(tcms_tenants.tests.TenantGroupsTestCase):
    "effective_date":"2019-04-01T00:00:00+00:00",
    "sender":{
       "login":"%s",
-      "id":3877742,
-      "avatar_url":"https://avatars2.githubusercontent.com/u/3877742?v=4",
+      "id":9990009999,
+      "avatar_url":"https://avatars2.githubusercontent.com/u/9990009999?v=4",
       "gravatar_id":"",
       "url":"https://api.github.com/users/username",
       "html_url":"https://github.com/username",
@@ -482,7 +482,7 @@ class CreateTenantTestCase(tcms_tenants.tests.TenantGroupsTestCase):
    "marketplace_purchase":{
       "account":{
          "type":"Organization",
-         "id":18404719,
+         "id":999999999,
          "login":"%s",
          "organization_billing_email":"username@email.com"
       },
@@ -539,8 +539,8 @@ class CreateTenantTestCase(tcms_tenants.tests.TenantGroupsTestCase):
    "effective_date":"2021-08-20T00:00:00+00:00",
    "sender":{
       "login":"%s",
-      "id":3877742,
-      "avatar_url":"https://avatars2.githubusercontent.com/u/3877742?v=4",
+      "id":9990009999,
+      "avatar_url":"https://avatars2.githubusercontent.com/u/9990009999?v=4",
       "gravatar_id":"",
       "url":"https://api.github.com/users/username",
       "html_url":"https://github.com/username",
@@ -560,7 +560,7 @@ class CreateTenantTestCase(tcms_tenants.tests.TenantGroupsTestCase):
    "marketplace_purchase":{
       "account":{
          "type":"User",
-         "id":18404719,
+         "id":999999999,
          "login":"%s",
          "organization_billing_email":"username@email.com"
       },

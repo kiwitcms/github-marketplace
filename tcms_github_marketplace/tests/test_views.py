@@ -41,8 +41,8 @@ class PurchaseHookTestCase(tcms_tenants.tests.LoggedInTestCase):
    "effective_date":"2017-10-25T00:00:00+00:00",
    "sender":{
       "login":"username",
-      "id":3877742,
-      "avatar_url":"https://avatars2.githubusercontent.com/u/3877742?v=4",
+      "id":9990009999,
+      "avatar_url":"https://avatars2.githubusercontent.com/u/9990009999?v=4",
       "gravatar_id":"",
       "url":"https://api.github.com/users/username",
       "html_url":"https://github.com/username",
@@ -62,7 +62,7 @@ class PurchaseHookTestCase(tcms_tenants.tests.LoggedInTestCase):
    "marketplace_purchase":{
       "account":{
          "type":"Organization",
-         "id":18404719,
+         "id":999999999,
          "login":"username",
          "organization_billing_email":"username@email.com"
       },
@@ -102,8 +102,8 @@ class PurchaseHookTestCase(tcms_tenants.tests.LoggedInTestCase):
    "effective_date":"2017-10-25T00:00:00+00:00",
    "sender":{
       "login":"username",
-      "id":3877742,
-      "avatar_url":"https://avatars2.githubusercontent.com/u/3877742?v=4",
+      "id":9990009999,
+      "avatar_url":"https://avatars2.githubusercontent.com/u/9990009999?v=4",
       "gravatar_id":"",
       "url":"https://api.github.com/users/username",
       "html_url":"https://github.com/username",
@@ -123,7 +123,7 @@ class PurchaseHookTestCase(tcms_tenants.tests.LoggedInTestCase):
    "marketplace_purchase":{
       "account":{
          "type":"Organization",
-         "id":18404719,
+         "id":999999999,
          "login":"example-org",
          "organization_billing_email":"username@email.com"
       },
@@ -255,8 +255,8 @@ class PurchaseHookTestCase(tcms_tenants.tests.LoggedInTestCase):
    "effective_date":"2019-04-01T00:00:00+00:00",
    "sender":{
       "login":"%s",
-      "id":3877742,
-      "avatar_url":"https://avatars2.githubusercontent.com/u/3877742?v=4",
+      "id":9990009999,
+      "avatar_url":"https://avatars2.githubusercontent.com/u/9990009999?v=4",
       "gravatar_id":"",
       "url":"https://api.github.com/users/username",
       "html_url":"https://github.com/username",
@@ -276,7 +276,7 @@ class PurchaseHookTestCase(tcms_tenants.tests.LoggedInTestCase):
    "marketplace_purchase":{
       "account":{
          "type":"Organization",
-         "id":18404719,
+         "id":999999999,
          "login":"kiwitcms",
          "organization_billing_email":"username@email.com"
       },
@@ -338,8 +338,8 @@ class InstallTestCase(tcms_tenants.tests.LoggedInTestCase):
    "effective_date":"2017-10-25T00:00:00+00:00",
    "sender":{
       "login":"%s",
-      "id":3877742,
-      "avatar_url":"https://avatars2.githubusercontent.com/u/3877742?v=4",
+      "id":9990009999,
+      "avatar_url":"https://avatars2.githubusercontent.com/u/9990009999?v=4",
       "gravatar_id":"",
       "url":"https://api.github.com/users/username",
       "html_url":"https://github.com/username",
@@ -359,7 +359,7 @@ class InstallTestCase(tcms_tenants.tests.LoggedInTestCase):
    "marketplace_purchase":{
       "account":{
          "type":"Organization",
-         "id":18404719,
+         "id":999999999,
          "login":"%s",
          "organization_billing_email":"username@email.com"
       },
@@ -446,8 +446,8 @@ class OtherInstallTestCase(tcms_tenants.tests.LoggedInTestCase):
    "effective_date":"2017-10-25T00:00:00+00:00",
    "sender":{
       "login":"%s",
-      "id":3877742,
-      "avatar_url":"https://avatars2.githubusercontent.com/u/3877742?v=4",
+      "id":9990009999,
+      "avatar_url":"https://avatars2.githubusercontent.com/u/9990009999?v=4",
       "gravatar_id":"",
       "url":"https://api.github.com/users/username",
       "html_url":"https://github.com/username",
@@ -467,7 +467,7 @@ class OtherInstallTestCase(tcms_tenants.tests.LoggedInTestCase):
    "marketplace_purchase":{
       "account":{
          "type":"Organization",
-         "id":18404719,
+         "id":999999999,
          "login":"%s",
          "organization_billing_email":"username@email.com"
       },
