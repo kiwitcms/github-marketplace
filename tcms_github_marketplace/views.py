@@ -34,6 +34,7 @@ from tcms_tenants import utils as tcms_tenants_utils
 from tcms_github_marketplace import docker
 from tcms_github_marketplace import fastspring
 from tcms_github_marketplace import forms
+from tcms_github_marketplace.github import find_sku as github_find_sku
 from tcms_github_marketplace import mailchimp
 from tcms_github_marketplace import utils
 from tcms_github_marketplace.models import Purchase
@@ -252,23 +253,7 @@ class PurchaseHook(GenericPurchaseNotificationView):
         )
 
     def find_sku(self, purchase):
-        """
-        GitHub Marketplace doesn't support specifying product SKUs. We could rely on the
-        marketplace listing ID but we've chosen to specify the list of private Docker
-        repositories inside one of the description items!
-        """
-        sku = ""
-        for item in purchase.payload["marketplace_purchase"]["plan"]["bullets"]:
-            if "Docker repositories" in item:
-                sku = (
-                    item.replace("Docker repositories:", "")
-                    .replace(" ", "")
-                    .replace("https://", "")
-                    .replace("quay.io/kiwitcms/", "")
-                    .replace(",", "+")
-                )
-
-        return sku
+        return github_find_sku(purchase)
 
     def purchase_action(self, event):
         return event["action"]
