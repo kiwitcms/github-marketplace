@@ -11,6 +11,7 @@ from datetime import datetime
 
 from django.db.models import Q
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.core.cache import cache
 from django.urls import reverse, reverse_lazy
 from django.http import HttpResponse, HttpResponseRedirect
@@ -26,6 +27,7 @@ from tcms.utils import github
 
 from django_tenants.utils import get_public_schema_name
 from tcms_tenants.models import Tenant
+from tcms_tenants.utils import create_user_account
 from tcms_tenants.views import NewTenantView
 from tcms_tenants import utils as tcms_tenants_utils
 
@@ -35,6 +37,9 @@ from tcms_github_marketplace import forms
 from tcms_github_marketplace import mailchimp
 from tcms_github_marketplace import utils
 from tcms_github_marketplace.models import Purchase
+
+
+UserModel = get_user_model()
 
 
 class GenericPurchaseNotificationView(View):
@@ -54,6 +59,13 @@ class GenericPurchaseNotificationView(View):
 
     def action_is_recurring_billing(self, purchase):
         raise NotImplementedError
+
+    def create_user_account(self, email):
+        """
+        Will create an account for whomever is purchasing this subscription!
+        """
+        if not UserModel.objects.filter(email=email).first():
+            create_user_account(email)
 
     def find_paid_tenant(self, purchase):  # pylint: disable=unused-argument
         """
@@ -164,6 +176,9 @@ class GenericPurchaseNotificationView(View):
             if self.action_is_activated(purchase) and not os.environ.get(
                 "SKIP_QUAY_IO", False
             ):
+                # create an account for first time users
+                self.create_user_account(purchase.sender)
+
                 sku = self.find_sku(purchase)
                 # create Robot account for Quay.io
                 with docker.QuayIOAccount(purchase.subscription) as account:
@@ -174,6 +189,9 @@ class GenericPurchaseNotificationView(View):
                 mailchimp.subscribe(purchase.sender)
 
             if self.action_is_recurring_billing(purchase):
+                # create an account in case it has expired or details have changed
+                self.create_user_account(purchase.sender)
+
                 # WARNING: this relies on the fact that vendor specific
                 # classes will override this method in order to find the exact
                 # tenant for each customer
