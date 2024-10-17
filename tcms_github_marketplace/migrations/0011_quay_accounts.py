@@ -13,12 +13,12 @@ def forwards(apps, schema_editor):  # pylint: disable=unused-argument
 
     from tcms_github_marketplace import docker
     from tcms_github_marketplace import fastspring
+    from tcms_github_marketplace import github
     from tcms_github_marketplace import utils
 
     purchase_model = apps.get_model("tcms_github_marketplace", "Purchase")
     for purchase in purchase_model.objects.filter(
         action="purchased",
-        vendor="fastspring",
         received_on__gte=timezone.now() - timedelta(days=32),
     ).order_by("-received_on"):
         if (
@@ -26,7 +26,12 @@ def forwards(apps, schema_editor):  # pylint: disable=unused-argument
             > 0
         ):
             try:
-                sku = fastspring.find_sku(purchase)
+                sku = ""
+                if purchase.vendor == "fastspring":
+                    sku = fastspring.find_sku(purchase)
+                elif purchase.vendor == "github":
+                    sku = github.find_sku(purchase)
+
                 with docker.QuayIOAccount(purchase.subscription) as account:
                     account.create()
                     utils.configure_product_access(account, sku)
