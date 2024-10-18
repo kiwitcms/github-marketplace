@@ -64,6 +64,27 @@ Product configuration
 Changelog
 ---------
 
+v4.0.0 (18 Oct 2024)
+~~~~~~~~~~~~~~~~~~~~
+
+- Automatically create a user account when someone purchases a paid subscription.
+  Senders can reset their passwords and still be able to login if they wish to or
+  use OAuth login!
+- Use ``Purchase.subscription`` instead of ``Purchase.sender`` when creating
+  Quay.io accounts, including a database migration for historical records.
+  This means that Quay.io accounts are now numerical, instead of based on email
+  addresses
+- Record subscription_id for GitHub events in the format
+  ``gh-<user-id>-<user|organization ID>``
+- Prefix manual purchases subscription_id with ``man-``
+- Prefix FastSpring subscription_id with ``fs-``, including a database migration
+  for historical records
+- Consider a GitHub purchase as activated only when price > 0 which fixes a
+  side effect bug which was creating a Quay.io account for users who
+  "purchased" the FREE plan on GitHub Marketplace
+- Refactor ``GitHub.action_is_recurring_billing()``
+
+
 v3.0.0 (07 Jun 2024)
 ~~~~~~~~~~~~~~~~~~~~
 
