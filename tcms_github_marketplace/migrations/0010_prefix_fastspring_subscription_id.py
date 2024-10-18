@@ -8,7 +8,9 @@ from django.db import migrations
 
 def forwards(apps, schema_editor):  # pylint: disable=unused-argument
     purchase_model = apps.get_model("tcms_github_marketplace", "Purchase")
-    for purchase in purchase_model.objects.filter(vendor="fastspring"):
+    for purchase in purchase_model.objects.filter(vendor="fastspring").exclude(
+        subscription=None
+    ):
         try:
             if not purchase.subscription.startswith("fs-"):
                 purchase.subscription = f"fs-{purchase.subscription}"
