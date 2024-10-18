@@ -17,10 +17,14 @@ def forwards(apps, schema_editor):  # pylint: disable=unused-argument
     from tcms_github_marketplace import utils
 
     purchase_model = apps.get_model("tcms_github_marketplace", "Purchase")
-    for purchase in purchase_model.objects.filter(
-        action="purchased",
-        received_on__gte=timezone.now() - timedelta(days=32),
-    ).order_by("-received_on"):
+    for purchase in (
+        purchase_model.objects.filter(
+            action="purchased",
+            received_on__gte=timezone.now() - timedelta(days=32),
+        )
+        .exclude(subscription=None)
+        .order_by("-received_on")
+    ):
         if (
             purchase.payload["marketplace_purchase"]["plan"]["monthly_price_in_cents"]
             > 0
