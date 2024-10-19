@@ -86,10 +86,7 @@ def cancel_plan(purchase):
     https://developer.github.com/marketplace/integrating-with-the-github-marketplace-api/cancelling-plans/
     """
     try:
-        # Warning: this may have the side effect of disabling a robot account which
-        # uses the same email address for multiple subscriptions. We'll deal with it
-        # when it happens.
-        with docker.QuayIOAccount(purchase.sender) as account:
+        with docker.QuayIOAccount(purchase.subscription) as account:
             account.delete()
     except:  # noqa:E722, pylint: disable=bare-except
         pass
