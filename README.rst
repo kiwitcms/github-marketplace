@@ -64,6 +64,13 @@ Product configuration
 Changelog
 ---------
 
+v4.0.1 (20 Oct 2024)
+~~~~~~~~~~~~~~~~~~~~
+
+- Bug-fix: remove Quay.io account based on Purchase.subscription when handling
+  cancelled subscriptions instead of using sender's email address
+
+
 v4.0.0 (18 Oct 2024)
 ~~~~~~~~~~~~~~~~~~~~
 
