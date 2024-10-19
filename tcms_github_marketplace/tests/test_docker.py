@@ -85,7 +85,7 @@ class TestQuayIOAccount(unittest.TestCase):
     )
     def test_create_account(self):
         now = timezone.now().strftime("%Y%m%d%H%M%S")
-        with docker.QuayIOAccount(f"testing-{now}@example.com") as account:
+        with docker.QuayIOAccount(f"testing-{now}-create-account") as account:
             try:
                 response = account.create()
                 self.assertIn("name", response)
@@ -104,7 +104,7 @@ class TestQuayIOAccount(unittest.TestCase):
     )
     def test_delete_account(self):
         now = timezone.now().strftime("%Y%m%d%H%M%S")
-        with docker.QuayIOAccount(f"testing-{now}@example.del") as account:
+        with docker.QuayIOAccount(f"testing-{now}-delete-account") as account:
             account.create()
             time.sleep(1)
 
@@ -124,7 +124,7 @@ class TestQuayIOAccount(unittest.TestCase):
     )
     def test_allow_read_access(self):
         now = timezone.now().strftime("%Y%m%d%H%M%S")
-        with docker.QuayIOAccount(f"testing-{now}@example.com") as account:
+        with docker.QuayIOAccount(f"testing-{now}-allow-read-access") as account:
             try:
                 account.create()
 
@@ -142,7 +142,7 @@ class TestQuayIOAccount(unittest.TestCase):
     )
     def test_regenerate_token(self):
         now = timezone.now().strftime("%Y%m%d%H%M%S")
-        with docker.QuayIOAccount(f"testing-{now}@example.token") as account:
+        with docker.QuayIOAccount(f"testing-{now}-regenerate-token") as account:
             try:
                 account.create()
                 first_token = account.token
