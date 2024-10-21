@@ -64,6 +64,12 @@ Product configuration
 Changelog
 ---------
 
+v4.0.2 (22 Oct 2024)
+~~~~~~~~~~~~~~~~~~~~
+
+- Bug-fix: solve a crash when applying migrations/0011
+
+
 v4.0.1 (20 Oct 2024)
 ~~~~~~~~~~~~~~~~~~~~
 
