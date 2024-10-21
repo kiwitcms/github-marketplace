@@ -5,8 +5,6 @@
 
 import json
 
-from tcms_github_marketplace.models import Purchase
-
 
 def find_sku(purchase):
     """
@@ -15,7 +13,7 @@ def find_sku(purchase):
     # this function is also called from purchase_should_have_tenant() which
     # only passes event JSON b/c the Purchase object hasn't been created yet
     event = purchase
-    if isinstance(purchase, Purchase):
+    if hasattr(purchase, "payload"):
         event = purchase.payload
     assert isinstance(event, dict)
 
