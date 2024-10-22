@@ -64,6 +64,12 @@ Product configuration
 Changelog
 ---------
 
+v4.0.3 (22 Oct 2024)
+~~~~~~~~~~~~~~~~~~~~
+
+- Fix a bug in the Subscriptions page when subscription ID is None
+
+
 v4.0.2 (22 Oct 2024)
 ~~~~~~~~~~~~~~~~~~~~
 
