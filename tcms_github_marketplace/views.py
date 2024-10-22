@@ -745,8 +745,10 @@ class ViewSubscriptionPlan(UpdateView):
     def get_object(self, queryset=None):
         """
         Always returns the latest purchase for the current user
+        which has the subscription field set! Note that some events,
+        e.g. order.canceled may have this field set to None
         """
-        return self.get_queryset().first()
+        return self.get_queryset().exclude(subscription=None).first()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
