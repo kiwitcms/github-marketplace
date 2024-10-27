@@ -64,6 +64,13 @@ Product configuration
 Changelog
 ---------
 
+v4.0.4 (27 Oct 2024)
+~~~~~~~~~~~~~~~~~~~~
+
+- Return billing email for GitHub payloads when sender is null. Fixes
+  a bug in processing webhooks from GitHub
+
+
 v4.0.3 (22 Oct 2024)
 ~~~~~~~~~~~~~~~~~~~~
 
