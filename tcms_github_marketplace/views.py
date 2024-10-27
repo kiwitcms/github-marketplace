@@ -269,7 +269,15 @@ class PurchaseHook(GenericPurchaseNotificationView):
         return f"https://github.com/{login}"
 
     def purchase_sender(self, event):
-        return event["sender"]["email"]
+        """
+        Prefer the email of the user doing the action b/c they are probably the one who
+        will be logging into Kiwi TCMS. In some case users don't want their emails disclosed
+        so default to the billing email instead of returning None.
+        """
+        return (
+            event["sender"]["email"]
+            or event["marketplace_purchase"]["account"]["organization_billing_email"]
+        )
 
     def purchase_should_have_tenant(self, event):
         """
