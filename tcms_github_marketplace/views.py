@@ -230,10 +230,9 @@ class PurchaseHook(GenericPurchaseNotificationView):
 
     def action_is_recurring_billing(self, purchase):
         """
-        GitHub doesn't recognize between an initial payment for a subscription and
-        a subsequent payment for the same subscription!
+        GitHub Marketplace doesn't send web hook payloads for recurring billing!
         """
-        return self.action_is_activated(purchase)
+        return False
 
     def action_is_cancelled(self, purchase):
         return purchase.action == "cancelled"
@@ -320,6 +319,24 @@ class PurchaseHook(GenericPurchaseNotificationView):
         needs to be able to iterate over the data structure!
         """
         return [payload]
+
+
+class GithubCronProcessor(PurchaseHook):
+    """
+    Called internally with payloads which simulate recurring billing for
+    GitHub Marketplace subscriptions
+    """
+
+    purchase_vendor = "github_cron"
+
+    def request_verify_signature(self, request):
+        return True
+
+    def action_is_activated(self, purchase):
+        return False
+
+    def action_is_recurring_billing(self, purchase):
+        return True
 
 
 @method_decorator(csrf_exempt, name="dispatch")

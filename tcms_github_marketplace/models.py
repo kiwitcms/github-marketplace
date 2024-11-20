@@ -3,6 +3,8 @@
 # Licensed under GNU Affero General Public License v3 or later (AGPLv3+)
 # https://www.gnu.org/licenses/agpl-3.0.html
 
+from datetime import datetime
+
 from django.db import models
 from django.contrib.postgres.indexes import GinIndex
 
@@ -79,3 +81,22 @@ class Purchase(models.Model):
 
     def __str__(self):
         return f"Purchase {self.action} from {self.sender} on {self.received_on.isoformat()}"
+
+    @staticmethod
+    def next_billing_date_from(payload):
+        next_billing_date = None
+
+        # a GitHub Marketplace subscription
+        if "next_billing_date" in payload["marketplace_purchase"]:
+            next_billing_date = payload["marketplace_purchase"]["next_billing_date"]
+
+        if next_billing_date is None:
+            return None
+
+        # GitHub uses the "2024-10-16T00:00:00Z" or "2024-10-16T00:00:00+00:00" format
+        # so we drop the timezone portion b/c our server is configured in UTC
+        return datetime.strptime(next_billing_date[:19], "%Y-%m-%dT%H:%M:%S")
+
+    @property
+    def next_billing_date(self):
+        return self.next_billing_date_from(self.payload)
