@@ -5,15 +5,18 @@
 
 # pylint: disable=too-many-ancestors
 import json
+
 from http import HTTPStatus
 from unittest.mock import call
 from unittest.mock import patch
-from datetime import datetime
+from datetime import timedelta
 
 from django.urls import reverse
 from django.conf import settings
 from django.http import HttpResponseForbidden
 from django.contrib.auth import get_user_model
+from django.test import override_settings
+from django.utils import timezone
 
 from social_django.models import UserSocialAuth
 
@@ -25,6 +28,9 @@ from tcms_github_marketplace import docker
 from tcms_github_marketplace import mailchimp
 from tcms_github_marketplace import utils
 from tcms_github_marketplace.models import Purchase
+from tcms_github_marketplace.cron_github_recurring_billing import (
+    check_github_for_subscription_renewals,
+)
 
 
 class PurchaseHookTestCase(tcms_tenants.tests.LoggedInTestCase):
@@ -235,93 +241,136 @@ class PurchaseHookTestCase(tcms_tenants.tests.LoggedInTestCase):
         # initial ping responds with a pong
         self.assertContains(response, "pong")
 
-    def test_recurring_billing_hook(self):
-        """
-        According to GitHub recurring billing events do not redirect to
-        Install URL but only send webhook payloads so we must
-        extend tenant.paid_until while handling the hook event
-        """
-        # tenant has expired
-        # b/c we will update only tenants which
-        # are currently/have been previously paid for !!!
-        self.tenant.paid_until = datetime(2019, 3, 30, 23, 59, 59, 0)
-        # just b/c the payload uses an organization
+    @override_settings(
+        KIWI_GITHUB_APP_ID=1234,
+        KIWI_GITHUB_APP_PRIVATE_KEY="this-is-the-key",
+    )
+    def test_recurring_billing_check(self):
+        now = timezone.now()
+
+        # Purchase made 35 days ago
+        _35_days_ago = now - timedelta(days=35)
+        # this is when a recurring purchase was supposed to happen
+        # but for some reason it didn't go through
+        _4_days_ago = now - timedelta(days=4)
+
+        old_purchase = Purchase.objects.create(
+            vendor="github",
+            action="purchased",
+            sender=self.tenant.owner.email,
+            received_on=_35_days_ago,
+            effective_date=_35_days_ago,
+            payload={
+                "action": "purchased",
+                "effective_date": _35_days_ago.strftime("%Y-%m-%dT%H:%M:%S"),
+                "sender": {
+                    "login": self.tenant.owner.username,
+                    "id": 9990009999,
+                    "type": "User",
+                    "email": self.tenant.owner.email,
+                },
+                "marketplace_purchase": {
+                    "account": {
+                        "type": "Organization",
+                        "id": 999999999,
+                        "login": "kiwitcms",
+                        "organization_billing_email": "username@email.com",
+                    },
+                    "billing_cycle": "monthly",
+                    "next_billing_date": _4_days_ago.strftime("%Y-%m-%dT%H:%M:%S"),
+                    "plan": {
+                        "bullets": [
+                            "1x SaaS hosting under *.tenant.kiwitcms.org",
+                            "Docker repositories: quay.io/kiwitcms/version",
+                            "Always the latest version",
+                            "09-17 UTC/Mon-Fri support ",
+                        ],
+                        "description": "Unlimited users. Control "
+                        "who can access. Ideal for "
+                        "small teams.",
+                        "has_free_trial": False,
+                        "id": 7335,
+                        "monthly_price_in_cents": 5000,
+                        "name": "Private Tenant",
+                        "yearly_price_in_cents": 60000,
+                    },
+                },
+            },
+        )
+        old_purchase.received_on = _35_days_ago
+        old_purchase.save()
+
+        # Tenant expired 4 days ago (Purchase.received_on + 31)
+        # lets say customer forgot to update card details!
+        self.tenant.paid_until = _4_days_ago
         self.tenant.organization = "kiwitcms"
         self.tenant.save()
 
-        payload = """
-{
-   "action":"purchased",
-   "effective_date":"2019-04-01T00:00:00+00:00",
-   "sender":{
-      "login":"%s",
-      "id":9990009999,
-      "avatar_url":"https://avatars2.githubusercontent.com/u/9990009999?v=4",
-      "gravatar_id":"",
-      "url":"https://api.github.com/users/username",
-      "html_url":"https://github.com/username",
-      "followers_url":"https://api.github.com/users/username/followers",
-      "following_url":"https://api.github.com/users/username/following{/other_user}",
-      "gists_url":"https://api.github.com/users/username/gists{/gist_id}",
-      "starred_url":"https://api.github.com/users/username/starred{/owner}{/repo}",
-      "subscriptions_url":"https://api.github.com/users/username/subscriptions",
-      "organizations_url":"https://api.github.com/users/username/orgs",
-      "repos_url":"https://api.github.com/users/username/repos",
-      "events_url":"https://api.github.com/users/username/events{/privacy}",
-      "received_events_url":"https://api.github.com/users/username/received_events",
-      "type":"User",
-      "site_admin":true,
-      "email":"%s"
-   },
-   "marketplace_purchase":{
-      "account":{
-         "type":"Organization",
-         "id":999999999,
-         "login":"kiwitcms",
-         "organization_billing_email":"username@email.com"
-      },
-      "billing_cycle":"monthly",
-      "unit_count":1,
-      "on_free_trial":false,
-      "free_trial_ends_on":null,
-      "next_billing_date":null,
-      "plan":{
-         "id":435,
-         "name":"Public Tenant",
-         "description":"Basic Plan",
-         "monthly_price_in_cents":3200,
-         "yearly_price_in_cents":32000,
-         "price_model":"flat",
-         "has_free_trial":true,
-         "unit_name":"seat",
-         "bullets":[
-            "Is Basic",
-            "Because Basic "
-         ]
-      }
-   }
-}
-""".strip() % (
-            self.tenant.owner.username,
-            self.tenant.owner.email,
-        )
-        signature = github.calculate_signature(
-            settings.KIWI_GITHUB_MARKETPLACE_SECRET,
-            json.dumps(json.loads(payload)).encode(),
-        )
+        with patch("github.Requester.Requester.requestJsonAndCheck") as mocked_func:
+            # simulate a payment which was just made after customer
+            # has updated their card details
+            mocked_func.return_value = (
+                {},
+                {
+                    "id": 999999999,
+                    "login": "kiwitcms",
+                    "marketplace_pending_change": None,
+                    "marketplace_purchase": {
+                        "billing_cycle": "monthly",
+                        "free_trial_ends_on": None,
+                        "is_installed": True,
+                        "next_billing_date": (now + timedelta(days=30)).strftime(
+                            "%Y-%m-%dT%H:%M:%S"
+                        ),
+                        "on_free_trial": False,
+                        "plan": {
+                            "bullets": [
+                                "1x SaaS hosting under *.tenant.kiwitcms.org",
+                                "Docker repositories: quay.io/kiwitcms/version",
+                                "Always the latest version",
+                                "09-17 UTC/Mon-Fri support ",
+                            ],
+                            "description": "Unlimited users. Control "
+                            "who can access. Ideal for "
+                            "small teams.",
+                            "has_free_trial": False,
+                            "id": 7335,
+                            "monthly_price_in_cents": 5000,
+                            "name": "Private Tenant",
+                            "number": 5,
+                            "price_model": "FLAT_RATE",
+                            "state": "published",
+                            "unit_name": None,
+                            "url": "https://api.github.com/marketplace_listing/plans/7335",
+                            "yearly_price_in_cents": 60000,
+                        },
+                        "unit_count": 1,
+                    },
+                    "organization_billing_email": "username@email.com",
+                    "type": "Organization",
+                    "url": "https://api.github.com/orgs/kiwitcms",
+                },
+            )
 
-        # send marketplace_purchase hook
-        response = self.client.post(
-            self.url,
-            json.loads(payload),
-            content_type="application/json",
-            HTTP_X_HUB_SIGNATURE=signature,
+            # then cron job comes and checks whether subscription has been renewed
+            check_github_for_subscription_renewals()
+
+        # a new purchase was recorded in DB
+        new_purchase = Purchase.objects.order_by("-received_on").first()
+        self.assertEqual(new_purchase.vendor, "github_cron")
+        self.assertEqual(new_purchase.sender, old_purchase.sender)
+        self.assertEqual(
+            new_purchase.payload["marketplace_purchase"]["account"]["id"],
+            old_purchase.payload["marketplace_purchase"]["account"]["id"],
         )
-        self.assertContains(response, "ok")
+        self.assertGreater(
+            new_purchase.next_billing_date,
+            old_purchase.next_billing_date + timedelta(days=30),
+        )
 
         # paid_until date was increased minimum 30 days
         self.tenant.refresh_from_db()
-        self.assertGreater(self.tenant.paid_until, datetime(2019, 5, 1, 23, 59, 59, 0))
+        self.assertGreater(self.tenant.paid_until, now + timedelta(days=30))
 
 
 class InstallTestCase(tcms_tenants.tests.LoggedInTestCase):
