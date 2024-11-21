@@ -42,7 +42,7 @@ def gitops_allow(repo_url):  # pylint: disable=missing-api-permissions-required
         .first()
     )
 
-    if not purchase:
+    if purchase is None:
         cache.set(key, False)
         return False
 
