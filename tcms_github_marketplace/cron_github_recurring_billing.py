@@ -22,7 +22,20 @@ from tcms_github_marketplace.models import Purchase
 from tcms_github_marketplace.views import GithubCronProcessor
 
 
-def check_github_for_subscription_renewals():
+def check_github_for_subscription_renewals(
+    # vvv monthly subscriptions between [-29d, now] are still current
+    # vvv monthly subscriptions made > 50 days ago are considered expired
+    monthly_range=(
+        timezone.now() - timedelta(days=50),
+        timezone.now() - timedelta(days=29),
+    ),
+    yearly_range=(
+        timezone.now() - timedelta(days=380),
+        timezone.now() - timedelta(days=350),
+    ),
+    # ^^^ yearly subscriptions [-350d, now] are still current
+    # ^^^ yearly subscriptions made > 380 days ago are considered expired
+):
     anonymous_user = AnonymousUser()
     factory = RequestFactory()
     gh_app = github.GithubIntegration(
@@ -36,20 +49,10 @@ def check_github_for_subscription_renewals():
     processed = {}
 
     with schema_context("public"):
-        now = timezone.now()
-
         # Find purchases made in the last 45-29 days to be inspected.
         # Loop over most-recent records first, skipping over non unique account IDs!
         for purchase in Purchase.objects.filter(
-            # vvv monthly subscriptions between [-29d, now] are still current
-            Q(received_on__range=(now - timedelta(days=50), now - timedelta(days=29)))
-            | Q(
-                received_on__range=(
-                    now - timedelta(days=380),
-                    now - timedelta(days=350),
-                )
-            ),
-            # ^^^ yearly subscriptions [-350d, now] are still current
+            Q(received_on__range=monthly_range) | Q(received_on__range=yearly_range),
             action="purchased",
             vendor__startswith="github",
             payload__marketplace_purchase__plan__monthly_price_in_cents__gt=0,
