@@ -64,6 +64,13 @@ Product configuration
 Changelog
 ---------
 
+v4.1.0 (23 Nov 2024)
+~~~~~~~~~~~~~~~~~~~~
+
+- Check for recurring billing events for GitHub Marketplace b/c
+  GitHub will not send a webhook for them
+
+
 v4.0.4 (27 Oct 2024)
 ~~~~~~~~~~~~~~~~~~~~
 
