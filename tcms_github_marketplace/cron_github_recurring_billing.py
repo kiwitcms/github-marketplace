@@ -17,7 +17,7 @@ from django.db.models import Q
 from django.test import RequestFactory
 from django.utils import timezone
 
-from django_tenants.utils import schema_context
+from django_tenants.utils import get_public_schema_name, schema_context
 from tcms_github_marketplace.models import Purchase
 from tcms_github_marketplace.views import GithubCronProcessor
 
@@ -48,7 +48,7 @@ def check_github_for_subscription_renewals(
     )
     processed = {}
 
-    with schema_context("public"):
+    with schema_context(get_public_schema_name()):
         # Find purchases made in the last 45-29 days to be inspected.
         # Loop over most-recent records first, skipping over non unique account IDs!
         for purchase in Purchase.objects.filter(
