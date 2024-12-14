@@ -64,6 +64,12 @@ Product configuration
 Changelog
 ---------
 
+v4.1.1 (14 Dec 2024)
+~~~~~~~~~~~~~~~~~~~~
+
+- Bug-fix for recurring billing cron job
+
+
 v4.1.0 (23 Nov 2024)
 ~~~~~~~~~~~~~~~~~~~~
 
