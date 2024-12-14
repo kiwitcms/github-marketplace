@@ -115,6 +115,5 @@ def check_github_for_subscription_renewals(
                 response = GithubCronProcessor.as_view()(request)
                 assert response.status_code == 200
 
-
-if __name__ == "__main__":
-    check_github_for_subscription_renewals()
+# execute
+check_github_for_subscription_renewals()
