@@ -64,6 +64,13 @@ Product configuration
 Changelog
 ---------
 
+v4.1.1 (16 Dec 2024)
+~~~~~~~~~~~~~~~~~~~~
+
+- Skip checking accounts which have been renewed or canceled meanwhile
+- Don't hard-code the name of public schema
+
+
 v4.1.0 (23 Nov 2024)
 ~~~~~~~~~~~~~~~~~~~~
 
