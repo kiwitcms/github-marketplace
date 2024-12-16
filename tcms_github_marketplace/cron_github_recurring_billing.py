@@ -66,6 +66,16 @@ def check_github_for_subscription_renewals(
                 continue
             processed[account_id] = True
 
+            # ignore accounts for which there is a newer record
+            # in the DB (potentially renewed via previous cron execution or cancelled)
+            # this will avoid creation of multiple DB records for the same customer
+            # b/c we inspect a rolling period of 20-30 days!
+            if Purchase.objects.filter(
+                payload__marketplace_purchase__account__id=account_id,
+                received_on__gt=monthly_range[1],
+            ).exists():
+                continue
+
             # ask GitHub Marketplace if this is still an active subscriber
             # NOTE: in day-to-day executions we may be querying this unnecessary
             try:
