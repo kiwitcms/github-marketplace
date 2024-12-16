@@ -372,6 +372,25 @@ class PurchaseHookTestCase(tcms_tenants.tests.LoggedInTestCase):
         self.tenant.refresh_from_db()
         self.assertGreater(self.tenant.paid_until, now + timedelta(days=30))
 
+    @override_settings(
+        KIWI_GITHUB_APP_ID=1234,
+        KIWI_GITHUB_APP_PRIVATE_KEY="this-is-the-key",
+    )
+    def test_recurring_billing_should_not_create_duplicate_record_if_already_renewed(
+        self,
+    ):
+        # simulate cron job executing once
+        self.test_recurring_billing_check()
+        old_purchase_count = Purchase.objects.count()
+
+        # then simulate it executing again on the next day
+        check_github_for_subscription_renewals()
+
+        new_purchase_count = Purchase.objects.count()
+
+        # a new purchase was NOT recorded in DB
+        self.assertEqual(new_purchase_count, old_purchase_count)
+
 
 class InstallTestCase(tcms_tenants.tests.LoggedInTestCase):
     @classmethod
