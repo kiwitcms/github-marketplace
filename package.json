@@ -2,7 +2,7 @@
   "author": "Alexander Todorov",
   "licence": " AGPL-3.0-or-later",
   "devDependencies": {
-    "eslint": "^8.18.0",
+    "eslint": "^9.19.0",
     "eslint-config-standard": "^17.0.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-node": "^11.1.0",
