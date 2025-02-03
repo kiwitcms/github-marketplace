@@ -4,7 +4,7 @@
 # https://www.gnu.org/licenses/agpl-3.0.html
 
 """
-    Query GitHub Marketplace b/c they don't send events for recurring billing!
+Query GitHub Marketplace b/c they don't send events for recurring billing!
 """
 
 from datetime import timedelta
