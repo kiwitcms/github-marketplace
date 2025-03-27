@@ -1,4 +1,4 @@
-# Copyright (c) 2019-2024 Alexander Todorov <atodorov@otb.bg>
+# Copyright (c) 2019-2025 Alexander Todorov <atodorov@otb.bg>
 #
 # Licensed under GNU Affero General Public License v3 or later (AGPLv3+)
 # https://www.gnu.org/licenses/agpl-3.0.html
@@ -26,7 +26,6 @@ import tcms_tenants
 
 from tcms_github_marketplace import docker
 from tcms_github_marketplace import mailchimp
-from tcms_github_marketplace import utils
 from tcms_github_marketplace.models import Purchase
 from tcms_github_marketplace.cron_github_recurring_billing import (
     check_github_for_subscription_renewals,
@@ -677,8 +676,6 @@ class CancelPlanTestCase(InstallTestCase):
         )
 
         with patch.object(
-            utils.Requester, "requestJsonAndCheck", return_value=({}, None)
-        ) as gh_api, patch.object(
             docker.QuayIOAccount, "delete", return_value=""
         ) as quay_io_api:
             response = self.client.post(
@@ -688,10 +685,9 @@ class CancelPlanTestCase(InstallTestCase):
                 HTTP_X_HUB_SIGNATURE=signature,
             )
             self.assertContains(response, "cancelled")
-            gh_api.assert_called_with("DELETE", self.gh_revoke_url)
             quay_io_api.assert_called_once()
 
-        # verify user is not present anymore
-        self.assertFalse(
+        # verify user is still present
+        self.assertTrue(
             get_user_model().objects.filter(username=self.tester.username).exists()
         )
