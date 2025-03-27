@@ -1,4 +1,4 @@
-# Copyright (c) 2019-2024 Alexander Todorov <atodorov@otb.bg>
+# Copyright (c) 2019-2025 Alexander Todorov <atodorov@otb.bg>
 #
 # Licensed under GNU Affero General Public License v3 or later (AGPLv3+)
 # https://www.gnu.org/licenses/agpl-3.0.html
@@ -8,18 +8,11 @@ import hashlib
 from base64 import b64encode
 from datetime import timedelta
 
-import github
-from github.GithubRetry import GithubRetry
-from github.Requester import Requester
-from social_django.models import UserSocialAuth
-
 from django.conf import settings
-from django.contrib.auth import get_user_model
 from django.http import HttpResponse, HttpResponseForbidden
 from django.utils.translation import gettext_lazy as _
 
 from tcms.core.utils.mailto import mailto
-from tcms.utils.user import delete_user
 from tcms_github_marketplace import docker
 
 
@@ -47,39 +40,6 @@ def verify_hmac(request):
     return True  # b/c of inconsistent-return-statements
 
 
-def revoke_oauth_token(token):
-    """
-    Revokes OAuth token:
-    https://developer.github.com/v3/oauth_authorizations/#revoke-an-authorization-for-an-application
-    """
-    # note: Requester is the internal transport used by PyGithub
-    # b/c it is missing this functionality built-in
-    #
-    # note2: GitHub documentation says that for this method we must
-    # use Basic Authentication, where the username is the OAuth application
-    # client_id and the password is its client_secret.
-    gh_api = Requester(
-        github.Auth.Login(
-            settings.SOCIAL_AUTH_GITHUB_APP_KEY,
-            settings.SOCIAL_AUTH_GITHUB_APP_SECRET,
-        ),
-        github.Consts.DEFAULT_BASE_URL,
-        github.Consts.DEFAULT_TIMEOUT,
-        "KiwiTCMS/Python",
-        github.Consts.DEFAULT_PER_PAGE,
-        True,
-        GithubRetry(),
-        None,
-        github.Consts.DEFAULT_SECONDS_BETWEEN_REQUESTS,
-        github.Consts.DEFAULT_SECONDS_BETWEEN_WRITES,
-    )
-
-    # note3: vvv this API method seems to have been removed already
-
-    revoke_url = f"/applications/{settings.SOCIAL_AUTH_GITHUB_APP_KEY}/tokens/{token}"
-    _headers, _data = gh_api.requestJsonAndCheck("DELETE", revoke_url)
-
-
 def cancel_plan(purchase):
     """
     Cancells the current plan from Marketplace:
@@ -98,39 +58,9 @@ def cancel_plan(purchase):
         subject=str(_("Kiwi TCMS Subscription Exit Poll")),
     )
 
-    customer = get_user_model().objects.filter(email=purchase.sender).first()
-
-    # this can happen for users who have installed the FREE subscription
-    # but their accounts were removed due to inactivity. Nothing else to do.
-    if not customer:
-        return HttpResponse("Sender not found", content_type="text/plain")
-
-    if customer.is_superuser:
-        return HttpResponse("super-user not deleted from DB", content_type="text/plain")
-
-    # Deactivate the account of the customer who cancelled their plan.
-    customer.is_active = False
-    customer.save()
-
-    # store token in a variable so we can remove it later
-    customer_token = None
-    user_social_auth = UserSocialAuth.objects.filter(user=customer).first()
-    if user_social_auth:
-        customer_token = user_social_auth.extra_data["access_token"]
-
-    # Remove user and all of their data across all tenants
-    # before attempting to revoke GitHub token
-    try:
-        delete_user(customer)
-    except:  # noqa:E722, pylint: disable=bare-except
-        pass
-
-    # Revoke the OAuth token your app received for the customer.
-    if customer_token:
-        try:
-            revoke_oauth_token(customer_token)
-        except:  # noqa:E722, pylint: disable=bare-except
-            pass
+    # Note: deliberately not removing users from DB b/c this removes
+    # accounts for customers with > 1 active subscription.
+    # Inactive users will be removed via cron job!
 
     return HttpResponse("cancelled", content_type="text/plain")
 
