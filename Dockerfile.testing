@@ -1,4 +1,4 @@
-FROM quay.io/kiwitcms/enterprise
+FROM hub.kiwitcms.eu/kiwitcms/enterprise
 
 COPY ./dist/*.whl /Kiwi/dist/
 RUN pip install --no-cache-dir --find-links /Kiwi/dist/ /Kiwi/dist/kiwitcms_github_marketplace*.whl

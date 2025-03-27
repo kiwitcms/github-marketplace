@@ -107,18 +107,18 @@ jobs:
           pip install -U pip wheel setuptools
           pip install -r devel.txt
 
-      - name: Login to Quay.io
+      - name: Login to Private Container Registry
         run: |
-          echo "${{ secrets.QUAY_PULL_TOKEN }}" | docker login -u="${{ secrets.QUAY_PULL_USERNAME }}" --password-stdin quay.io
+          echo "${{ secrets.QUAY_PULL_TOKEN }}" | docker login -u="${{ secrets.QUAY_PULL_USERNAME }}" --password-stdin hub.kiwitcms.eu
 
       - name: Execute tests
         run: |
           make test-via-docker
 
-      - name: Logout of Quay.io
+      - name: Logout of Private Container Registry
         if: always()
         run: |
-          docker logout quay.io
+          docker logout hub.kiwitcms.eu
 
       - name: Upload testing artifacts
         uses: actions/upload-artifact@v4
