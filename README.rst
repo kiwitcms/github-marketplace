@@ -64,6 +64,14 @@ Product configuration
 Changelog
 ---------
 
+v4.2 (27 Mar 2025)
+~~~~~~~~~~~~~~~~~~
+
+- Do not remove users from DB when they cancel their accounts.
+  Let the account expire due to inactivity at which point it will
+  be removed via cron job
+
+
 v4.1.1 (16 Dec 2024)
 ~~~~~~~~~~~~~~~~~~~~
 

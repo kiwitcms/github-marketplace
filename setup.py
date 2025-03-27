@@ -1,6 +1,6 @@
 # pylint: disable=missing-docstring
 
-# Copyright (c) 2019-2024 Alexander Todorov <atodorov@otb.bg>
+# Copyright (c) 2019-2025 Alexander Todorov <atodorov@otb.bg>
 #
 # Licensed under GNU Affero General Public License v3 or later (AGPLv3+)
 # https://www.gnu.org/licenses/agpl-3.0.html
@@ -26,7 +26,7 @@ def get_install_requires(path):
 
 setup(
     name="kiwitcms-github-marketplace",
-    version="4.1.1",
+    version="4.2",
     description="GitHub Marketplace integration for Kiwi TCMS",
     long_description=get_long_description(),
     author="Kiwi TCMS",
