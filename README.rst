@@ -64,7 +64,7 @@ Product configuration
 Changelog
 ---------
 
-v4.2.1 (21 Apr 2025)
+v4.2.2 (21 Apr 2025)
 ~~~~~~~~~~~~~~~~~~~~
 
 - Bug fix: update exclude filter for Tenant Subscriptions page to account for

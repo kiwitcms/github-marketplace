@@ -773,7 +773,11 @@ class ViewSubscriptionPlan(UpdateView):
         which has the subscription field set! Note that some events,
         e.g. order.canceled may have this field set to None
         """
-        return self.get_queryset().exclude(subscription__contains="None").first()
+        return (
+            self.get_queryset()
+            .exclude(Q(subscription=None) | Q(subscription__contains="None"))
+            .first()
+        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
