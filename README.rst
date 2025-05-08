@@ -64,9 +64,10 @@ Product configuration
 Changelog
 ---------
 
-v4.2.3 (08 May 2025)
+v4.2.4 (08 May 2025)
 ~~~~~~~~~~~~~~~~~~~~
 
+- Try harder to discover subscription price on Subscriptions page
 - Don't crash if we can't extract display price for Subscriptions page
 
 
