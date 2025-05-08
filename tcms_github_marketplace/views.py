@@ -801,12 +801,12 @@ class ViewSubscriptionPlan(UpdateView):
             purchase_data = self.object.payload["marketplace_purchase"]
             if purchase_data["billing_cycle"] == "monthly":
                 subscription_price = (
-                    purchase_data["plan"]["monthly_price_in_cents"] // 100
+                    purchase_data["plan"].get("monthly_price_in_cents", 0) // 100
                 )
                 subscription_period = _("mo")
             elif purchase_data["billing_cycle"] == "yearly":
                 subscription_price = (
-                    purchase_data["plan"]["yearly_price_in_cents"] // 100
+                    purchase_data["plan"].get("yearly_price_in_cents", 0) // 100
                 )
                 subscription_period = _("yr")
 
