@@ -799,15 +799,20 @@ class ViewSubscriptionPlan(UpdateView):
                 cancel_url = self.object.payload["data"]["account"]["url"]
 
             purchase_data = self.object.payload["marketplace_purchase"]
-            if purchase_data["billing_cycle"] == "monthly":
+
+            # try yearly billing first
+            subscription_price = (
+                purchase_data["plan"].get("yearly_price_in_cents", 0) // 100
+            )
+            # default to monthly price next. FastSpring yearly billing subscriptions
+            # also send the price in this field
+            if subscription_price == 0:
                 subscription_price = (
                     purchase_data["plan"].get("monthly_price_in_cents", 0) // 100
                 )
+            if purchase_data["billing_cycle"] == "monthly":
                 subscription_period = _("mo")
             elif purchase_data["billing_cycle"] == "yearly":
-                subscription_price = (
-                    purchase_data["plan"].get("yearly_price_in_cents", 0) // 100
-                )
                 subscription_period = _("yr")
 
             subscription_price = int(subscription_price)
