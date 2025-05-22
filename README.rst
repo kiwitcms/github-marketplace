@@ -64,6 +64,12 @@ Product configuration
 Changelog
 ---------
 
+v4.2.5 (22 May 2025)
+~~~~~~~~~~~~~~~~~~~~
+
+- Handle SKU references to hub.kiwitcms.eu Private Container Repository
+
+
 v4.2.4 (08 May 2025)
 ~~~~~~~~~~~~~~~~~~~~
 
