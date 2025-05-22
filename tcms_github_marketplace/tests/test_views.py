@@ -149,7 +149,7 @@ class PurchaseHookTestCase(tcms_tenants.tests.LoggedInTestCase):
          "bullets":[
             "Is Basic",
             "Because Basic ",
-            "Docker repositories: quay.io/kiwitcms/version, https://quay.io/kiwitcms/enterprise"
+            "Docker repositories: hub.kiwitcms.eu/kiwitcms/version, https://quay.io/kiwitcms/enterprise"
          ]
       }
    }
