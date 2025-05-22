@@ -1,4 +1,4 @@
-# Copyright (c) 2024 Alexander Todorov <atodorov@otb.bg>
+# Copyright (c) 2024-2025 Alexander Todorov <atodorov@otb.bg>
 #
 # Licensed under GNU Affero General Public License v3 or later (AGPLv3+)
 # https://www.gnu.org/licenses/agpl-3.0.html
@@ -18,6 +18,7 @@ def find_sku(purchase):
                 .replace(" ", "")
                 .replace("https://", "")
                 .replace("quay.io/kiwitcms/", "")
+                .replace("hub.kiwitcms.eu/kiwitcms/", "")
                 .replace(",", "+")
             )
 
