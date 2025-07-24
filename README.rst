@@ -64,6 +64,12 @@ Product configuration
 Changelog
 ---------
 
+v4.2.6 (24 Jul 2025)
+~~~~~~~~~~~~~~~~~~~~
+
+- Update argument to ``tcms-profile`` URL, which was changed in Kiwi TCMS v14.3
+
+
 v4.2.5 (22 May 2025)
 ~~~~~~~~~~~~~~~~~~~~
 
