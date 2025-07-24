@@ -31,7 +31,7 @@ https://www.gnu.org/licenses/agpl-3.0.html
 
                 <h2 class="card-pf-title kiwi-text-align-left">
                     <span class="pficon pficon-user"></span>{% trans 'Owner' %}:
-                    <a href="{% url "tcms-profile" tenant.owner.username %}">{{ tenant.owner }}</a>
+                    <a href="{% url "tcms-profile" tenant.owner.pk %}">{{ tenant.owner }}</a>
                 </h2>
 
                 {% if tenant.organization %}
