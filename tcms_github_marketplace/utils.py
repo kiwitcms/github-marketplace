@@ -65,7 +65,7 @@ def cancel_plan(purchase):
     return HttpResponse("cancelled", content_type="text/plain")
 
 
-def calculate_paid_until(mp_purchase, effective_date):
+def calculate_paid_until(mp_purchase, effective_date, next_billing_date=None):
     """
     Calculates when access to paid services must be disabled.
     """
@@ -74,6 +74,8 @@ def calculate_paid_until(mp_purchase, effective_date):
         paid_until += timedelta(days=31)
     elif mp_purchase["billing_cycle"] == "yearly":
         paid_until += timedelta(days=366)
+    elif next_billing_date:
+        paid_until = next_billing_date
 
     # above we give them 1 extra day and here we always end at 23:59:59
     return paid_until.replace(hour=23, minute=59, second=59)

@@ -201,6 +201,7 @@ class GenericPurchaseNotificationView(View):
                     tenant.paid_until = utils.calculate_paid_until(
                         purchase.payload["marketplace_purchase"],
                         purchase.effective_date,
+                        purchase.next_billing_date,
                     )
                     tenant.save()
 
@@ -729,6 +730,7 @@ class CreateTenant(NewTenantView):
             paid_until = utils.calculate_paid_until(
                 self.purchase.payload["marketplace_purchase"],
                 self.purchase.effective_date,
+                self.purchase.next_billing_date,
             )
             kwargs["initial"]["paid_until"] = paid_until
 
