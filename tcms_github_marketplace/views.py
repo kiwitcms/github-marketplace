@@ -466,6 +466,22 @@ class FastSpringHook(GenericPurchaseNotificationView):
 
         raise RuntimeError(f"Unsupported billing cycle: '{interval}'")
 
+    def find_next_billing_date(self, event):
+        if "nextChargeDateInSeconds" in event["data"]:
+            return datetime.fromtimestamp(
+                event["data"]["nextChargeDateInSeconds"]
+            ).isoformat()
+
+        if (
+            "subscription" in event["data"]
+            and "nextChargeDateInSeconds" in event["data"]["subscription"]
+        ):
+            return datetime.fromtimestamp(
+                event["data"]["subscription"]["nextChargeDateInSeconds"]
+            ).isoformat()
+
+        return None
+
     def vendor_pre_process_payload(self, payload):  # pylint: disable=unused-argument
         """
         Multiple webhooks might be combined in a single payload. We need to adjust
@@ -491,6 +507,7 @@ class FastSpringHook(GenericPurchaseNotificationView):
 
             event["marketplace_purchase"] = {
                 "billing_cycle": self.find_billing_cycle_interval(event),
+                "next_billing_date": self.find_next_billing_date(event),
                 "plan": {
                     "monthly_price_in_cents": sub_total_in_payout_currency * 100,
                 },

@@ -554,6 +554,8 @@ class FastSpringHookTestCase(tcms_tenants.tests.LoggedInTestCase):
         self.assertEqual(
             purchase.payload["marketplace_purchase"]["billing_cycle"], "monthly"
         )
+        self.assertEqual(purchase.next_billing_date, datetime(2022, 3, 2, 0, 0))
+
         # make sure no prefix was recorded
         self.assertIsNone(purchase.gitops_prefix)
 
@@ -849,6 +851,15 @@ class FastSpringHookTestCase(tcms_tenants.tests.LoggedInTestCase):
                 should_have_tenant=True,
             ).exists()
         )
+        purchase = Purchase.objects.filter(
+            vendor="fastspring",
+            action="purchased",
+            sender=self.tester.email,
+            should_have_tenant=True,
+        ).first()
+        self.assertIsNotNone(purchase)
+        self.assertEqual(purchase.next_billing_date, datetime(2022, 3, 2, 0, 0))
+
         # this is an initial subscription so Tenant hasn't been created yet The used needs
         # to do this by visiting the Create Tenant page
         self.tenant.refresh_from_db()
@@ -1147,6 +1158,15 @@ class FastSpringHookTestCase(tcms_tenants.tests.LoggedInTestCase):
                 should_have_tenant=True,
             ).exists()
         )
+        purchase = Purchase.objects.filter(
+            vendor="fastspring",
+            action="purchased",
+            sender=purchase_sender,
+            should_have_tenant=True,
+        ).first()
+        self.assertIsNotNone(purchase)
+        self.assertEqual(purchase.next_billing_date, datetime(2022, 3, 2, 0, 0))
+
         # this is an initial subscription so Tenant hasn't been created yet The used needs
         # to do this by visiting the Create Tenant page
         self.tenant.refresh_from_db()
@@ -1426,6 +1446,14 @@ class FastSpringHookTestCase(tcms_tenants.tests.LoggedInTestCase):
                 should_have_tenant=True,
             ).exists()
         )
+        purchase = Purchase.objects.filter(
+            vendor="fastspring",
+            action="purchased",
+            sender=self.tester.email,
+            should_have_tenant=True,
+        ).first()
+        self.assertIsNotNone(purchase)
+        self.assertEqual(purchase.next_billing_date, datetime(2022, 3, 2, 0, 0))
 
     def test_subscription_activated_fallback_sku_enterprise_subscription(self):
         payload = """
@@ -1695,6 +1723,14 @@ class FastSpringHookTestCase(tcms_tenants.tests.LoggedInTestCase):
                 should_have_tenant=True,
             ).exists()
         )
+        purchase = Purchase.objects.filter(
+            vendor="fastspring",
+            action="purchased",
+            sender=self.tester.email,
+            should_have_tenant=True,
+        ).first()
+        self.assertIsNotNone(purchase)
+        self.assertEqual(purchase.next_billing_date, datetime(2022, 3, 2, 0, 0))
 
     def test_request_signature_is_not_valid(self):
         payload = """
@@ -2000,6 +2036,14 @@ class FastSpringHookTestCase(tcms_tenants.tests.LoggedInTestCase):
                 should_have_tenant=True,
             ).exists()
         )
+        purchase = Purchase.objects.filter(
+            vendor="fastspring",
+            action="subscription.payment.reminder",
+            sender=self.tester.email,
+            should_have_tenant=True,
+        ).first()
+        self.assertIsNotNone(purchase)
+        self.assertEqual(purchase.next_billing_date, datetime(2023, 4, 9, 0, 0))
 
     def test_that_order_cancel_for_non_recurring_billing_doesnt_crash(self):
         payload = """
