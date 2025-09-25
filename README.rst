@@ -64,6 +64,13 @@ Product configuration
 Changelog
 ---------
 
+v4.2.7 (25 Sep 2025)
+~~~~~~~~~~~~~~~~~~~~
+
+- Use ``next_billing_date`` field if present
+- Translate ``nextCharge...`` timestamps from FastSpring event payloads
+
+
 v4.2.6 (24 Jul 2025)
 ~~~~~~~~~~~~~~~~~~~~
 
