@@ -1,4 +1,4 @@
-# Copyright (c) 2022-2024 Alexander Todorov <atodorov@otb.bg>
+# Copyright (c) 2022-2025 Alexander Todorov <atodorov@otb.bg>
 #
 # Licensed under GNU Affero General Public License v3 or later (AGPLv3+)
 # https://www.gnu.org/licenses/agpl-3.0.html
@@ -38,7 +38,7 @@ class ViewSubscriptionTestCase(tcms_tenants.tests.LoggedInTestCase):
             "You can access the following tenants",
             "You own the following tenants",
             "Transaction history",
-            "Docker credentials",
+            "Private repository credentials",
             "Username",
             "Password",
         ):
