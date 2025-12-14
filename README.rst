@@ -64,6 +64,12 @@ Product configuration
 Changelog
 ---------
 
+v4.2.8 (14 Dec 2025)
+~~~~~~~~~~~~~~~~~~~~
+
+- Update help text for private repository credentials
+
+
 v4.2.7 (25 Sep 2025)
 ~~~~~~~~~~~~~~~~~~~~
 
