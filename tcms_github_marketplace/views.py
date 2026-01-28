@@ -1,4 +1,4 @@
-# Copyright (c) 2019-2025 Alexander Todorov <atodorov@otb.bg>
+# Copyright (c) 2019-2026 Alexander Todorov <atodorov@otb.bg>
 #
 # Licensed under GNU Affero General Public License v3 or later (AGPLv3+)
 # https://www.gnu.org/licenses/agpl-3.0.html
@@ -256,7 +256,16 @@ class PurchaseHook(GenericPurchaseNotificationView):
         return github_find_sku(purchase)
 
     def purchase_action(self, event):
-        return event["action"]
+        action = event["action"]
+
+        # an "upgrade" from the FREE tier
+        if (
+            action == "changed"
+            and event["marketplace_purchase"]["plan"]["monthly_price_in_cents"] > 0
+        ):
+            action = "purchased"
+
+        return action
 
     def purchase_effective_date(self, event):
         # format is 2017-10-25T00:00:00+00:00
