@@ -64,6 +64,13 @@ Product configuration
 Changelog
 ---------
 
+v4.3.0 (28 Jan 2026)
+~~~~~~~~~~~~~~~~~~~~
+
+- Properly account for GitHub change events from FREE -> paid
+- Remove redundant colon
+
+
 v4.2.8 (14 Dec 2025)
 ~~~~~~~~~~~~~~~~~~~~
 
