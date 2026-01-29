@@ -26,10 +26,9 @@ class PurchaseAdmin(admin.ModelAdmin):
         "received_on",
         "should_have_tenant",
         "should_have_support",
-        "gitops_prefix",
     )
     list_filter = ("action", "vendor", "sender")
-    search_fields = ("action", "vendor", "sender", "subscription", "gitops_prefix")
+    search_fields = ("action", "vendor", "sender", "subscription")
     ordering = ["-pk"]
 
     def monthly_price(self, purchase):  # pylint: disable=no-self-use
