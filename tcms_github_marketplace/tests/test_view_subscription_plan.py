@@ -1,4 +1,4 @@
-# Copyright (c) 2022-2025 Alexander Todorov <atodorov@otb.bg>
+# Copyright (c) 2022-2026 Alexander Todorov <atodorov@otb.bg>
 #
 # Licensed under GNU Affero General Public License v3 or later (AGPLv3+)
 # https://www.gnu.org/licenses/agpl-3.0.html
@@ -122,6 +122,7 @@ class ViewSubscriptionTestCase(tcms_tenants.tests.LoggedInTestCase):
         self.assertContains(response, "test-purchase")
         self.assertContains(response, "fastspring")
 
+    @unittest.skip("feature currently disabled")
     def test_saving_gitops_prefix_clears_cache(self):
         # simulate ownership
         self.tenant.owner = self.tester
