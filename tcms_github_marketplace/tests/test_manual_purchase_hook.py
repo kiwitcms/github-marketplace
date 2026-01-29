@@ -1,4 +1,4 @@
-# Copyright (c) 2023 Alexander Todorov <atodorov@otb.bg>
+# Copyright (c) 2023-2026 Alexander Todorov <atodorov@otb.bg>
 #
 # Licensed under GNU Affero General Public License v3 or later (AGPLv3+)
 # https://www.gnu.org/licenses/agpl-3.0.html
@@ -74,7 +74,11 @@ class ProcessManualPurchaseTestCase(tcms_tenants.tests.LoggedInTestCase):
                     reverse("admin:tcms_github_marketplace_purchase_changelist"),
                 )
                 self.assertContains(response, form_data["invoice"])
-                self.assertContains(response, form_data["price"])
+                if billing_cycle == "yearly":
+                    # b/c we show only the $/mo column now
+                    self.assertContains(response, int(form_data["price"]) // 12)
+                else:
+                    self.assertContains(response, form_data["price"])
 
                 quay_io_create.assert_called_once()
                 quay_io_allow_read_access.assert_has_calls(
