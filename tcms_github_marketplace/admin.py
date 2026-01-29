@@ -1,4 +1,4 @@
-# Copyright (c) 2019-2024 Alexander Todorov <atodorov@otb.bg>
+# Copyright (c) 2019-2026 Alexander Todorov <atodorov@otb.bg>
 #
 # Licensed under GNU Affero General Public License v3 or later (AGPLv3+)
 # https://www.gnu.org/licenses/agpl-3.0.html
@@ -24,7 +24,6 @@ class PurchaseAdmin(admin.ModelAdmin):
         "action",
         "sender",
         "subscription",
-        "effective_date",
         "received_on",
         "should_have_tenant",
         "should_have_support",

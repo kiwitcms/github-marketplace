@@ -63,7 +63,6 @@ class PurchaseAdminTestCase(LoggedInTestCase):
         self.assertContains(response, purchase.action)
         self.assertContains(response, purchase.sender)
         # timestamps are formatted according to localization
-        self.assertContains(response, "Effective date")
         self.assertContains(response, "Received on")
 
     def test_add_not_possible(self):
