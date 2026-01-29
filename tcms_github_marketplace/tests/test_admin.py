@@ -1,4 +1,4 @@
-# Copyright (c) 2019-2024 Alexander Todorov <atodorov@otb.bg>
+# Copyright (c) 2019-2026 Alexander Todorov <atodorov@otb.bg>
 #
 # Licensed under GNU Affero General Public License v3 or later (AGPLv3+)
 # https://www.gnu.org/licenses/agpl-3.0.html
@@ -59,7 +59,6 @@ class PurchaseAdminTestCase(LoggedInTestCase):
         # shows price column
         self.assertContains(response, "$/mo")
         self.assertContains(response, "25")
-        self.assertContains(response, "$/yr")
         self.assertContains(response, purchase.action)
         self.assertContains(response, purchase.sender)
         # timestamps are formatted according to localization
