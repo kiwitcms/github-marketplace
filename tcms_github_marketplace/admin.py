@@ -20,6 +20,7 @@ class PurchaseAdmin(admin.ModelAdmin):
         "pk",
         "vendor",
         "monthly_price",
+        "purchased_quantity",
         "action",
         "sender",
         "subscription",
@@ -40,6 +41,11 @@ class PurchaseAdmin(admin.ModelAdmin):
         )
 
     monthly_price.short_description = "$/mo"
+
+    def purchased_quantity(self, purchase):  # pylint: disable=no-self-use
+        return purchase.unit_count
+
+    purchased_quantity.short_description = "Qty"
 
     def add_view(self, request, form_url="", extra_context=None):
         return HttpResponseRedirect(
