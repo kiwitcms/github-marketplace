@@ -1,4 +1,4 @@
-# Copyright (c) 2019-2024 Alexander Todorov <atodorov@otb.bg>
+# Copyright (c) 2019-2026 Alexander Todorov <atodorov@otb.bg>
 #
 # Licensed under GNU Affero General Public License v3 or later (AGPLv3+)
 # https://www.gnu.org/licenses/agpl-3.0.html
@@ -100,3 +100,33 @@ class Purchase(models.Model):
     @property
     def next_billing_date(self):
         return self.next_billing_date_from(self.payload)
+
+    @property
+    def unit_count(self):
+        """
+        A value of zero/0 represent a case where the code wasn't able to find
+        the actual value from the event payload!
+        """
+        if self.vendor in ("github", "github_cron"):
+            if "marketplace_purchase" not in self.payload:
+                return 0
+
+            return self.payload["marketplace_purchase"].get("unit_count", 0)
+
+        if self.vendor == "manual_purchase":
+            return self.payload["marketplace_purchase"].get("unit_count", 0)
+
+        if self.vendor == "fastspring":
+            if "data" not in self.payload:
+                return 0
+
+            value = self.payload["data"].get("quantity", 0)
+            if value == 0 and "subscription" in self.payload["data"]:
+                value = self.payload["data"]["subscription"].get("quantity", 0)
+
+            if value == 0 and "items" in self.payload["data"]:
+                value = self.payload["data"]["items"][0].get("quantity", 0)
+
+            return value
+
+        return 0

@@ -133,6 +133,7 @@ class ManualPurchaseAdmin(admin.ModelAdmin):
                     "account": {
                         "type": "User",
                     },
+                    "unit_count": 1,
                     "billing_cycle": form.cleaned_data["billing_cycle"],
                     "plan": {
                         "monthly_price_in_cents": monthly_price,

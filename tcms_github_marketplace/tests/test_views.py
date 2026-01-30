@@ -1,4 +1,4 @@
-# Copyright (c) 2019-2025 Alexander Todorov <atodorov@otb.bg>
+# Copyright (c) 2019-2026 Alexander Todorov <atodorov@otb.bg>
 #
 # Licensed under GNU Affero General Public License v3 or later (AGPLv3+)
 # https://www.gnu.org/licenses/agpl-3.0.html
@@ -133,7 +133,7 @@ class PurchaseHookTestCase(tcms_tenants.tests.LoggedInTestCase):
          "organization_billing_email":"username@email.com"
       },
       "billing_cycle":"monthly",
-      "unit_count":1,
+      "unit_count":3,
       "on_free_trial":false,
       "free_trial_ends_on":null,
       "next_billing_date":"2017-11-05T00:00:00+00:00",
@@ -196,6 +196,7 @@ class PurchaseHookTestCase(tcms_tenants.tests.LoggedInTestCase):
         # make sure the prefix was recorded
         purchase = Purchase.objects.order_by("pk").last()
         self.assertEqual(purchase.gitops_prefix, "https://github.com/example-org")
+        self.assertEqual(purchase.unit_count, 3)
 
     def test_hook_ping(self):
         payload = """
@@ -275,6 +276,7 @@ class PurchaseHookTestCase(tcms_tenants.tests.LoggedInTestCase):
                         "login": "kiwitcms",
                         "organization_billing_email": "username@email.com",
                     },
+                    "unit_count": 1,
                     "billing_cycle": "monthly",
                     "next_billing_date": _4_days_ago.strftime("%Y-%m-%dT%H:%M:%S"),
                     "plan": {
@@ -298,6 +300,7 @@ class PurchaseHookTestCase(tcms_tenants.tests.LoggedInTestCase):
         )
         old_purchase.received_on = _35_days_ago
         old_purchase.save()
+        self.assertEqual(old_purchase.unit_count, 1)
 
         # Tenant expired 4 days ago (Purchase.received_on + 31)
         # lets say customer forgot to update card details!
