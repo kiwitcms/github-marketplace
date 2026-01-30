@@ -100,6 +100,7 @@ class ProcessManualPurchaseTestCase(tcms_tenants.tests.LoggedInTestCase):
         ).first()
 
         self.assertIsNotNone(purchase)
+        self.assertEqual(purchase.unit_count, 1)
         self.assertEqual(
             purchase.payload["marketplace_purchase"]["billing_cycle"], billing_cycle
         )

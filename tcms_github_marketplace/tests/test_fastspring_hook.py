@@ -1,4 +1,4 @@
-# Copyright (c) 2022-2025 Alexander Todorov <atodorov@otb.bg>
+# Copyright (c) 2022-2026 Alexander Todorov <atodorov@otb.bg>
 #
 # Licensed under GNU Affero General Public License v3 or later (AGPLv3+)
 # https://www.gnu.org/licenses/agpl-3.0.html
@@ -555,6 +555,7 @@ class FastSpringHookTestCase(tcms_tenants.tests.LoggedInTestCase):
             purchase.payload["marketplace_purchase"]["billing_cycle"], "monthly"
         )
         self.assertEqual(purchase.next_billing_date, datetime(2022, 3, 2, 0, 0))
+        self.assertEqual(purchase.unit_count, 1)
 
         # make sure no prefix was recorded
         self.assertIsNone(purchase.gitops_prefix)
@@ -677,7 +678,7 @@ class FastSpringHookTestCase(tcms_tenants.tests.LoggedInTestCase):
             "currency": "EUR",
             "discount": 0,
             "endValue": null,
-            "quantity": 1,
+            "quantity": 2,
             "sequence": 1,
             "subtotal": 46.67,
             "autoRenew": true,
@@ -859,6 +860,7 @@ class FastSpringHookTestCase(tcms_tenants.tests.LoggedInTestCase):
         ).first()
         self.assertIsNotNone(purchase)
         self.assertEqual(purchase.next_billing_date, datetime(2022, 3, 2, 0, 0))
+        self.assertEqual(purchase.unit_count, 2)
 
         # this is an initial subscription so Tenant hasn't been created yet The used needs
         # to do this by visiting the Create Tenant page
@@ -1166,6 +1168,7 @@ class FastSpringHookTestCase(tcms_tenants.tests.LoggedInTestCase):
         ).first()
         self.assertIsNotNone(purchase)
         self.assertEqual(purchase.next_billing_date, datetime(2022, 3, 2, 0, 0))
+        self.assertEqual(purchase.unit_count, 1)
 
         # this is an initial subscription so Tenant hasn't been created yet The used needs
         # to do this by visiting the Create Tenant page
@@ -1454,6 +1457,7 @@ class FastSpringHookTestCase(tcms_tenants.tests.LoggedInTestCase):
         ).first()
         self.assertIsNotNone(purchase)
         self.assertEqual(purchase.next_billing_date, datetime(2022, 3, 2, 0, 0))
+        self.assertEqual(purchase.unit_count, 1)
 
     def test_subscription_activated_fallback_sku_enterprise_subscription(self):
         payload = """
@@ -1731,6 +1735,7 @@ class FastSpringHookTestCase(tcms_tenants.tests.LoggedInTestCase):
         ).first()
         self.assertIsNotNone(purchase)
         self.assertEqual(purchase.next_billing_date, datetime(2022, 3, 2, 0, 0))
+        self.assertEqual(purchase.unit_count, 1)
 
     def test_request_signature_is_not_valid(self):
         payload = """
@@ -2044,6 +2049,7 @@ class FastSpringHookTestCase(tcms_tenants.tests.LoggedInTestCase):
         ).first()
         self.assertIsNotNone(purchase)
         self.assertEqual(purchase.next_billing_date, datetime(2023, 4, 9, 0, 0))
+        self.assertEqual(purchase.unit_count, 1)
 
     def test_that_order_cancel_for_non_recurring_billing_doesnt_crash(self):
         payload = """
