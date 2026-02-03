@@ -64,6 +64,15 @@ Product configuration
 Changelog
 ---------
 
+v4.4.0 (03 Feb 2026)
+~~~~~~~~~~~~~~~~~~~~
+
+- Don't display ``effective_date`` column in Purchase Admin page
+- Don't display ``$/yr`` column in Purchase Admin page
+- Display ``Qty`` column in Purchase Admin page
+- Hide kiwitcms/gitops feature from Admin & Subscriptions pages
+
+
 v4.3.0 (28 Jan 2026)
 ~~~~~~~~~~~~~~~~~~~~
 
