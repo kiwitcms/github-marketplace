@@ -1,3 +1,4 @@
+httplink==0.2.0
 kiwitcms-tenants>=2.8.3
 mailchimp3==3.0.21
 requests
