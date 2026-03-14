@@ -130,3 +130,17 @@ class Purchase(models.Model):
             return value
 
         return 0
+
+
+class PrivateRepoToken(models.Model):
+    vendor = models.CharField(max_length=16, db_index=True)
+    subscription = models.CharField(max_length=32, db_index=True, blank=True, null=True)
+    created_at = models.DateTimeField(db_index=True, auto_now_add=True)
+    payload = models.JSONField()
+
+    class Meta:
+        indexes = [
+            GinIndex(
+                fastupdate=False, fields=["payload"], name="ghmp_privaterepotoken_gin"
+            ),
+        ]

@@ -12,7 +12,7 @@ from django.utils import timezone
 from django.contrib import admin
 from django.http import HttpResponseForbidden, HttpResponseRedirect
 
-from tcms_github_marketplace.models import ManualPurchase, Purchase
+from tcms_github_marketplace.models import ManualPurchase, PrivateRepoToken, Purchase
 
 
 class PurchaseAdmin(admin.ModelAdmin):
@@ -178,3 +178,4 @@ class ManualPurchaseAdmin(admin.ModelAdmin):
 
 admin.site.register(ManualPurchase, ManualPurchaseAdmin)
 admin.site.register(Purchase, PurchaseAdmin)
+admin.site.register(PrivateRepoToken)
