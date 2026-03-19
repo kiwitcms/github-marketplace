@@ -144,3 +144,7 @@ class PrivateRepoToken(models.Model):
                 fastupdate=False, fields=["payload"], name="ghmp_privaterepotoken_gin"
             ),
         ]
+
+    @property
+    def token(self):
+        return self.payload["token_value"]

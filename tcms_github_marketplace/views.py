@@ -36,7 +36,7 @@ from tcms_github_marketplace import forms
 from tcms_github_marketplace.github import find_sku as github_find_sku
 from tcms_github_marketplace import mailchimp
 from tcms_github_marketplace import utils
-from tcms_github_marketplace.models import Purchase
+from tcms_github_marketplace.models import PrivateRepoToken, Purchase
 
 
 UserModel = get_user_model()
@@ -814,6 +814,7 @@ class ViewSubscriptionPlan(UpdateView):
 
         cancel_url = None
         quay_io_account = None
+        private_repo_token = None
 
         subscription_price = "-"
         subscription_period = "-"
@@ -821,6 +822,11 @@ class ViewSubscriptionPlan(UpdateView):
         if self.object is not None:
             subscription_price = "0"
             quay_io_account = docker.QuayIOAccount(self.object.subscription)
+            private_repo_token = (
+                PrivateRepoToken.objects.filter(subscription=self.object.subscription)
+                .order_by("pk")
+                .last()
+            )
 
             if self.object.vendor.lower() == "github":
                 cancel_url = "https://github.com/settings/billing"
@@ -856,6 +862,7 @@ class ViewSubscriptionPlan(UpdateView):
                 "subscription_period": subscription_period,
                 "cancel_url": cancel_url,
                 "quay_io_account": quay_io_account,
+                "private_repo_token": private_repo_token,
             }
         )
 

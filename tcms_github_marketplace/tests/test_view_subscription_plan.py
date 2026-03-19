@@ -38,7 +38,7 @@ class ViewSubscriptionTestCase(tcms_tenants.tests.LoggedInTestCase):
             "You can access the following tenants",
             "You own the following tenants",
             "Transaction history",
-            "Private repository credentials",
+            "Private credentials",
             "Username",
             "Password",
         ):
