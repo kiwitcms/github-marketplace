@@ -29,4 +29,15 @@ $(document).ready(function () {
         $('#docker_password').attr('type', 'password')
     }
   })
+
+  // toggle private repo password
+  $('#show-repo-token').click(function() {
+    var input_type = $('#repo_token').attr('type')
+
+    if (input_type === 'password') {
+        $('#repo_token').attr('type', 'text')
+    } else {
+        $('#repo_token').attr('type', 'password')
+    }
+  })
 })
