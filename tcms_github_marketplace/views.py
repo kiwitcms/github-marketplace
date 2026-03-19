@@ -27,7 +27,6 @@ from tcms.utils import github
 
 from django_tenants.utils import get_public_schema_name
 from tcms_tenants.models import Tenant
-from tcms_tenants.utils import create_user_account
 from tcms_tenants.views import NewTenantView
 from tcms_tenants import utils as tcms_tenants_utils
 
@@ -66,7 +65,7 @@ class GenericPurchaseNotificationView(View):
         Will create an account for whomever is purchasing this subscription!
         """
         if not UserModel.objects.filter(email=email).first():
-            create_user_account(email)
+            tcms_tenants_utils.create_user_account(email)
 
     def find_paid_tenant(self, purchase):  # pylint: disable=unused-argument
         """
@@ -185,6 +184,9 @@ class GenericPurchaseNotificationView(View):
                 with docker.QuayIOAccount(purchase.subscription) as account:
                     account.create()
                     utils.configure_product_access(account, sku)
+
+                # create private repository token
+                utils.create_repo_token(purchase.subscription)
 
                 # ask them to subscribe to newsletter
                 mailchimp.subscribe(purchase.sender)

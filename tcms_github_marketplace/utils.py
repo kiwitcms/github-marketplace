@@ -1,4 +1,4 @@
-# Copyright (c) 2019-2025 Alexander Todorov <atodorov@otb.bg>
+# Copyright (c) 2019-2026 Alexander Todorov <atodorov@otb.bg>
 #
 # Licensed under GNU Affero General Public License v3 or later (AGPLv3+)
 # https://www.gnu.org/licenses/agpl-3.0.html
@@ -13,7 +13,8 @@ from django.http import HttpResponse, HttpResponseForbidden
 from django.utils.translation import gettext_lazy as _
 
 from tcms.core.utils.mailto import mailto
-from tcms_github_marketplace import docker
+from tcms_github_marketplace import docker, fury
+from tcms_github_marketplace.models import PrivateRepoToken
 
 
 def verify_hmac(request):
@@ -48,6 +49,11 @@ def cancel_plan(purchase):
     try:
         with docker.QuayIOAccount(purchase.subscription) as account:
             account.delete()
+    except:  # noqa:E722, pylint: disable=bare-except
+        pass
+
+    try:
+        remove_repo_token(purchase.subscription)
     except:  # noqa:E722, pylint: disable=bare-except
         pass
 
@@ -98,3 +104,20 @@ def configure_product_access(quay_account, sku):
     for repo_name in sku.split("+"):
         if repo_name and not repo_name.startswith("x-"):
             quay_account.allow_read_access(repo_name)
+
+
+def create_repo_token(subscription_id):
+    api = fury.GemfuryAPI(settings.GEMFURY_API_TOKEN)
+
+    return PrivateRepoToken.objects.create(
+        vendor="gemfury",
+        subscription=subscription_id,
+        payload=api.create_token(subscription_id),
+    )
+
+
+def remove_repo_token(subscription_id):
+    PrivateRepoToken.objects.filter(subscription=subscription_id).delete()
+
+    api = fury.GemfuryAPI(settings.GEMFURY_API_TOKEN)
+    api.delete_token(subscription_id)
