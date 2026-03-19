@@ -93,6 +93,9 @@ KIWI_GITHUB_PAT_FOR_CHECKING_ORGS_AND_USERNAMES = "check-me"
 # used for creating new accounts
 QUAY_IO_TOKEN = os.getenv("QUAY_IO_TOKEN")
 
+# used for creating pull tokens
+GEMFURY_API_TOKEN = os.getenv("GEMFURY_API_TOKEN")
+
 # Allows us to hook-up kiwitcms-django-plugin at will
 TEST_RUNNER = os.environ.get("DJANGO_TEST_RUNNER", "django.test.runner.DiscoverRunner")
 
