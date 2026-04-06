@@ -65,6 +65,14 @@ Product configuration
 Changelog
 ---------
 
+v4.5.0 (06 Apr 2026)
+~~~~~~~~~~~~~~~~~~~~
+
+- Add model ``PrivateRepoToken``
+- Add Gemfury API client
+- Create/remove tokens for newly activated/canceled subscriptions
+
+
 v4.4.0 (03 Feb 2026)
 ~~~~~~~~~~~~~~~~~~~~
 
