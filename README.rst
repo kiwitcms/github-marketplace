@@ -65,7 +65,7 @@ Product configuration
 Changelog
 ---------
 
-v4.5.0 (06 Apr 2026)
+v4.5.1 (06 Apr 2026)
 ~~~~~~~~~~~~~~~~~~~~
 
 - Add model ``PrivateRepoToken``
