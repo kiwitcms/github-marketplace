@@ -1,4 +1,4 @@
-# Copyright (c) 2019-2024 Alexander Todorov <atodorov@otb.bg>
+# Copyright (c) 2019-2026 Alexander Todorov <atodorov@otb.bg>
 #
 # Licensed under GNU Affero General Public License v3 or later (AGPLv3+)
 # https://www.gnu.org/licenses/agpl-3.0.html
@@ -59,10 +59,22 @@ messages:
 check: flake8 pylint test
 
 
-.PHONY: test-via-docker
-test-via-docker:
+.PHONY: package
+package:
 	rm -rf build/ dist/ kiwitcms_github_marketplace.egg-info/
+	python setup.py sdist
 	python setup.py bdist_wheel
+	twine check dist/*
+
+
+.PHONY: test-via-docker
+test-via-docker: package
 	docker build -f Dockerfile.testing -t kiwitcms/github-marketplace:latest .
 	docker images
 	test_project/sanity-check.sh
+
+.PHONY: upload
+upload: package
+	test -n "$(TWINE_USERNAME)" || exit 1
+	test -n "$(TWINE_PASSWORD)" || exit 2
+	twine upload dist/* --repository-url https://push.fury.io/kiwitcms
