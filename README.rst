@@ -65,6 +65,12 @@ Product configuration
 Changelog
 ---------
 
+v4.5.2 (08 Apr 2026)
+~~~~~~~~~~~~~~~~~~~~
+
+- Improve ``PrivateRepoToken`` Admin page
+
+
 v4.5.1 (06 Apr 2026)
 ~~~~~~~~~~~~~~~~~~~~
 
