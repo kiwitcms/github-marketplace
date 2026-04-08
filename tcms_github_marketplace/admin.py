@@ -176,6 +176,18 @@ class ManualPurchaseAdmin(admin.ModelAdmin):
         return ProcessManualPurchase.as_view()(new_request)
 
 
+class PrivateRepoTokenAdmin(admin.ModelAdmin):
+    list_display = (
+        "pk",
+        "vendor",
+        "subscription",
+        "created_at",
+    )
+    list_filter = ("vendor", "subscription")
+    search_fields = ("vendor", "subscription")
+    ordering = ["-pk"]
+
+
 admin.site.register(ManualPurchase, ManualPurchaseAdmin)
 admin.site.register(Purchase, PurchaseAdmin)
-admin.site.register(PrivateRepoToken)
+admin.site.register(PrivateRepoToken, PrivateRepoTokenAdmin)
