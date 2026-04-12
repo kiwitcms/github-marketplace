@@ -462,6 +462,9 @@ class FastSpringHook(GenericPurchaseNotificationView):
             and "intervalUnit" in event["data"]["items"][0]["subscription"]
         ):
             interval = event["data"]["items"][0]["subscription"]["intervalUnit"]
+        # 1 year product (no auto-renewal) with WIRE transfer option
+        elif "-for-1-year" in event_as_string:
+            interval = "year"
         elif "additional-services-for-kiwi-tcms" in event_as_string:
             return "one-time"
         elif "subscription" not in event_as_string:
