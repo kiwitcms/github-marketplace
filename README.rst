@@ -65,6 +65,12 @@ Product configuration
 Changelog
 ---------
 
+v4.5.3 (12 Apr 2026)
+~~~~~~~~~~~~~~~~~~~~
+
+- Correctly set interval for one-time products with WIRE transfer payment
+
+
 v4.5.2 (08 Apr 2026)
 ~~~~~~~~~~~~~~~~~~~~
 
