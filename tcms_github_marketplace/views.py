@@ -7,13 +7,14 @@
 
 import json
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.db.models import Q
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.cache import cache
 from django.urls import reverse, reverse_lazy
+from django.utils import timezone
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import View
@@ -504,6 +505,12 @@ class FastSpringHook(GenericPurchaseNotificationView):
             return datetime.fromtimestamp(
                 event["data"]["subscription"]["nextChargeDateInSeconds"]
             ).isoformat()
+
+        event_as_string = json.dumps(event)
+
+        # 1 year product (no auto-renewal) with WIRE transfer option
+        if "-for-1-year" in event_as_string:
+            return timezone.now() + timedelta(days=366)
 
         return None
 
