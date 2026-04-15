@@ -364,9 +364,16 @@ class FastSpringHook(GenericPurchaseNotificationView):
     def action_is_activated(self, purchase):
         payload_as_string = json.dumps(purchase.payload)
 
-        return (purchase.payload["type"] == "subscription.activated") or (
-            "-for-1-year" in payload_as_string
-            and purchase.payload["type"] == "order.completed"
+        return (
+            (purchase.payload["type"] == "subscription.activated")
+            or (
+                "-for-1-year" in payload_as_string
+                and purchase.payload["type"] == "order.completed"
+            )
+            or (
+                "-for-3-years" in payload_as_string
+                and purchase.payload["type"] == "order.completed"
+            )
         )
 
     def action_is_cancelled(self, purchase):
@@ -410,7 +417,10 @@ class FastSpringHook(GenericPurchaseNotificationView):
             return "purchased"
 
         event_as_string = json.dumps(event)
-        if "-for-1-year" in event_as_string and event["type"] in ["order.completed"]:
+        if "-for-1-year" in event_as_string and event["type"] == "order.completed":
+            return "purchased"
+
+        if "-for-3-years" in event_as_string and event["type"] == "order.completed":
             return "purchased"
 
         if event["type"] == "subscription.deactivated":
@@ -474,9 +484,10 @@ class FastSpringHook(GenericPurchaseNotificationView):
             and "intervalUnit" in event["data"]["items"][0]["subscription"]
         ):
             interval = event["data"]["items"][0]["subscription"]["intervalUnit"]
-        # 1 year product (no auto-renewal) with WIRE transfer option
         elif "-for-1-year" in event_as_string:
             interval = "year"
+        elif "-for-3-years" in event_as_string:
+            interval = "3-years"
         elif "additional-services-for-kiwi-tcms" in event_as_string:
             return "one-time"
         elif "subscription" not in event_as_string:
@@ -508,9 +519,11 @@ class FastSpringHook(GenericPurchaseNotificationView):
 
         event_as_string = json.dumps(event)
 
-        # 1 year product (no auto-renewal) with WIRE transfer option
         if "-for-1-year" in event_as_string:
             return timezone.now() + timedelta(days=366)
+
+        if "-for-3-years" in event_as_string:
+            return timezone.now() + timedelta(days=1096)
 
         return None
 

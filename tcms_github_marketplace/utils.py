@@ -80,6 +80,8 @@ def calculate_paid_until(mp_purchase, effective_date, next_billing_date=None):
         paid_until += timedelta(days=31)
     elif mp_purchase["billing_cycle"] == "yearly":
         paid_until += timedelta(days=366)
+    elif mp_purchase["billing_cycle"] == "3-years":
+        paid_until += timedelta(days=1096)
     elif next_billing_date:
         paid_until = next_billing_date
 
