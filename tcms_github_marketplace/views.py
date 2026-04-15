@@ -426,6 +426,8 @@ class FastSpringHook(GenericPurchaseNotificationView):
             subscription = data["subscription"]
             if isinstance(subscription, dict):
                 subscription = subscription["id"]
+        elif "order" in data:
+            subscription = data["order"]
 
         return f"fs-{subscription}"
 
