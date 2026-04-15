@@ -361,7 +361,12 @@ class FastSpringHook(GenericPurchaseNotificationView):
     purchase_vendor = "fastspring"
 
     def action_is_activated(self, purchase):
-        return purchase.payload["type"] == "subscription.activated"
+        payload_as_string = json.dumps(purchase.payload)
+
+        return (purchase.payload["type"] == "subscription.activated") or (
+            "-for-1-year" in payload_as_string
+            and purchase.payload["type"] == "order.completed"
+        )
 
     def action_is_cancelled(self, purchase):
         return purchase.payload["type"] == "subscription.deactivated"
