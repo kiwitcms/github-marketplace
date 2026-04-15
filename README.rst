@@ -65,6 +65,13 @@ Product configuration
 Changelog
 ---------
 
+v4.5.4 (15 Apr 2026)
+~~~~~~~~~~~~~~~~~~~~
+
+- More updates for 1-year products with WIRE transfer payment
+- Parse 3-years products with WIRE transfer payment
+
+
 v4.5.3 (12 Apr 2026)
 ~~~~~~~~~~~~~~~~~~~~
 
