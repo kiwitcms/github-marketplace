@@ -403,6 +403,10 @@ class FastSpringHook(GenericPurchaseNotificationView):
         if event["type"] in ["subscription.activated", "subscription.charge.completed"]:
             return "purchased"
 
+        event_as_string = json.dumps(event)
+        if "-for-1-year" in event_as_string and event["type"] in ["order.completed"]:
+            return "purchased"
+
         if event["type"] == "subscription.deactivated":
             return "cancelled"
 
