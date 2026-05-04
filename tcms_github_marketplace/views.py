@@ -447,7 +447,13 @@ class FastSpringHook(GenericPurchaseNotificationView):
             if isinstance(subscription, dict):
                 subscription = subscription["id"]
         elif "order" in data:
-            subscription = data["order"]
+            # extract subscription ID only for order.completed events which are related to
+            # WIRE payments b/c for subscriptions we also receive such an event and that
+            # messes up the ViewSubscription view b/c subscription ID is different from the ID
+            # received in the 'purchased' event
+            event_as_string = json.dumps(event)
+            if "-for-1-year" in event_as_string or "-for-3-years" in event_as_string:
+                subscription = data["order"]
 
         return f"fs-{subscription}"
 
