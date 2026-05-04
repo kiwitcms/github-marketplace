@@ -65,6 +65,12 @@ Product configuration
 Changelog
 ---------
 
+v4.5.5 (04 May 2026)
+~~~~~~~~~~~~~~~~~~~~
+
+- Extract subscription ID from `order.completed` events only for WIRE payments
+
+
 v4.5.4 (15 Apr 2026)
 ~~~~~~~~~~~~~~~~~~~~
 
