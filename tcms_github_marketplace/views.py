@@ -526,10 +526,10 @@ class FastSpringHook(GenericPurchaseNotificationView):
         event_as_string = json.dumps(event, default=str)
 
         if "-for-1-year" in event_as_string:
-            return timezone.now() + timedelta(days=366)
+            return (timezone.now() + timedelta(days=366)).isoformat()
 
         if "-for-3-years" in event_as_string:
-            return timezone.now() + timedelta(days=1096)
+            return (timezone.now() + timedelta(days=1096)).isoformat()
 
         return None
 
