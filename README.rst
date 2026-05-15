@@ -65,6 +65,12 @@ Product configuration
 Changelog
 ---------
 
+v4.5.6 (15 May 2026)
+~~~~~~~~~~~~~~~~~~~~
+
+- Fix for Sentry issue KIWI-TCMS-ZT
+
+
 v4.5.5 (04 May 2026)
 ~~~~~~~~~~~~~~~~~~~~
 
