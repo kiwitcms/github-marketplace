@@ -362,7 +362,7 @@ class FastSpringHook(GenericPurchaseNotificationView):
     purchase_vendor = "fastspring"
 
     def action_is_activated(self, purchase):
-        payload_as_string = json.dumps(purchase.payload)
+        payload_as_string = json.dumps(purchase.payload, default=str)
 
         return (
             (purchase.payload["type"] == "subscription.activated")
@@ -416,7 +416,7 @@ class FastSpringHook(GenericPurchaseNotificationView):
         if event["type"] in ["subscription.activated", "subscription.charge.completed"]:
             return "purchased"
 
-        event_as_string = json.dumps(event)
+        event_as_string = json.dumps(event, default=str)
         if "-for-1-year" in event_as_string and event["type"] == "order.completed":
             return "purchased"
 
@@ -451,7 +451,7 @@ class FastSpringHook(GenericPurchaseNotificationView):
             # WIRE payments b/c for subscriptions we also receive such an event and that
             # messes up the ViewSubscription view b/c subscription ID is different from the ID
             # received in the 'purchased' event
-            event_as_string = json.dumps(event)
+            event_as_string = json.dumps(event, default=str)
             if "-for-1-year" in event_as_string or "-for-3-years" in event_as_string:
                 subscription = data["order"]
 
@@ -462,7 +462,7 @@ class FastSpringHook(GenericPurchaseNotificationView):
 
     def find_billing_cycle_interval(self, event):
         interval = ""
-        event_as_string = json.dumps(event)
+        event_as_string = json.dumps(event, default=str)
 
         if (
             "product" in event["data"]
@@ -523,7 +523,7 @@ class FastSpringHook(GenericPurchaseNotificationView):
                 event["data"]["subscription"]["nextChargeDateInSeconds"]
             ).isoformat()
 
-        event_as_string = json.dumps(event)
+        event_as_string = json.dumps(event, default=str)
 
         if "-for-1-year" in event_as_string:
             return timezone.now() + timedelta(days=366)
