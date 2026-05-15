@@ -493,7 +493,7 @@ class FastSpringHook(GenericPurchaseNotificationView):
         elif "-for-1-year" in event_as_string:
             interval = "year"
         elif "-for-3-years" in event_as_string:
-            interval = "3-years"
+            return "3-years"
         elif "additional-services-for-kiwi-tcms" in event_as_string:
             return "one-time"
         elif "subscription" not in event_as_string:
