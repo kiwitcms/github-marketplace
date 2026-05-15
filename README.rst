@@ -65,10 +65,11 @@ Product configuration
 Changelog
 ---------
 
-v4.5.6 (15 May 2026)
+v4.5.7 (15 May 2026)
 ~~~~~~~~~~~~~~~~~~~~
 
-- Fix for Sentry issue KIWI-TCMS-ZT
+- Fix for Sentry issues related to JSON serialization and
+  products paid by WIRE transfer
 
 
 v4.5.5 (04 May 2026)
