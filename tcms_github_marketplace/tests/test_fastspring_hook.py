@@ -2201,3 +2201,229 @@ class FastSpringHookTestCase(tcms_tenants.tests.LoggedInTestCase):
                 should_have_tenant=False,
             ).exists()
         )
+
+    def test_order_pending_payment_3years_wire_is_recoded_in_database(self):
+        payload = """
+{
+  "events": [
+    {
+      "id": "EVWBGEKAOJSAQJGBLJKIF3XODNKQEI",
+      "processed": false,
+      "created": 1778833375757,
+      "type": "order.payment.pending",
+      "live": true,
+      "data": {
+        "order": "upyiLi0-QO27Pl6_yhckgQ",
+        "id": "upyiLi0-QO27Pl6_yhckgQ",
+        "reference": "MRSENKO260515-8490-56112",
+        "buyerReference": null,
+        "ipAddress": "1.2.3.4",
+        "completed": false,
+        "orderLevelCouponApplied": false,
+        "changed": 1778833375579,
+        "changedValue": 1778833375579,
+        "changedInSeconds": 1778833375,
+        "changedDisplay": "15.05.26",
+        "changedDisplayISO8601": "2026-05-15",
+        "changedDisplayEmailEnhancements": "May 15, 2026",
+        "changedDisplayEmailEnhancementsWithTime": "May 15, 2026 08:22:55 AM",
+        "language": "de",
+        "live": true,
+        "currency": "EUR",
+        "payoutCurrency": "USD",
+        "quote": null,
+        "invoiceUrl": "https://mrsenko.onfastspring.com/account/order/invoice",
+        "siteId": "XAeq54smTQ8",
+        "paymentDueDate": "Thu May 28 00:00:00 UTC 2026",
+        "account": {
+          "id": "Af56zLaNTpKRpXYMG05jow",
+          "account": "Af56zLaNTpKRpXYMG05jow",
+          "contact": {
+            "first": "Kiwi",
+            "last": "TCMS",
+            "email": "kiwitcms@example.com",
+            "company": "Kiwi TCMS",
+            "phone": "0123456789",
+            "subscribed": true
+          },
+          "address": {
+            "address line 1": null,
+            "address line 2": null,
+            "city": null,
+            "country": "DE",
+            "postal code": null,
+            "region": null,
+            "region custom": null,
+            "company": "Kiwi TCMS"
+          },
+          "language": "de",
+          "country": "DE",
+          "lookup": {
+            "global": "mfKAas0IRaqKPBqvwseHnw"
+          },
+          "url": "https://mrsenko.onfastspring.com/account"
+        },
+        "total": 901.0,
+        "totalDisplay": "901,00 €",
+        "totalInPayoutCurrency": 1018.87,
+        "totalInPayoutCurrencyDisplay": "1.018,87 $",
+        "tax": 143.86,
+        "taxDisplay": "143,86 €",
+        "taxInPayoutCurrency": 162.68,
+        "taxInPayoutCurrencyDisplay": "162,68 $",
+        "subtotal": 757.14,
+        "subtotalDisplay": "757,14 €",
+        "subtotalInPayoutCurrency": 856.19,
+        "subtotalInPayoutCurrencyDisplay": "856,19 $",
+        "discount": 0.0,
+        "discountDisplay": "0,00 €",
+        "discountInPayoutCurrency": 0.0,
+        "discountInPayoutCurrencyDisplay": "0,00 $",
+        "discountWithTax": 0.0,
+        "discountWithTaxDisplay": "0,00 €",
+        "discountWithTaxInPayoutCurrency": 0.0,
+        "discountWithTaxInPayoutCurrencyDisplay": "0,00 $",
+        "billDescriptor": "N/A",
+        "payment": {},
+        "reason": "wireTransfer",
+        "customer": {
+          "first": "Kiwi",
+          "last": "TCMS",
+          "email": "kiwitcms@example.com",
+          "company": "Kiwi TCMS",
+          "phone": "0123456789",
+          "subscribed": false
+        },
+        "address": {
+          "country": "DE",
+          "display": "DE"
+        },
+        "recipients": [
+          {
+            "recipient": {
+              "first": "Kiwi",
+              "last": "TCMS",
+              "email": "kiwitcms@example.com",
+              "company": "Kiwi TCMS",
+              "phone": "023456789",
+              "subscribed": false,
+              "account": {
+                "id": "Af56zLaNTpKRpXYMG05jow",
+                "account": "Af56zLaNTpKRpXYMG05jow",
+                "contact": {
+                  "first": "Kiwi",
+                  "last": "TCMS",
+                  "email": "kiwitcms@example.com",
+                  "company": "Kiwi TCMS",
+                  "phone": "0123456789",
+                  "subscribed": true
+                },
+                "address": {
+                  "address line 1": null,
+                  "address line 2": null,
+                  "city": null,
+                  "country": "DE",
+                  "postal code": null,
+                  "region": null,
+                  "region custom": null,
+                  "company": "Kiwi TCMS"
+                },
+                "language": "de",
+                "country": "DE",
+                "lookup": {
+                  "global": "mfKAas0IRaqKPBqvwseHnw"
+                },
+                "url": "https://mrsenko.onfastspring.com/account"
+              },
+              "address": {
+                "country": "DE",
+                "display": "DE"
+              }
+            }
+          }
+        ],
+        "notes": [],
+        "items": [
+          {
+            "product": "kiwi-tcms-self-support-for-3-years",
+            "quantity": 1,
+            "display": "Kiwi TCMS Self-Support for 3 years",
+            "sku": "version",
+            "imageUrl": "https://d8y8nchqlnmka.cloudfront.net/XAeq54smTQ8/YtJw4BRnSeE/square-with-name.png",
+            "shortDisplay": "Kiwi TCMS Self-Support for 3 years",
+            "subtotal": 757.14,
+            "subtotalDisplay": "757,14 €",
+            "subtotalInPayoutCurrency": 856.19,
+            "subtotalInPayoutCurrencyDisplay": "856,19 $",
+            "discount": 0.0,
+            "discountDisplay": "0,00 €",
+            "discountInPayoutCurrency": 0.0,
+            "discountInPayoutCurrencyDisplay": "0,00 $",
+            "isAddon": true,
+            "withholdings": {
+              "taxWithholdings": false
+            },
+            "proratedItemChangeAmount": 0.0,
+            "proratedItemChangeAmountDisplay": "0,00 €",
+            "proratedItemChangeAmountInPayoutCurrency": 0.0,
+            "proratedItemChangeAmountInPayoutCurrencyDisplay": "0,00 $",
+            "proratedItemProratedCharge": 0.0,
+            "proratedItemProratedChargeDisplay": "0,00 €",
+            "proratedItemProratedChargeInPayoutCurrency": 0.0,
+            "proratedItemProratedChargeInPayoutCurrencyDisplay": "0,00 $",
+            "proratedItemCreditAmount": 0.0,
+            "proratedItemCreditAmountDisplay": "0,00 €",
+            "proratedItemCreditAmountInPayoutCurrency": 0.0,
+            "proratedItemCreditAmountInPayoutCurrencyDisplay": "0,00 $",
+            "proratedItemTaxAmount": 0.0,
+            "proratedItemTaxAmountDisplay": "0,00 €",
+            "proratedItemTaxAmountInPayoutCurrency": 0.0,
+            "proratedItemTaxAmountInPayoutCurrencyDisplay": "0,00 $",
+            "proratedItemTotal": 0.0,
+            "proratedItemTotalDisplay": "0,00 €",
+            "proratedItemTotalInPayoutCurrency": 0.0,
+            "proratedItemTotalInPayoutCurrencyDisplay": "0,00 $"
+          }
+        ]
+      }
+    }
+  ]
+}
+""".strip()
+
+        signature = self.calculate_signature(payload)
+
+        initial_purchase_count = Purchase.objects.count()
+        self.assertFalse(
+            Purchase.objects.filter(
+                vendor="fastspring",
+                subscription="upyiLi0-QO27Pl6_yhckgQ",
+                action="order.payment.pending",
+            ).exists()
+        )
+
+        response = self.client.post(
+            self.purchase_hook_url,
+            json.loads(payload),
+            content_type="application/json",
+            HTTP_X_FS_SIGNATURE=signature,
+        )
+        self.assertContains(response, "ok")
+
+        self.assertEqual(initial_purchase_count + 1, Purchase.objects.count())
+        self.assertTrue(
+            Purchase.objects.filter(
+                vendor="fastspring",
+                subscription="fs-upyiLi0-QO27Pl6_yhckgQ",
+                action="order.payment.pending",
+            ).exists()
+        )
+        purchase = Purchase.objects.filter(
+            vendor="fastspring",
+            subscription="fs-upyiLi0-QO27Pl6_yhckgQ",
+            action="order.payment.pending",
+        ).first()
+        self.assertIsNotNone(purchase)
+        self.assertFalse(purchase.should_have_tenant)
+        self.assertEqual(purchase.unit_count, 1)
+        self.assertGreater(purchase.next_billing_date, datetime(2029, 5, 15, 0, 0))
