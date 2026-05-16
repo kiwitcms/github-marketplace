@@ -2427,3 +2427,249 @@ class FastSpringHookTestCase(tcms_tenants.tests.LoggedInTestCase):
         self.assertFalse(purchase.should_have_tenant)
         self.assertEqual(purchase.unit_count, 1)
         self.assertGreater(purchase.next_billing_date, datetime(2029, 5, 15, 0, 0))
+
+    def test_order_completed_paid_by_wire(self):
+        payload = """
+{
+  "events": [
+    {
+      "id": "EVWB3FZFNVU6JBC4JMV42UDOL2B4NE",
+      "data": {
+        "id": "xBUe_-klTjSxIBIvDMsAFw",
+        "tax": 0.0,
+        "live": true,
+        "items": [
+          {
+            "sku": "version",
+            "display": "Kiwi TCMS Self-Support for 1 year",
+            "isAddon": true,
+            "product": "kiwi-tcms-self-support-for-1-year",
+            "discount": 0.0,
+            "imageUrl": "https://d8y8nchqlnmka.cloudfront.net/XAeq54smTQ8/yvAKTcZ7QIg/square-with-name.png",
+            "quantity": 1,
+            "subtotal": 251.67,
+            "fulfillments": {},
+            "shortDisplay": "Kiwi TCMS Self-Support for 1 year",
+            "withholdings": {
+              "taxWithholdings": false
+            },
+            "discountDisplay": "€0.00",
+            "subtotalDisplay": "€251.67",
+            "proratedItemTotal": 0.0,
+            "proratedItemTaxAmount": 0.0,
+            "discountInPayoutCurrency": 0.0,
+            "proratedItemChangeAmount": 0.0,
+            "proratedItemCreditAmount": 0.0,
+            "proratedItemTotalDisplay": "€0.00",
+            "subtotalInPayoutCurrency": 284.82,
+            "proratedItemProratedCharge": 0.0,
+            "proratedItemTaxAmountDisplay": "€0.00",
+            "discountInPayoutCurrencyDisplay": "$0.00",
+            "proratedItemChangeAmountDisplay": "€0.00",
+            "proratedItemCreditAmountDisplay": "€0.00",
+            "subtotalInPayoutCurrencyDisplay": "$284.82",
+            "proratedItemProratedChargeDisplay": "€0.00",
+            "proratedItemTotalInPayoutCurrency": 0.0,
+            "proratedItemTaxAmountInPayoutCurrency": 0.0,
+            "proratedItemChangeAmountInPayoutCurrency": 0.0,
+            "proratedItemCreditAmountInPayoutCurrency": 0.0,
+            "proratedItemTotalInPayoutCurrencyDisplay": "$0.00",
+            "proratedItemProratedChargeInPayoutCurrency": 0.0,
+            "proratedItemTaxAmountInPayoutCurrencyDisplay": "$0.00",
+            "proratedItemChangeAmountInPayoutCurrencyDisplay": "$0.00",
+            "proratedItemCreditAmountInPayoutCurrencyDisplay": "$0.00",
+            "proratedItemProratedChargeInPayoutCurrencyDisplay": "$0.00"
+          }
+        ],
+        "notes": [],
+        "order": "xBUe_-klTjSxIBIvDMsAFw",
+        "quote": null,
+        "total": 251.67,
+        "siteId": "XAeq54smTQ8",
+        "account": {
+          "id": "35i8b9RoSrCuDkV_ewTQ-Q",
+          "url": "https://mrsenko.onfastspring.com/account",
+          "lookup": {
+            "global": "ZkLmDVa7Thu-AtMZuHkpnQ"
+          },
+          "account": "35i8b9RoSrCuDkV_ewTQ-Q",
+          "address": {
+            "city": null,
+            "region": null,
+            "company": "Kiwi TCMS",
+            "country": "BG",
+            "postal code": null,
+            "region custom": null,
+            "address line 1": null,
+            "address line 2": null
+          },
+          "contact": {
+            "last": "Todorov",
+            "email": "tester@example.com",
+            "first": "Alex",
+            "phone": "0123456789",
+            "company": "Kiwi TCMS",
+            "subscribed": true
+          },
+          "country": "BG",
+          "language": "en"
+        },
+        "address": {
+          "country": "BG",
+          "display": "BG"
+        },
+        "changed": 1776252428386,
+        "payment": {
+          "bank": "wire",
+          "type": "bank"
+        },
+        "currency": "EUR",
+        "customer": {
+          "last": "Todorov",
+          "email": "tester@example.com",
+          "first": "Alex",
+          "phone": "0123456789",
+          "company": "Kiwi TCMS",
+          "subscribed": false
+        },
+        "discount": 0.0,
+        "language": "en",
+        "subtotal": 251.67,
+        "completed": true,
+        "ipAddress": "4.6.5.8",
+        "reference": "MRSENKO260412-2790-31105",
+        "invoiceUrl": "https://mrsenko.onfastspring.com/account/order/invoice",
+        "recipients": [
+          {
+            "recipient": {
+              "last": "Todorov",
+              "email": "tester@example.com",
+              "first": "Alex",
+              "phone": "0123456789",
+              "account": {
+                "id": "35i8b9RoSrCuDkV_ewTQ-Q",
+                "url": "https://mrsenko.onfastspring.com/account",
+                "lookup": {
+                  "global": "ZkLmDVa7Thu-AtMZuHkpnQ"
+                },
+                "account": "35i8b9RoSrCuDkV_ewTQ-Q",
+                "address": {
+                  "city": null,
+                  "region": null,
+                  "company": "Kiwi TCMS",
+                  "country": "BG",
+                  "postal code": null,
+                  "region custom": null,
+                  "address line 1": null,
+                  "address line 2": null
+                },
+                "contact": {
+                  "last": "Todorov",
+                  "email": "tester@example.com",
+                  "first": "Alex",
+                  "phone": "0123456789",
+                  "company": "Kiwi TCMS",
+                  "subscribed": true
+                },
+                "country": "BG",
+                "language": "en"
+              },
+              "address": {
+                "country": "BG",
+                "display": "BG"
+              },
+              "company": "Kiwi TCMS",
+              "subscribed": false
+            }
+          }
+        ],
+        "taxDisplay": "€0.00",
+        "changedValue": 1776252428386,
+        "totalDisplay": "€251.67",
+        "billDescriptor": "N/A",
+        "buyerReference": null,
+        "changedDisplay": "4/15/26",
+        "payoutCurrency": "USD",
+        "discountDisplay": "€0.00",
+        "discountWithTax": 0.0,
+        "subtotalDisplay": "€251.67",
+        "changedInSeconds": 1776252428,
+        "taxInPayoutCurrency": 0.0,
+        "changedDisplayISO8601": "2026-04-15",
+        "totalInPayoutCurrency": 284.82,
+        "discountWithTaxDisplay": "€0.00",
+        "orderLevelCouponApplied": false,
+        "discountInPayoutCurrency": 0.0,
+        "subtotalInPayoutCurrency": 284.82,
+        "taxInPayoutCurrencyDisplay": "$0.00",
+        "totalInPayoutCurrencyDisplay": "$284.82",
+        "changedDisplayEmailEnhancements": "Apr 15, 2026",
+        "discountInPayoutCurrencyDisplay": "$0.00",
+        "discountWithTaxInPayoutCurrency": 0.0,
+        "subtotalInPayoutCurrencyDisplay": "$284.82",
+        "discountWithTaxInPayoutCurrencyDisplay": "$0.00",
+        "changedDisplayEmailEnhancementsWithTime": "Apr 15, 2026 11:27:08 AM"
+      },
+      "live": true,
+      "type": "order.completed",
+      "created": 1776252428516,
+      "processed": false
+    }
+  ]
+}
+""".strip()
+        signature = self.calculate_signature(payload)
+
+        initial_purchase_count = Purchase.objects.count()
+        self.assertFalse(
+            Purchase.objects.filter(
+                vendor="fastspring",
+                subscription="fs-xBUe_-klTjSxIBIvDMsAFw",
+                action="purchased",
+            ).exists()
+        )
+
+        # tmp_account calculates the actual robot name for mocking - currently not in use
+        with docker.QuayIOAccount("tester@example.com") as tmp_account:
+            with patch.object(
+                docker.QuayIOAccount,
+                "create",
+                return_value={"name": tmp_account.name, "token": "secret"},
+            ) as quay_io_create, patch.object(
+                docker.QuayIOAccount,
+                "allow_read_access",
+                return_value="success",
+            ) as quay_io_allow_read_access, patch.object(
+                mailchimp,
+                "subscribe",
+                return_value="success",
+            ) as mailchimp_subscribe:
+                response = self.client.post(
+                    self.purchase_hook_url,
+                    json.loads(payload),
+                    content_type="application/json",
+                    HTTP_X_FS_SIGNATURE=signature,
+                )
+                self.assertContains(response, "ok")
+
+                quay_io_create.assert_called_once()
+                quay_io_allow_read_access.assert_called_once_with("version")
+                mailchimp_subscribe.assert_called_once()
+
+        self.assertEqual(initial_purchase_count + 1, Purchase.objects.count())
+        self.assertTrue(
+            Purchase.objects.filter(
+                vendor="fastspring",
+                subscription="fs-xBUe_-klTjSxIBIvDMsAFw",
+                action="purchased",
+            ).exists()
+        )
+        purchase = Purchase.objects.filter(
+            vendor="fastspring",
+            subscription="fs-xBUe_-klTjSxIBIvDMsAFw",
+            action="purchased",
+        ).first()
+        self.assertIsNotNone(purchase)
+        self.assertFalse(purchase.should_have_tenant)
+        self.assertEqual(purchase.unit_count, 1)
+        self.assertGreater(purchase.next_billing_date, datetime(2027, 4, 15, 0, 0))
