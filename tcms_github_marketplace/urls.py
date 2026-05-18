@@ -6,7 +6,6 @@
 from django.urls import re_path
 from tcms_github_marketplace import views
 
-
 urlpatterns = [
     re_path(
         r"^purchase_hook/$",

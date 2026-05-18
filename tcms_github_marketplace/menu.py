@@ -6,7 +6,6 @@
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 
-
 # Follows the format of ``tcms.settings.common.MENU_ITEMS``
 MENU_ITEMS = [
     (_("Subscriptions"), reverse_lazy("github_marketplace_plans")),

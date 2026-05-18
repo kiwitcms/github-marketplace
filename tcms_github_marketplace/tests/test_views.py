@@ -39,8 +39,7 @@ class PurchaseHookTestCase(tcms_tenants.tests.LoggedInTestCase):
         cls.url = reverse("github_marketplace_purchase_hook")
 
     def test_without_signature_header(self):
-        payload = json.loads(
-            """
+        payload = json.loads("""
 {
    "action":"purchased",
    "effective_date":"2017-10-25T00:00:00+00:00",
@@ -92,8 +91,7 @@ class PurchaseHookTestCase(tcms_tenants.tests.LoggedInTestCase):
       }
    }
 }
-""".strip()
-        )
+""".strip())
         response = self.client.post(self.url, payload, content_type="application/json")
 
         # missing signature should cause failure

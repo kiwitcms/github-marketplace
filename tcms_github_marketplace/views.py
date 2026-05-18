@@ -39,7 +39,6 @@ from tcms_github_marketplace import mailchimp
 from tcms_github_marketplace import utils
 from tcms_github_marketplace.models import PrivateRepoToken, Purchase
 
-
 UserModel = get_user_model()
 
 
