@@ -13,8 +13,7 @@ from tcms_github_marketplace import utils
 
 class CalculatePaidUntilTestCase(TestCase):
     def test_monthly_cycle(self):
-        mp_purchase = json.loads(
-            """
+        mp_purchase = json.loads("""
 {
   "account":{
      "type":"Organization",
@@ -42,8 +41,7 @@ class CalculatePaidUntilTestCase(TestCase):
      ]
   }
 }
-""".strip()
-        )
+""".strip())
         effective_date = datetime(2019, 4, 1, 0, 0, 0, 0)
         paid_until = utils.calculate_paid_until(mp_purchase, effective_date)
         expected = datetime(2019, 5, 2, 23, 59, 59, 0)  # 31 days
@@ -51,8 +49,7 @@ class CalculatePaidUntilTestCase(TestCase):
         self.assertEqual(paid_until, expected)
 
     def test_yearly_cycle(self):
-        mp_purchase = json.loads(
-            """
+        mp_purchase = json.loads("""
 {
   "account":{
      "type":"Organization",
@@ -80,8 +77,7 @@ class CalculatePaidUntilTestCase(TestCase):
      ]
   }
 }
-""".strip()
-        )
+""".strip())
         effective_date = datetime(2019, 4, 1, 0, 0, 0, 0)
         paid_until = utils.calculate_paid_until(mp_purchase, effective_date)
         expected = datetime(2020, 4, 1, 23, 59, 59, 0)  # 366 days
@@ -89,8 +85,7 @@ class CalculatePaidUntilTestCase(TestCase):
         self.assertEqual(paid_until, expected)
 
     def test_custom_billing_cycle(self):
-        mp_purchase = json.loads(
-            """
+        mp_purchase = json.loads("""
 {
   "account":{
      "type":"Organization",
@@ -118,8 +113,7 @@ class CalculatePaidUntilTestCase(TestCase):
      ]
   }
 }
-""".strip()
-        )
+""".strip())
         effective_date = datetime(2025, 9, 25, 0, 0, 0, 0)
         paid_until = utils.calculate_paid_until(
             mp_purchase, effective_date, datetime(2027, 9, 25, 0, 0, 0, 0)
