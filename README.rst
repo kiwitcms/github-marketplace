@@ -65,6 +65,14 @@ Product configuration
 Changelog
 ---------
 
+v4.6.0 (23 May 2026)
+~~~~~~~~~~~~~~~~~~~~
+
+- Make this code compatible with setuptools>=82
+- Update black from 25.12.0 to 26.5.1
+- Add more tests for ``order.completed`` event w/o subscription
+
+
 v4.5.7 (15 May 2026)
 ~~~~~~~~~~~~~~~~~~~~
 
