@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2019-2024 Alexander Todorov <atodorov@otb.bg>
+# Copyright (c) 2019-2026 Alexander Todorov <atodorov@otb.bg>
 #
 # Licensed under GNU Affero General Public License v3 or later (AGPLv3+)
 # https://www.gnu.org/licenses/agpl-3.0.html
@@ -18,27 +18,43 @@ if not os.environ.get("RUNNING_AS_CONTAINER"):
     # so we can load multi_tenant.py first!
     home_dir = os.path.expanduser("~")
     removed_paths = []
-    for path in sys.path:
-        if path.startswith(home_dir) and path.find("site-packages") == -1:
-            removed_paths.append(path)
+    for a_path in sys.path:
+        if a_path.startswith(home_dir) and a_path.find("site-packages") == -1:
+            removed_paths.append(a_path)
 
-    for path in removed_paths:
-        sys.path.remove(path)
+    for a_path in removed_paths:
+        sys.path.remove(a_path)
 
     # re add them again
     sys.path.extend(removed_paths)
 
-    import pkg_resources
+    from importlib.metadata import Distribution, DistributionFinder
 
     # pretend this is a plugin during testing & development
     # IT NEEDS TO BE BEFORE the wildcard import below !!!
     # .egg-info/ directory will mess up with this
-    dist = pkg_resources.Distribution(__file__)
-    entry_point = pkg_resources.EntryPoint.parse(
-        "github/marketplace = tcms_github_marketplace", dist=dist
-    )
-    dist._ep_map = {"kiwitcms.plugins": {"github/marketplace": entry_point}}
-    pkg_resources.working_set.add(dist)
+    class FakePluginFinder(DistributionFinder):  # pylint: disable=nested-class-found
+        class FakeDistribution(Distribution):  # pylint: disable=nested-class-found
+            def read_text(self, filename):
+                if filename == "METADATA":
+                    return """Name: github/marketplace
+Version: 0.1
+"""
+                if filename == "entry_points.txt":
+                    return """
+[kiwitcms.plugins]
+github/marketplace=tcms_github_marketplace
+"""
+
+                return ""
+
+            def locate_file(self, path):
+                raise RuntimeError("This distribution has no file system")
+
+        def find_distributions(self, context=DistributionFinder.Context()):
+            yield self.FakeDistribution()
+
+    sys.meta_path.append(FakePluginFinder())
 
     from tcms.settings.product import *
 
