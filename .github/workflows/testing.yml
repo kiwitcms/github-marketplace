@@ -82,10 +82,12 @@ jobs:
         env:
           QUAY_IO_TOKEN: ${{ secrets.QUAY_IO_TOKEN }}
           GEMFURY_API_TOKEN: ${{ secrets.GEMFURY_API_TOKEN }}
-
+          PKG_TOKEN: ${{ secrets.GEMFURY_PULL_TOKEN }}
         run: |
           pip install -U pip wheel setuptools
-          pip install -r devel.txt
+          pip install -r devel.txt \
+            --index-url https://$PKG_TOKEN@pkg.kiwitcms.eu/pypi/ \
+            --extra-index-url https://pypi.org/simple/
 
           # report to Kiwi TCMS only if we have access to secrets
           if [ -n "${{ secrets.TCMS_PASSWORD }}" ]; then
@@ -127,9 +129,13 @@ jobs:
           sudo apt-get install -y ca-certificates
 
       - name: Install Python dependencies
+        env:
+          PKG_TOKEN: ${{ secrets.GEMFURY_PULL_TOKEN }}
         run: |
           pip install -U pip wheel setuptools
-          pip install -r devel.txt
+          pip install -r devel.txt \
+            --index-url https://$PKG_TOKEN@pkg.kiwitcms.eu/pypi/ \
+            --extra-index-url https://pypi.org/simple/
 
       - name: Login to Private Container Registry
         run: |
