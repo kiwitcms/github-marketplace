@@ -151,7 +151,7 @@ jobs:
           docker logout hub.kiwitcms.eu
 
       - name: Upload testing artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: testing-artifacts
           path: |
