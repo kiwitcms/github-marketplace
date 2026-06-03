@@ -65,6 +65,18 @@ Product configuration
 Changelog
 ---------
 
+v4.7.0 (05 Jun 2026)
+~~~~~~~~~~~~~~~~~~~~
+
+- Update codecov/codecov-action from 5 to 6
+- Update github/codeql-action from 3 to 4
+- Update actions/checkout from 4 to 6
+- Update actions/setup-python from 5 to 6
+- Update actions/upload-artifact from 4 to 7
+- Remove more restrictions on setuptools version
+- Build and test with Python 3.12
+
+
 v4.6.0 (23 May 2026)
 ~~~~~~~~~~~~~~~~~~~~
 
