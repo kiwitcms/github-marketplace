@@ -34,6 +34,7 @@ setup(
     url="https://github.com/kiwitcms/github-marketplace/",
     license="AGPLv3+",
     install_requires=get_install_requires("requirements.txt"),
+    python_requires=">=3.12",
     packages=find_packages(exclude=["test_project*", "*.tests"]),
     zip_safe=False,
     include_package_data=True,
@@ -48,5 +49,6 @@ setup(
         "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.12",
+        "Framework :: Django :: 6.0",
     ],
 )
