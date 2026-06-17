@@ -116,6 +116,5 @@ GEMFURY_API_TOKEN = os.getenv("GEMFURY_API_TOKEN")
 TEST_RUNNER = os.environ.get("DJANGO_TEST_RUNNER", "django.test.runner.DiscoverRunner")
 
 # only for testing
-ALLOWED_HOSTS.append(  # noqa: F821 pylint: disable=used-before-assignment
-    "testing.example.bg"
-)
+# pylint: disable=possibly-used-before-assignment
+ALLOWED_HOSTS.append("testing.example.bg")  # noqa: F821
