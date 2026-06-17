@@ -65,6 +65,15 @@ Product configuration
 Changelog
 ---------
 
+v4.8.0 (17 Jun 2026)
+~~~~~~~~~~~~~~~~~~~~
+
+- Require minimum Python version 3.12
+- Build & test with Django >= 6
+- Update kiwitcms-tenants requirement from >=2.8.3 to >=4.5.0
+- Add ``django.contrib.postgres`` to ``INSTALLED_APPS``
+
+
 v4.7.0 (05 Jun 2026)
 ~~~~~~~~~~~~~~~~~~~~
 
