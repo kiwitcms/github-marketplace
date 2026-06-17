@@ -142,6 +142,8 @@ jobs:
           echo "${{ secrets.QUAY_PULL_TOKEN }}" | docker login -u="${{ secrets.QUAY_PULL_USERNAME }}" --password-stdin hub.kiwitcms.eu
 
       - name: Execute tests
+        env:
+          PKG_TOKEN: ${{ secrets.GEMFURY_PULL_TOKEN }}
         run: |
           make test-via-docker
 

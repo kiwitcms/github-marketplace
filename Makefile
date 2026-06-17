@@ -69,7 +69,10 @@ package:
 
 .PHONY: test-via-docker
 test-via-docker: package
-	docker build -f Dockerfile.testing -t kiwitcms/github-marketplace:latest .
+	test -n "$(PKG_TOKEN)" || exit 1
+	docker build -f Dockerfile.testing \
+	    --build-arg PKG_TOKEN=$(PKG_TOKEN) \
+	    -t kiwitcms/github-marketplace:latest .
 	docker images
 	test_project/sanity-check.sh
 
