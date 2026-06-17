@@ -7,3 +7,6 @@
 
 if "tcms_github_marketplace.api" not in MODERNRPC_METHODS_MODULES:  # noqa: F821
     MODERNRPC_METHODS_MODULES.append("tcms_github_marketplace.api")  # noqa: F821
+
+if "django.contrib.postgres" not in INSTALLED_APPS:  # noqa: F821
+    INSTALLED_APPS.append("django.contrib.postgres")  # noqa: F821
