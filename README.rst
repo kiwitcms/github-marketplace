@@ -65,6 +65,12 @@ Product configuration
 Changelog
 ---------
 
+v4.8.1 (23 Jun 2026)
+~~~~~~~~~~~~~~~~~~~~
+
+- Convert 2 consequtive underscores into 1 for Quay.io robot accounts
+
+
 v4.8.0 (17 Jun 2026)
 ~~~~~~~~~~~~~~~~~~~~
 
