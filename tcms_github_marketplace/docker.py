@@ -1,6 +1,7 @@
-# Copyright (c) 2022-2024 Alexander Todorov <atodorov@MrSenko.com>
-
-# Licensed under the GPL 3.0: https://www.gnu.org/licenses/gpl-3.0.txt
+# Copyright (c) 2022-2026 Alexander Todorov <atodorov@MrSenko.com>
+#
+# Licensed under GNU Affero General Public License v3 or later (AGPLv3+)
+# https://www.gnu.org/licenses/agpl-3.0.html
 
 from django.conf import settings
 from .quay import QuayApiClient
@@ -42,6 +43,7 @@ class QuayIOAccount:
             .replace(".", "_")
             .replace("+", "_")
             .replace("-", "_")
+            .replace("__", "_")
             .lower()
         )
 
