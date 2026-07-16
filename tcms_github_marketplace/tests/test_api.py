@@ -1,4 +1,4 @@
-# Copyright (c) 2024 Alexander Todorov <atodorov@otb.bg>
+# Copyright (c) 2024-2026 Alexander Todorov <atodorov@otb.bg>
 #
 # Licensed under GNU Affero General Public License v3 or later (AGPLv3+)
 # https://www.gnu.org/licenses/agpl-3.0.html
@@ -6,11 +6,15 @@
 # -*- coding: utf-8 -*-
 # pylint: disable=too-many-ancestors,attribute-defined-outside-init,no-member
 
+import json
 from datetime import timedelta
+from http import HTTPStatus
 
 from django import test
 from django.core.cache import cache
 from django.utils import timezone
+
+from tcms_tenants.tests import LoggedInTestCase
 
 from tcms_github_marketplace import api
 from tcms_github_marketplace.models import Purchase
@@ -149,4 +153,66 @@ class TestGitOpsAllow(test.TestCase):
 
         # trying for a different repository which will not match
         result = api.gitops_allow("https://github.com/atodorov/testing-with-python")
+        self.assertEqual(result, False)
+
+
+class TestGitOpsAllowViaJsonRpc(LoggedInTestCase):
+    # Exercises GitOps.allow through the /json-rpc/ HTTP endpoint,
+    # exercising the entire request/response layer
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        Purchase.objects.all().delete()
+        cache.clear()
+
+    @classmethod
+    def tearDownClass(cls):
+        super().tearDownClass()
+        Purchase.objects.all().delete()
+        cache.clear()
+
+    def _rpc_call(self, repo_url):
+        response = self.client.post(
+            "/json-rpc/",
+            {
+                "id": "jsonrpc",
+                "jsonrpc": "2.0",
+                "method": "GitOps.allow",
+                "params": [repo_url],
+            },
+            content_type="application/json",
+        )
+        self.assertEqual(HTTPStatus.OK, response.status_code)
+        data = json.loads(response.content)
+        self.assertIn("result", data)
+        return data["result"]
+
+    def test_when_active_purchase_with_non_zero_price_matching_repo_then_result_is_true(
+        self,
+    ):
+        Purchase.objects.create(
+            vendor="testing",
+            action="purchased",
+            gitops_prefix="https://github.com/kiwitcms",
+            sender="kiwitcms-bot@example.bg",
+            effective_date=timezone.now() - timedelta(days=23),
+            payload={
+                "marketplace_purchase": {
+                    "billing_cycle": "monthly",
+                    "plan": {
+                        "monthly_price_in_cents": 1500,
+                    },
+                }
+            },
+        )
+
+        result = self._rpc_call("https://github.com/kiwitcms/enterprise")
+        self.assertEqual(result, True)
+
+        result = self._rpc_call("https://github.com/kiwitcms/tcms-api")
+        self.assertEqual(result, True)
+
+        # trying for a different repository which will not match
+        result = self._rpc_call("https://github.com/atodorov/testing-with-python")
         self.assertEqual(result, False)
