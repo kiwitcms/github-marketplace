@@ -65,6 +65,13 @@ Product configuration
 Changelog
 ---------
 
+v4.9.0 (18 Jul 2026)
+~~~~~~~~~~~~~~~~~~~~
+
+- Refactor API methods for compatibility with django-modern-rpc v2
+- Add JSON-RPC test for GitOps.allow() API method
+
+
 v4.8.1 (23 Jun 2026)
 ~~~~~~~~~~~~~~~~~~~~
 
