@@ -141,6 +141,24 @@ jobs:
         run: |
           echo "${{ secrets.QUAY_PULL_TOKEN }}" | docker login -u="${{ secrets.QUAY_PULL_USERNAME }}" --password-stdin hub.kiwitcms.eu
 
+      - name: Build intermediary kiwitcms/version:16.1 image
+        env:
+          RUNTIME_BASE: registry.access.redhat.com/ubi10-minimal:latest
+        run: |
+          git clone https://github.com/kiwitcms/Kiwi
+          make -C Kiwi/ docker-image
+          docker tag pub.kiwitcms.eu/kiwitcms/kiwi:latest hub.kiwitcms.eu/kiwitcms/version:16.1
+
+      - name: Build intermediary kiwitcms/enterprise:latest image
+        env:
+          PKG_TOKEN: ${{ secrets.GEMFURY_PULL_TOKEN }}
+        run: |
+          git clone https://github.com/kiwitcms/enterprise
+          make -C enterprise/ docker-image
+          docker tag \
+              hub.kiwitcms.eu/kiwitcms/enterprise:16.1-mt-$(uname -m) \
+              hub.kiwitcms.eu/kiwitcms/enterprise:latest
+
       - name: Execute tests
         env:
           PKG_TOKEN: ${{ secrets.GEMFURY_PULL_TOKEN }}
