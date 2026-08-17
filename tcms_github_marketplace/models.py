@@ -102,7 +102,7 @@ class Purchase(models.Model):
         return self.next_billing_date_from(self.payload)
 
     @property
-    def unit_count(self):
+    def unit_count(self):  # pylint: disable=too-many-return-statements
         """
         A value of zero/0 represent a case where the code wasn't able to find
         the actual value from the event payload!
@@ -117,6 +117,11 @@ class Purchase(models.Model):
             return self.payload["marketplace_purchase"].get("unit_count", 0)
 
         if self.vendor == "fastspring":
+            # Kiwi TCMS Partner Store
+            if "items" in self.payload:
+                return self.payload["items"][0].get("quantity", 0)
+
+            # FastSpring direct sale
             if "data" not in self.payload:
                 return 0
 
