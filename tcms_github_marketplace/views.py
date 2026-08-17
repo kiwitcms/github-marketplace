@@ -570,6 +570,27 @@ class FastSpringHook(GenericPurchaseNotificationView):
 
 
 @method_decorator(csrf_exempt, name="dispatch")
+class FastSpringPartner(FastSpringHook):
+    """
+    Handles HTTP notification events from
+    https://sites.fastspring.com/kiwitcms-partner/signup
+    """
+
+    def action_is_recurring_billing(self, purchase):
+        """
+        Products on Kiwi TCMS Partner Store are one-time products, not
+        real subscriptions!
+        """
+        return False
+
+    def request_verify_signature(self, request):
+        """
+        Temporary until we can figure out all of the details
+        """
+        return True
+
+
+@method_decorator(csrf_exempt, name="dispatch")
 class ProcessManualPurchase(GenericPurchaseNotificationView):
     """
     Handles manual purchases confirmed via the Admin panel.

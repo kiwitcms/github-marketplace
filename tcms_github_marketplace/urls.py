@@ -1,4 +1,4 @@
-# Copyright (c) 2019-2022 Alexander Todorov <atodorov@otb.bg>
+# Copyright (c) 2019-2026 Alexander Todorov <atodorov@otb.bg>
 #
 # Licensed under GNU Affero General Public License v3 or later (AGPLv3+)
 # https://www.gnu.org/licenses/agpl-3.0.html
@@ -24,4 +24,9 @@ urlpatterns = [
         name="github_marketplace_plans",
     ),
     re_path(r"^fastspring/$", views.FastSpringHook.as_view(), name="fastspring"),
+    re_path(
+        r"^fastspring/partner/$",
+        views.FastSpringPartner.as_view(),
+        name="fastspring-partner",
+    ),
 ]
