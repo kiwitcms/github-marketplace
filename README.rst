@@ -45,6 +45,7 @@ Required settings:
 - ``KIWI_GITHUB_PAT_FOR_CHECKING_ORGS_AND_USERNAMES`` - string
 - ``KIWI_GITHUB_MARKETPLACE_SECRET`` - binary string
 - ``KIWI_FASTSPRING_SECRET`` - binary string
+- ``KIWI_FASTSPRING_PARTNER_STORE_PRIVATE_KEYS`` - tuple of strings
 - ``QUAY_IO_TOKEN`` - string
 - ``MAILCHIMP_USERNAME`` - string
 - ``MAILCHIMP_SECRET`` - string

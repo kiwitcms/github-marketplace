@@ -587,7 +587,7 @@ class FastSpringPartner(FastSpringHook):
         """
         Temporary until we can figure out all of the details
         """
-        return True
+        return utils.verify_md5_partner(request)
 
 
 @method_decorator(csrf_exempt, name="dispatch")
