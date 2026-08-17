@@ -102,6 +102,7 @@ SOCIAL_AUTH_GITHUB_APP_SECRET = "oauth_client_secret"
 # NOTE: must be bytes, not string
 KIWI_GITHUB_MARKETPLACE_SECRET = b"S3cr3t"
 KIWI_FASTSPRING_SECRET = b"s3cr3t"
+KIWI_FASTSPRING_PARTNER_STORE_PRIVATE_KEYS = ("s3cr3t", "Passw0rd")
 
 # this one is string
 KIWI_GITHUB_PAT_FOR_CHECKING_ORGS_AND_USERNAMES = "check-me"

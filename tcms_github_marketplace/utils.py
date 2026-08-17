@@ -41,6 +41,29 @@ def verify_hmac(request):
     return True  # b/c of inconsistent-return-statements
 
 
+def verify_md5_partner(request):
+    """
+    Verifies request comes from Kiwi TCMS Partner Store:
+    https://sites.fastspring.com/kiwitcms-partner/signup
+    """
+    received_security_data = request.headers.get("X-Security-Data", None)
+    if not received_security_data:
+        return HttpResponseForbidden()
+
+    received_security_hash = request.headers.get("X-Security-Hash", None)
+    if not received_security_hash:
+        return HttpResponseForbidden()
+
+    for private_key in settings.KIWI_FASTSPRING_PARTNER_STORE_PRIVATE_KEYS:
+        computed_hash = hashlib.md5(
+            (received_security_data + private_key).encode()
+        ).hexdigest()
+        if hmac.compare_digest(computed_hash, received_security_hash):
+            return True
+
+    return HttpResponseForbidden()
+
+
 def cancel_plan(purchase):
     """
     Cancells the current plan from Marketplace:
