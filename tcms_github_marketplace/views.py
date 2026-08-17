@@ -3,7 +3,7 @@
 # Licensed under GNU Affero General Public License v3 or later (AGPLv3+)
 # https://www.gnu.org/licenses/agpl-3.0.html
 
-# pylint: disable=missing-permission-required, no-self-use
+# pylint: disable=missing-permission-required, no-self-use, too-many-lines
 
 import json
 import os
@@ -576,18 +576,110 @@ class FastSpringPartner(FastSpringHook):
     https://sites.fastspring.com/kiwitcms-partner/signup
     """
 
+    def action_is_activated(self, purchase):
+        return purchase.payload["status"] == "completed"
+
+    def action_is_cancelled(self, purchase):
+        return purchase.payload["status"] == "canceled"
+
     def action_is_recurring_billing(self, purchase):
         """
         Products on Kiwi TCMS Partner Store are one-time products, not
-        real subscriptions!
+        real subscriptions but the store seems like it may support subscriptions
+        in the future!
         """
-        return False
+        return purchase.payload["isRebill"]
+
+    def purchase_action(self, event):
+        """
+        Match existing statuses from GitHub Marketplace b/c other tools
+        depend on these values
+        """
+        if event["status"] == "completed":
+            return "purchased"
+
+        if event["status"] == "canceled":
+            return "cancelled"
+
+        return event["status"]
+
+    def purchase_effective_date(self, event):
+        """
+        Format sent from FastSpring Partner store is:
+
+            "created": "Aug 17, 2026, 12:20:14 PM",
+            "createdDate": "Aug 17 2026 12:20:14 PM",
+
+        It doesn't appear there is any other way to format this in a more
+        machine friendly way!
+        """
+        return datetime.strptime(event["createdDate"], "%b %d %Y %I:%M:%S %p")
+
+    def purchase_sender(self, event):
+        """
+        On the Kiwi TCMS Partner Store the only field where a reseller can indicate
+        any sort of information for the end customer is inside the
+        ``PO Number:`` field! All other email addresses are the reseller ones!
+        """
+        return event["customerReference"].lower()
+
+    def purchase_subscription(self, event):
+        subscription = event.get("id")
+        return f"fs-{subscription}"
 
     def request_verify_signature(self, request):
         """
         Temporary until we can figure out all of the details
         """
         return utils.verify_md5_partner(request)
+
+    def find_billing_cycle_interval(self, event):
+        event_as_string = json.dumps(event, default=str)
+
+        if "for 1 year" in event_as_string:
+            return "yearly"
+
+        if "for 3 years" in event_as_string:
+            return "3-years"
+
+        raise RuntimeError("Unsupported billing cycle")
+
+    def find_next_billing_date(self, event):
+        event_as_string = json.dumps(event, default=str)
+
+        if "for 1 year" in event_as_string:
+            return (timezone.now() + timedelta(days=366)).isoformat()
+
+        if "for 3 years" in event_as_string:
+            return (timezone.now() + timedelta(days=1096)).isoformat()
+
+        return None
+
+    def vendor_pre_process_payload(self, payload):
+        """
+        Currently not sure if notifications from multiple partners will be batched
+        together!
+        """
+        total_in_payout_currency = 0
+        if "totalUSD" in payload:
+            total_in_payout_currency = payload["totalUSD"]
+        else:
+            raise RuntimeError("totalUSD not found in FastSpring data")
+
+        payload["data"] = {"account": {"url": payload["invoiceUrl"]}}
+
+        payload["marketplace_purchase"] = {
+            "billing_cycle": self.find_billing_cycle_interval(payload),
+            "next_billing_date": self.find_next_billing_date(payload),
+            "plan": {
+                "monthly_price_in_cents": int(total_in_payout_currency * 100),
+            },
+            "account": {
+                "type": "User",  # no organization support for FastSpring
+            },
+        }
+
+        return [payload]
 
 
 @method_decorator(csrf_exempt, name="dispatch")

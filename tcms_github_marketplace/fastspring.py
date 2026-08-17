@@ -1,4 +1,4 @@
-# Copyright (c) 2024 Alexander Todorov <atodorov@otb.bg>
+# Copyright (c) 2024-2026 Alexander Todorov <atodorov@otb.bg>
 #
 # Licensed under GNU Affero General Public License v3 or later (AGPLv3+)
 # https://www.gnu.org/licenses/agpl-3.0.html
@@ -16,6 +16,10 @@ def find_sku(purchase):
     if hasattr(purchase, "payload"):
         event = purchase.payload
     assert isinstance(event, dict)
+
+    # this is for Partner Store
+    if "tagNameString" in event:
+        return event["tagNameString"].replace(" ", "").replace(",", "+")
 
     # begin looking for SKU
     if "sku" in event["data"] and event["data"]["sku"]:
