@@ -609,11 +609,15 @@ class FastSpringPartner(FastSpringHook):
 
             "created": "Aug 17, 2026, 12:20:14 PM",
             "createdDate": "Aug 17 2026 12:20:14 PM",
+            "statusChange": "Aug 18, 2026, 8:49:12 AM",
 
         It doesn't appear there is any other way to format this in a more
         machine friendly way!
         """
-        return datetime.strptime(event["createdDate"], "%b %d %Y %I:%M:%S %p")
+        try:
+            return datetime.strptime(event["statusChange"], "%b %d, %Y, %I:%M:%S %p")
+        except:  # noqa, pylint: disable=bare-except
+            return datetime.strptime(event["createdDate"], "%b %d %Y %I:%M:%S %p")
 
     def purchase_sender(self, event):
         """
