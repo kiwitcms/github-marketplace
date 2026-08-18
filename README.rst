@@ -66,7 +66,7 @@ Product configuration
 Changelog
 ---------
 
-v4.9.4 (18 Aug 2026)
+v4.9.5 (18 Aug 2026)
 ~~~~~~~~~~~~~~~~~~~~
 
 - Support for Kiwi TCMS Partner Store via FastSpring
