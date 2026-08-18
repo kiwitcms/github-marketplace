@@ -629,7 +629,7 @@ class FastSpringPartner(FastSpringHook):
 
     def purchase_subscription(self, event):
         subscription = event.get("id")
-        return f"fs-{subscription}"
+        return f"fsp-{subscription}"
 
     def request_verify_signature(self, request):
         """
