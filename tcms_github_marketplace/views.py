@@ -379,7 +379,14 @@ class FastSpringHook(GenericPurchaseNotificationView):
         return purchase.payload["type"] == "subscription.deactivated"
 
     def action_is_recurring_billing(self, purchase):
-        return purchase.payload["type"] == "subscription.charge.completed"
+        """
+        We treat all One-Time Products (WIRE or CC) as recurring billing events
+        in order to enable Private Tenant extension for the same Sender.
+        The underlying Subscription ID will be different but Tenant don't use this field!
+        """
+        return purchase.payload[
+            "type"
+        ] == "subscription.charge.completed" or self.action_is_activated(purchase)
 
     def find_paid_tenant(self, purchase):
         """
@@ -584,11 +591,12 @@ class FastSpringPartner(FastSpringHook):
 
     def action_is_recurring_billing(self, purchase):
         """
-        Products on Kiwi TCMS Partner Store are one-time products, not
-        real subscriptions but the store seems like it may support subscriptions
-        in the future!
+        Products on Kiwi TCMS Partner Store are one-time products.
+        We treat all completed orders as recurring billing events in order
+        to enable Private Tenant extension for the same Sender. The underlying
+        Subscription ID will be different but Tenant don't use this field!
         """
-        return purchase.payload["isRebill"]
+        return self.action_is_activated(purchase)
 
     def purchase_action(self, event):
         """
