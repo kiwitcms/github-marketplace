@@ -576,6 +576,11 @@ class FastSpringHook(GenericPurchaseNotificationView):
         return payload["events"]
 
 
+class CronCancelFastSpringProduct(FastSpringHook):
+    def request_verify_signature(self, request):
+        return True
+
+
 @method_decorator(csrf_exempt, name="dispatch")
 class FastSpringPartner(FastSpringHook):
     """
@@ -692,6 +697,11 @@ class FastSpringPartner(FastSpringHook):
         }
 
         return [payload]
+
+
+class CronCancelFastSpringPartner(FastSpringPartner):
+    def request_verify_signature(self, request):
+        return True
 
 
 @method_decorator(csrf_exempt, name="dispatch")

@@ -9,21 +9,25 @@ import hmac
 import hashlib
 
 from base64 import b64encode
-from datetime import datetime
+from datetime import datetime, timedelta
 from unittest.mock import call, patch
 
 from django.urls import reverse
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.http import HttpResponseForbidden
+from django.utils import timezone
 
 from social_django.models import UserSocialAuth
 
 import tcms_tenants
 
-from tcms_github_marketplace import docker
+from tcms_github_marketplace import docker, fury
 from tcms_github_marketplace import mailchimp
 from tcms_github_marketplace.models import Purchase
+from tcms_github_marketplace.cron_fastspring_non_recurring import (
+    check_fastspring_for_subscription_renewals,
+)
 
 
 class FastSpringHookTestCase(tcms_tenants.tests.LoggedInTestCase):
@@ -2673,3 +2677,362 @@ class FastSpringHookTestCase(tcms_tenants.tests.LoggedInTestCase):
         self.assertFalse(purchase.should_have_tenant)
         self.assertEqual(purchase.unit_count, 1)
         self.assertGreater(purchase.next_billing_date, datetime(2027, 4, 15, 0, 0))
+
+    def test_check_non_recurring_events_cancels_expired_from_direct_order(self):
+        # Purchase made 370 days ago
+        _370_days_ago = timezone.now() - timedelta(days=370)
+        next_billing_date = (_370_days_ago + timedelta(days=366)).strftime(
+            "%Y-%m-%dT%H:%M:%S"
+        )
+        subscription_id = "9c14486a-a39d"
+        payload = """
+{
+    "id": "EVWB3FZFNVU6JBC4JMV42UDOL2B4NE",
+    "data": {
+        "id": "%s",
+        "tax": 0.0,
+        "live": true,
+        "items": [{
+            "sku": "version",
+            "display": "Kiwi TCMS Self-Support for 1 year",
+            "product": "kiwi-tcms-self-support-for-1-year",
+            "quantity": 1,
+            "subtotal": 251.67,
+            "proratedItemProratedChargeInPayoutCurrencyDisplay": "$0.00"
+        }],
+        "order": "%s",
+        "total": 251.67,
+        "account": {
+            "id": "35i8b9RoSrCuDkV_ewTQ-Q",
+            "url": "https://mrsenko.onfastspring.com/account",
+            "contact": {
+                "email": "%s"
+            }
+        },
+        "changed": 1776252428386,
+        "payment": {"bank": "wire", "type": "bank"},
+        "subtotal": 251.67,
+        "completed": true,
+        "reference": "MRSENKO260412-2790-31105",
+        "changedValue": 1776252428386,
+        "subtotalInPayoutCurrency": 284.82
+    },
+    "type": "order.completed",
+    "created": 1776252428516,
+    "marketplace_purchase": {
+        "plan": {"monthly_price_in_cents": 28482.0},
+        "account": {"type": "User"},
+        "billing_cycle": "yearly",
+        "next_billing_date": "%s"
+    }
+}
+""".strip() % (
+            subscription_id,
+            subscription_id,
+            self.tenant.owner.email,
+            next_billing_date,
+        )
+
+        old_purchase = Purchase.objects.create(
+            vendor="fastspring",
+            action="purchased",
+            sender=self.tenant.owner.email,
+            subscription=f"fs-{subscription_id}",
+            received_on=_370_days_ago,
+            effective_date=_370_days_ago,
+            payload=json.loads(payload),
+        )
+        old_purchase.received_on = _370_days_ago
+        old_purchase.save()
+
+        self.tenant.paid_until = _370_days_ago
+        self.tenant.save()
+
+        with patch.object(
+            docker.QuayIOAccount, "delete", return_value=None
+        ) as quay_io_delete, patch.object(
+            fury.GemfuryAPI,
+            "delete_token",
+            return_value=None,
+        ) as gemfury_delete_token:
+            check_fastspring_for_subscription_renewals()
+
+            # signals that utils.cancel_plan() was called
+            quay_io_delete.assert_called_once()
+            gemfury_delete_token.assert_called_once()
+
+        # a new 'cancelled' event was recorded in DB
+        new_purchase = Purchase.objects.order_by("-received_on").first()
+        self.assertEqual(new_purchase.action, "cancelled")
+        self.assertEqual(new_purchase.vendor, "fastspring")
+        self.assertEqual(new_purchase.sender, old_purchase.sender)
+        self.assertEqual(new_purchase.subscription, old_purchase.subscription)
+        self.assertGreater(
+            new_purchase.received_on,
+            old_purchase.next_billing_date,
+        )
+
+        self.tenant.refresh_from_db()
+        self.assertLess(self.tenant.paid_until, timezone.now())
+
+    def test_new_non_recurring_order_from_same_sender_extends_tenant_paid_until(self):
+        # tenant is expired
+        self.tenant.paid_until = timezone.now() - timedelta(days=7)
+        self.tenant.save()
+
+        subscription_id = "eff6e88e-bf42"
+        payload = """
+{
+    "events": [
+        {
+            "id": "EVWB3FZFNVU6JBC4JMV42UDOL2B4NE",
+            "data": {
+                "id": "%s",
+                "tax": 0.0,
+                "live": true,
+                "items": [{
+                    "sku": "x-tenant+version",
+                    "display": "Kiwi TCMS Private Tenant for 1 year",
+                    "product": "kiwi-tcms-private-tenant-for-1-year",
+                    "quantity": 1,
+                    "subtotal": 251.67,
+                    "proratedItemProratedChargeInPayoutCurrencyDisplay": "$0.00"
+                }],
+                "order": "%s",
+                "total": 251.67,
+                "account": {
+                    "id": "35i8b9RoSrCuDkV_ewTQ-Q",
+                    "url": "https://mrsenko.onfastspring.com/account",
+                    "contact": {
+                        "email": "%s"
+                    }
+                },
+                "changed": 1776252428386,
+                "payment": {"bank": "wire", "type": "bank"},
+                "subtotal": 251.67,
+                "completed": true,
+                "reference": "MRSENKO260412-2790-31105",
+                "changedValue": 1776252428386,
+                "subtotalInPayoutCurrency": 284.82
+            },
+            "type": "order.completed",
+            "created": %d
+        }
+    ]
+}
+""".strip() % (
+            subscription_id,
+            subscription_id,
+            self.tenant.owner.email,
+            int(timezone.now().timestamp() * 1000),
+        )
+
+        signature = self.calculate_signature(payload)
+
+        # tmp_account calculates the actual robot name for mocking - currently not in use
+        with docker.QuayIOAccount(self.tester.email) as tmp_account:
+            with patch.object(
+                docker.QuayIOAccount,
+                "create",
+                return_value={"name": tmp_account.name, "token": "secret"},
+            ) as quay_io_create, patch.object(
+                docker.QuayIOAccount,
+                "allow_read_access",
+                return_value="success",
+            ) as quay_io_allow_read_access, patch.object(
+                mailchimp,
+                "subscribe",
+                return_value="success",
+            ) as mailchimp_subscribe:
+                response = self.client.post(
+                    self.purchase_hook_url,
+                    json.loads(payload),
+                    content_type="application/json",
+                    HTTP_X_FS_SIGNATURE=signature,
+                )
+                self.assertContains(response, "ok")
+                quay_io_create.assert_called_once()
+                quay_io_allow_read_access.assert_called_once_with("version")
+                mailchimp_subscribe.assert_called_once_with(self.tenant.owner.email)
+
+        # a new 'purchased' event was recorded in DB
+        new_purchase = Purchase.objects.get(subscription=f"fs-{subscription_id}")
+        self.assertEqual(new_purchase.action, "purchased")
+        self.assertEqual(new_purchase.vendor, "fastspring")
+        self.assertEqual(new_purchase.sender, self.tenant.owner.email)
+
+        # tenant.paid_until was updated b/c sender/owner emails match
+        self.tenant.refresh_from_db()
+        self.assertGreater(self.tenant.paid_until, timezone.now() + timedelta(days=365))
+
+    def test_check_non_recurring_events_reminds_about_expiring_order(self):
+        # Purchase made 350 days ago
+        _350_days_ago = timezone.now() - timedelta(days=350)
+        next_billing_date = (_350_days_ago + timedelta(days=366)).strftime(
+            "%Y-%m-%dT%H:%M:%S"
+        )
+        subscription_id = "103fea97-02fc"
+        payload = """
+{
+    "id": "EVWB3FZFNVU6JBC4JMV42UDOL2B4NE",
+    "data": {
+        "id": "%s",
+        "tax": 0.0,
+        "live": true,
+        "items": [{
+            "sku": "version",
+            "display": "Kiwi TCMS Self-Support for 1 year",
+            "product": "kiwi-tcms-self-support-for-1-year",
+            "quantity": 1,
+            "subtotal": 251.67,
+            "proratedItemProratedChargeInPayoutCurrencyDisplay": "$0.00"
+        }],
+        "order": "%s",
+        "total": 251.67,
+        "account": {
+            "id": "35i8b9RoSrCuDkV_ewTQ-Q",
+            "url": "https://mrsenko.onfastspring.com/account",
+            "contact": {
+                "email": "%s"
+            }
+        },
+        "changed": 1776252428386,
+        "payment": {"bank": "wire", "type": "bank"},
+        "subtotal": 251.67,
+        "completed": true,
+        "reference": "MRSENKO260412-2790-31105",
+        "changedValue": 1776252428386,
+        "subtotalInPayoutCurrency": 284.82
+    },
+    "type": "order.completed",
+    "created": 1776252428516,
+    "marketplace_purchase": {
+        "plan": {"monthly_price_in_cents": 28482.0},
+        "account": {"type": "User"},
+        "billing_cycle": "yearly",
+        "next_billing_date": "%s"
+    }
+}
+""".strip() % (
+            subscription_id,
+            subscription_id,
+            self.tenant.owner.email,
+            next_billing_date,
+        )
+
+        old_purchase = Purchase.objects.create(
+            vendor="fastspring",
+            action="purchased",
+            sender=self.tenant.owner.email,
+            subscription=f"fs-{subscription_id}",
+            received_on=_350_days_ago,
+            effective_date=_350_days_ago,
+            payload=json.loads(payload),
+        )
+        old_purchase.received_on = _350_days_ago
+        old_purchase.save()
+
+        with patch(
+            "tcms_github_marketplace.cron_fastspring_non_recurring.send_mail"
+        ) as send_mail:
+            check_fastspring_for_subscription_renewals()
+
+            send_mail.assert_called_once()
+            self.assertIn(
+                "Action required: Your Kiwi TCMS subscription will expire soon",
+                send_mail.call_args_list[0][0][0],
+            )
+            self.assertIn(old_purchase.sender, send_mail.call_args_list[0][0][-1])
+
+    def test_check_non_recurring_events_cancels_expired_from_partner_store(self):
+        # Purchase made 370 days ago
+        _370_days_ago = timezone.now() - timedelta(days=370)
+        next_billing_date = (_370_days_ago + timedelta(days=366)).strftime(
+            "%Y-%m-%dT%H:%M:%S"
+        )
+        subscription_id = "6d93991e-a5ff"
+        payload = """
+{
+  "id": "%s",
+  "data": {
+    "account": {
+      "url": "https://sites.fastspring.com/kiwitcms-partner/order/invoice/MRS260818-7425-55115/invoice"
+    }
+  },
+  "type": "normal",
+  "items": [
+    {
+      "quantity": 1,
+      "totalUSD": 890.0,
+      "priceTotal": 890.0,
+      "productName": "Kiwi TCMS Private Tenant for 1 year",
+      "priceTotalUSD": 890.0
+    }
+  ],
+  "status": "completed",
+  "partner": {
+    "email": "partner@kiwitcms.org"
+  },
+  "totalUSD": 890.0,
+  "invoiceUrl": "https://sites.fastspring.com/kiwitcms-partner/order/invoice/MRS260818-7425-55115/invoice",
+  "statusChange": "Aug 18, 2026, 10:06:13 AM",
+  "tagNameString": "x-partner, x-tenant, version",
+  "customerReference": "%s",
+  "marketplace_purchase": {
+    "plan": {
+      "monthly_price_in_cents": 89000
+    },
+    "account": {
+      "type": "User"
+    },
+    "billing_cycle": "yearly",
+    "next_billing_date": "%s"
+  }
+}
+""".strip() % (
+            subscription_id,
+            self.tenant.owner.email,
+            next_billing_date,
+        )
+
+        old_purchase = Purchase.objects.create(
+            vendor="fastspring",
+            action="purchased",
+            sender=self.tenant.owner.email,
+            subscription=f"fsp-{subscription_id}",
+            received_on=_370_days_ago,
+            effective_date=_370_days_ago,
+            payload=json.loads(payload),
+        )
+        old_purchase.received_on = _370_days_ago
+        old_purchase.save()
+
+        self.tenant.paid_until = _370_days_ago
+        self.tenant.save()
+
+        with patch.object(
+            docker.QuayIOAccount, "delete", return_value=None
+        ) as quay_io_delete, patch.object(
+            fury.GemfuryAPI,
+            "delete_token",
+            return_value=None,
+        ) as gemfury_delete_token:
+            check_fastspring_for_subscription_renewals()
+
+            # signals that utils.cancel_plan() was called
+            quay_io_delete.assert_called_once()
+            gemfury_delete_token.assert_called_once()
+
+        # a new 'cancelled' event was recorded in DB
+        new_purchase = Purchase.objects.order_by("-received_on").first()
+        self.assertEqual(new_purchase.action, "cancelled")
+        self.assertEqual(new_purchase.vendor, "fastspring")
+        self.assertEqual(new_purchase.sender, old_purchase.sender)
+        self.assertEqual(new_purchase.subscription, old_purchase.subscription)
+        self.assertGreater(
+            new_purchase.received_on,
+            old_purchase.next_billing_date,
+        )
+
+        self.tenant.refresh_from_db()
+        self.assertLess(self.tenant.paid_until, timezone.now())

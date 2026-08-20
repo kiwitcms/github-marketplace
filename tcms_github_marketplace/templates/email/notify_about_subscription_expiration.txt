@@ -1,0 +1,30 @@
+Dear customer,
+we have detected that one of your Kiwi TCMS subscriptions expires soon!
+
+Important: it was a one-time purchase, not recurring billing, and it
+will NOT renew automatically! Usually this applies to products paid by
+WIRE Transfer or purchased via Kiwi TCMS Reseller Partner!
+
+Action Required: please inspect the information below and renew your
+Kiwi TCMS subscription before it expires! This is an automated message,
+please ignore it if you had already received it more than once!
+
+
+Purchase ID: {{ latest_purchase.id }}
+Unit count: {{ latest_purchase.unit_count }}
+Sender: {{ latest_purchase.sender }}
+Subscription ID: {{ latest_purchase.subscription }}
+Received on: {{ latest_purchase.received_on }}
+Valid until: {{ expiration_date }}
+
+Explore more by visiting
+https://public.tenant.kiwitcms.org/github/marketplace/plans/
+while logged in with the same email address which is receiving this message!
+
+
+Feel free to contact https://kiwitcms.org/support/
+or your Reseller for more information.
+
+
+Happy Testing,
+the Kiwi TCMS team
