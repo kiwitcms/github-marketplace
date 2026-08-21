@@ -66,6 +66,13 @@ Product configuration
 Changelog
 ---------
 
+v4.9.6 (22 Aug 2026)
+~~~~~~~~~~~~~~~~~~~~
+
+- Treat completed one-time orders as recurring billing
+- Add cron job to inspect non-recurring purchases from FastSpring
+
+
 v4.9.5 (18 Aug 2026)
 ~~~~~~~~~~~~~~~~~~~~
 
