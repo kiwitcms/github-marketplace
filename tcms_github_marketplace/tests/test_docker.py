@@ -84,7 +84,7 @@ class TestQuayIOAccount(unittest.TestCase):
         "QUAY_IO_TOKEN is not defined",
     )
     def test_create_account(self):
-        now = timezone.now().strftime("%Y%m%d%H%M%S")
+        now = timezone.now().strftime("%Y%m%d%H%M%S%f")
         with docker.QuayIOAccount(f"testing-{now}-create-account") as account:
             try:
                 response = account.create()
