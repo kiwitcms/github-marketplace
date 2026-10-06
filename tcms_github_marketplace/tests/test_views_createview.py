@@ -17,6 +17,8 @@ from tcms.utils import github
 
 import tcms_tenants.tests
 
+from tcms_github_marketplace.models import ReadOnlyDatabaseRole
+
 
 class CreateTenantTestCase(tcms_tenants.tests.TenantGroupsTestCase):
     @classmethod
@@ -627,6 +629,10 @@ class CreateTenantTestCase(tcms_tenants.tests.TenantGroupsTestCase):
         tenant = tcms_tenants.models.Tenant.objects.get(schema_name="tinc")
         self.assertEqual(tenant.owner, self.tester)
         self.assertEqual(tenant.extra_emails, "billing@example.org; admin@example.net")
+
+        # a read-only DB role is created after the tenant
+        role = ReadOnlyDatabaseRole.objects.filter(name="ro_for_tinc").first()
+        self.assertIsNotNone(role)
         with tenant_context(tenant):
             self.assertTrue(
                 tenant.owner.tenant_groups.filter(name="Administrator").exists()
