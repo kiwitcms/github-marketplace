@@ -37,7 +37,11 @@ from tcms_github_marketplace import forms
 from tcms_github_marketplace.github import find_sku as github_find_sku
 from tcms_github_marketplace import mailchimp
 from tcms_github_marketplace import utils
-from tcms_github_marketplace.models import PrivateRepoToken, Purchase
+from tcms_github_marketplace.models import (
+    PrivateRepoToken,
+    Purchase,
+    ReadOnlyDatabaseRole,
+)
 
 UserModel = get_user_model()
 
@@ -206,6 +210,12 @@ class GenericPurchaseNotificationView(View):
                         purchase.next_billing_date,
                     )
                     tenant.save()
+
+                    role = ReadOnlyDatabaseRole.objects.filter(
+                        name=f"{ReadOnlyDatabaseRole.READ_ONLY_ROLE_PREFIX}{tenant.schema_name}"
+                    ).first()
+                    if role:
+                        role.update_valid_until(tenant.paid_until)
 
         return self.vendor_response(purchase)
 
@@ -938,6 +948,19 @@ class CreateTenant(NewTenantView):
 
         kwargs["initial"]["organization"] = self.organization
         return kwargs
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+
+        tenant = Tenant.objects.filter(
+            schema_name=form.cleaned_data["schema_name"]
+        ).first()
+        if tenant and self.purchase:
+            ReadOnlyDatabaseRole.create_for_schema(
+                tenant.schema_name, tenant.paid_until
+            )
+
+        return response
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
