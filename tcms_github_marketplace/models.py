@@ -3,10 +3,13 @@
 # Licensed under GNU Affero General Public License v3 or later (AGPLv3+)
 # https://www.gnu.org/licenses/agpl-3.0.html
 
+import uuid
 from datetime import datetime
 
-from django.db import models
+import django.db
+from django.db import models, transaction
 from django.contrib.postgres.indexes import GinIndex
+from psycopg import sql
 
 
 class ManualPurchase(models.Model):  # pylint: disable=remove-empty-class
@@ -153,3 +156,63 @@ class PrivateRepoToken(models.Model):
     @property
     def token(self):
         return self.payload["token_value"]
+
+
+class ReadOnlyDatabaseRole(models.Model):
+    READ_ONLY_ROLE_PREFIX = "ro_for_"
+
+    name = models.CharField(max_length=64, unique=True, db_index=True)
+    created_at = models.DateTimeField(db_index=True, auto_now_add=True)
+    valid_until = models.DateTimeField(db_index=True)
+    password = models.CharField(max_length=36)
+
+    def __str__(self):
+        return self.name
+
+    @classmethod
+    def create_for_schema(cls, schema_name, valid_until):
+        with transaction.atomic():
+            instance = cls(
+                name=f"{cls.READ_ONLY_ROLE_PREFIX}{schema_name}",
+                password=str(uuid.uuid4()),
+                valid_until=valid_until,
+            )
+            instance.save()
+            instance.create_database_role(schema_name)
+
+        return instance
+
+    def create_database_role(self, schema_name):
+        # WARNING: all values are escaped via psycopg's Identifier/Literal
+        # wrappers to prevent SQL injection!
+        with django.db.connection.cursor() as cursor:
+            schema = sql.Identifier(schema_name)
+            role = sql.Identifier(self.name)
+
+            cursor.execute(
+                sql.SQL("""
+                    CREATE ROLE {name} WITH LOGIN ENCRYPTED PASSWORD {password} VALID UNTIL {valid_until};
+                    GRANT USAGE ON SCHEMA {schema} TO {name};
+                    GRANT SELECT ON ALL TABLES IN SCHEMA {schema} TO {name};
+                    -- cover tables which are created after this call
+                    ALTER DEFAULT PRIVILEGES IN SCHEMA {schema} GRANT SELECT ON TABLES TO {name};
+                    """).format(
+                    name=role,
+                    password=sql.Literal(self.password),
+                    valid_until=sql.Literal(self.valid_until.isoformat()),
+                    schema=schema,
+                )
+            )
+
+    def update_valid_until(self, valid_until):
+        with transaction.atomic():
+            self.valid_until = valid_until
+            self.save()
+
+            with django.db.connection.cursor() as cursor:
+                cursor.execute(
+                    sql.SQL("ALTER ROLE {name} VALID UNTIL {valid_until}").format(
+                        name=sql.Identifier(self.name),
+                        valid_until=sql.Literal(self.valid_until.isoformat()),
+                    )
+                )
