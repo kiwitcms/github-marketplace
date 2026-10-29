@@ -46,7 +46,7 @@ setup(
         "Environment :: Web Environment",
         "Intended Audience :: Developers",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.14",
         "Framework :: Django :: 6.0",
     ],
 )
