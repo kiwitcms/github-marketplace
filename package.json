@@ -3,16 +3,6 @@
   "licence": " AGPL-3.0-or-later",
   "devDependencies": {
     "eslint": "^10.14.0",
-    "eslint-config-standard": "^17.0.0",
-    "eslint-plugin-import": "^2.26.0",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^6.0.0"
-  },
-  "eslintConfig": {
-    "overrides": [
-      {
-        "files": ["*.js"]
-      }
-    ]
+    "neostandard": "^0.14.1"
   }
 }
