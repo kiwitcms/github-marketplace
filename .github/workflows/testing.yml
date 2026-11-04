@@ -27,11 +27,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
       - name: Run eslint
         run: |
           npm install --include=dev
 
-          ./node_modules/.bin/eslint . -c package.json
+          ./node_modules/.bin/eslint .
 
   build-package:
     runs-on: ubuntu-latest
