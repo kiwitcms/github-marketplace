@@ -280,7 +280,7 @@ class TestUpdateGitopsPrefixForm(test.TestCase):
             {"gitops_prefix": "https://github.com/kiwitcms"}, instance=purchase
         )
 
-        # WARNING: settings.KIWI_GITHUB_PAT_FOR_CHECKING_ORGS_AND_USERNAMES is invalid
+        # WARNING: settings.KIWI_GITHUB_API_TOKEN_FOR_GET_GITHUB_USER is invalid
         # during local development and testing and will cause authentication to fail!
         self.assertFalse(form.is_valid())
         self.assertIn("API request to GitHub failed", form.errors["gitops_prefix"])
