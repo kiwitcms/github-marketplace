@@ -66,6 +66,12 @@ Product configuration
 Changelog
 ---------
 
+v4.10.0 (05 Nov 2026)
+~~~~~~~~~~~~~~~~~~~~~
+
+- Rename setting KIWI_GITHUB_PAT_FOR_CHECKING_ORGS_AND_USERNAMES -> KIWI_GITHUB_API_TOKEN_FOR_GET_GITHUB_USER
+
+
 v4.9.6 (22 Aug 2026)
 ~~~~~~~~~~~~~~~~~~~~
 
