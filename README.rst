@@ -42,7 +42,7 @@ Configuration
 Required settings:
 
 - ``GEMFURY_API_TOKEN`` - string
-- ``KIWI_GITHUB_PAT_FOR_CHECKING_ORGS_AND_USERNAMES`` - string
+- ``KIWI_GITHUB_API_TOKEN_FOR_GET_GITHUB_USER`` - string
 - ``KIWI_GITHUB_MARKETPLACE_SECRET`` - binary string
 - ``KIWI_FASTSPRING_SECRET`` - binary string
 - ``KIWI_FASTSPRING_PARTNER_STORE_PRIVATE_KEYS`` - tuple of strings

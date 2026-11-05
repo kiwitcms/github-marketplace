@@ -19,7 +19,7 @@ def get_github_user(prefix):
 
     gh = github.Github(
         auth=github.Auth.Token(
-            settings.KIWI_GITHUB_PAT_FOR_CHECKING_ORGS_AND_USERNAMES,
+            settings.KIWI_GITHUB_API_TOKEN_FOR_GET_GITHUB_USER,
         )
     )
 

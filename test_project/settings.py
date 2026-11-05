@@ -105,7 +105,7 @@ KIWI_FASTSPRING_SECRET = b"s3cr3t"
 KIWI_FASTSPRING_PARTNER_STORE_PRIVATE_KEYS = ("s3cr3t", "Passw0rd")
 
 # this one is string
-KIWI_GITHUB_PAT_FOR_CHECKING_ORGS_AND_USERNAMES = "check-me"
+KIWI_GITHUB_API_TOKEN_FOR_GET_GITHUB_USER = "check-me"
 
 # used for creating new accounts
 QUAY_IO_TOKEN = os.getenv("QUAY_IO_TOKEN")
