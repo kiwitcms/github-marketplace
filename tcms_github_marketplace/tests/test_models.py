@@ -61,7 +61,7 @@ class TestIPrefixForLookup(test.TestCase):
 
     def test_filtering_works(self):
         for value in [
-            "https://github.com/kiwitcms/Kiwi",
+            "https://github.com/kiwitcms/kiwitcms",
             "https://github.com/kiwitcms/enterprise",
         ]:
             query = Purchase.objects.filter(action__iprefix_for=value)
