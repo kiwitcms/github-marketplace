@@ -24,7 +24,7 @@ def gitops_allow(repo_url):  # pylint: disable=missing-api-permissions-required
         Whether or not ``kiwitcms/gitops`` can continue processing the given repository
         depending on the fact that there's an active subscription configured!
 
-        :param repo_url: A URL to a repository, e.g. https://github.com/kiwitcms/Kiwi
+        :param repo_url: A URL to a repository, e.g. https://github.com/kiwitcms/kiwitcms
         :type repo_url: str
         :return: ``True`` or ``False``
         :rtype: bool
