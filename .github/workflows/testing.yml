@@ -167,6 +167,7 @@ jobs:
         if: always()
         run: |
           docker logout hub.kiwitcms.eu
+          rm -f ~/.docker/config.json
 
       - name: Upload testing artifacts
         uses: actions/upload-artifact@v7
